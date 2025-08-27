@@ -115,7 +115,7 @@ yarn build
 Предназначен для обеспечения типизации методов API-запросов.
 
 ```ts
-export type ApiPostMethods = "POST" | "PUT" | "DELETE";
+type ApiPostMethods = "POST" | "PUT" | "DELETE";
 ```
 
 #### API-интерфейс: `IApi`
@@ -126,7 +126,7 @@ export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 - `post()` - типизированного метода запроса на внесение изменений ("POST" | "PUT") или удаление ("DELETE") данных, который принимает адрес `uri`, объект с передаваемыми данными `data`, тип метода завпроса `method`, а возвращает промис ответа
 
 ```ts
-export interface IApi {
+interface IApi {
   get<T extends object>(uri: string): Promise<T>;
   post<T extends object>(
     uri: string,
@@ -156,17 +156,17 @@ classDiagram
 
 #### Товар - `IProduct`
 
-Описывает основную абстракцию - товар, обладающий следующими свойствами:
+Описывает основную абстракцию, товар, со следующими свойствами:
 
-- `id` - uuid товара
-- `description` - описание
+- `id` - уникальный идентификатор (uuid) товара
+- `description` - описание товара
 - `image` - фрагмент пути к файлу картинки товара
 - `title` - название товара
 - `category` - категория товара
 - `price` - цена (опционально)
 
 ```ts
-export interface IProduct {
+interface IProduct {
   id: string;
   description: string;
   image: string;
@@ -193,15 +193,33 @@ classDiagram
 
 #### Список товаров - `IProductsList`
 
-Описание абстрактного списка товаров. Предполагается, что может использоваться как для описания галереи товаров, так и для списка товаров в корзине. Имеет следующие поля:
+Предполагается, что список товаров может использоваться, как для описания галереи товаров, так и для корзины товаров. Имеет следующие свойства
 
 - `IProduct` - список товаров, реализующий массив объектов типа `IProduct`
-- `selectedProductId` - уникальный идентификатор (uuid) выбранного товара, тип которого соответствует типу свойства `id` интерфейса `IProduct` или яаляется объектом, соответствующим интерфейсу `IProduct`, или `null`.
+- `selectedProductId` - уникальный идентификатор (uuid) выбранного товара (например, для просмотра в отдельном окне), тип которого соответствует типу свойства `id` интерфейса `IProduct` или является объектом, соответствующим интерфейсу `IProduct`, или `null`.
+
+и методы
+
+1. `addProduct(product: IProduct): void` - метод добавления товара в список, принимающий ссылку `product` на товар и ничего не возвращающий.
+
+2. `delProduct(productId: ProductId, payload: Function | null): void` - метод удаления товара из списка, принимающий идентификатор `productId` товара типа `ProductId`, а так же callback `payload` (опционально), вызываемый после удаления товара в частности, для обработки события изменения списка `products` товаров брокером событий. Данный методи ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, удаляет  и вызывает callback `payload`.
+
+3. `updProduct(product: IProduct, payload: Function | null): void` - метод обновления товара, содержащегося в списке `products`, принимающий ссылку `product` на товар, а так же callback `payload` (опционально), вызываемый после удаления товара товара в частности, для обработки события изменения товара брокером событий. Данный метод ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, модифицирует его на основе данных `product` и вызывает callback `payload`.
+
+4. `getProduct(productId: ProductId): IProduct` - метод поиска товара в списке `products` по его идентификатору (`product.id`), возвращающий ссылку на найденный товар типа `IProduct` или `undefined`, если он не найден.
+
+Для упрощения работы с уникальным идентификатором и возможности изменения его типа введен тип `ProductId`, являющийся производным от типа свойства `id` интерфейса `IProduct`.
 
 ```ts
-export interface IProductsList {
+type ProductId = IProduct["id"];
+
+interface IProductsList {
   products: IProduct[];
-  selectedProductId: Pick<IProduct, "id"> | IProduct | null;
+  selectedProductId: ProductId | null /* string | null ??? */;
+  addProduct(product: IProduct): void;
+  delProduct(productId: ProductId, payload: Function | null): void;
+  updProduct(product: IProduct, payload: Function | null): void;
+  getProduct(productId: ProductId): IProduct | undefined;
 }
 ```
 
@@ -209,18 +227,34 @@ export interface IProductsList {
 
 ```mermaid
 classDiagram
+    class ProductId {
+        <<type>>
+        = IProduct['id']
+    }
+
     class IProductsList {
         <<interface>>
         +products: IProduct[]
-        +selectedProductId: Pick~IProduct, "id"~ | IProduct | null
+        +selectedProductId: ProductId | null
+        +addProduct(product: IProduct) void
+        +delProduct(productId: ProductId, payload: Function | null) void
+        +updProduct(product: IProduct, payload: Function | null) void
+        +getProduct(productId: ProductId) IProduct
     }
 
     class IProduct {
         <<interface>>
     }
 
+    class Function {
+        <<type>>
+    }
+
     IProductsList --> "0..*" IProduct : products
-    IProductsList ..> IProduct : selectedProductId
+    IProductsList --> ProductId : selectedProductId
+    IProductsList ..> ProductId : delProduct(), getProduct()
+    IProductsList ..> Function : productId
+    ProductId ..|> IProduct : id
 ```
 
 #### Способы оплаты - `TPayment`
@@ -228,7 +262,7 @@ classDiagram
 Предназначен для обеспечения типизации при работе со способами оплаты.
 
 ```ts
-export type TPayment = "online" | "При получении"; //! уточнить значения!?
+type TPayment = "online" | "При получении"; //! уточнить значения!?
 ```
 
 Представление `TPayment` на UML-диаграмме
@@ -251,7 +285,7 @@ classDiagram
 - `address` - адрес доставки
 
 ```ts
-export interface IBuyer {
+interface IBuyer {
   payment: TPayment;
   email: string;
   phone: string;
@@ -289,7 +323,7 @@ classDiagram
 Данные карточки товара, используемые при ее представлении в галерее.
 
 ```ts
-export type GaleryCardData = Omit<IProduct, "description">;
+type GaleryCardData = Omit<IProduct, "description">;
 ```
 
 ##### Карточка товара в корзине - `BasketCardData`
@@ -297,7 +331,7 @@ export type GaleryCardData = Omit<IProduct, "description">;
 Данные карточки товара, используемые при ее представлении в корзине.
 
 ```ts
-export type BasketCardData = Omit<IProduct, "description" | "image">;
+type BasketCardData = Omit<IProduct, "description" | "image">;
 ```
 
 Представление `GaleryCardData` и `BasketCardData` на UML-диаграмме
@@ -318,55 +352,53 @@ classDiagram
         <<interface>>
     }
 
-    GaleryCardData ..|> IProduct : Omit "description"
-    BasketCardData ..|> IProduct : Omit "description", "image"
+    GaleryCardData ..|> IProduct
+    BasketCardData ..|> IProduct
 ```
 
 #### Типы данных, производные от `IBuyer`:
 
-##### Адрес доставки - `Address`
+##### Адрес доставки, email и телефон - `Address`, `Email` и `Phone`
 
-Используется в первом окне оформления заказа.
-
-```ts
-export type Address = Pick<IBuyer, "address">;
-```
-
-##### Электронная почта и телефон - `Email`, `Phone`
-
-Используются во втором окне оформления заказа.
+Используются при оформлении заказа.
 
 ```ts
-export type Email = Pick<IBuyer, "email">;
-export type Phone = Pick<IBuyer, "phone">;
+type Address = IBuyer["address"];
+type Email = IBuyer["email"];
+type Phone = IBuyer["phone"];
 ```
 
-Представление `Address`, `Email` и `Phone` на UML-диаграмме
+Представление производных от `IBuyer` типов `Address`, `Email` и `Phone` на UML-диаграмме:
 
 ```mermaid
 classDiagram
-    class Address {
-        <<type>>
-        = Pick~IBuyer, "address"~
-    }
-
-    class Email {
-        <<type>>
-        = Pick~IBuyer, "email"~
-    }
-
-    class Phone {
-        <<type>>
-        = Pick~IBuyer, "phone"~
-    }
-
     class IBuyer {
         <<interface>>
     }
 
-    Address ..|> IBuyer : Pick "address"
-    Email ..|> IBuyer : Pick "email"
-    Phone ..|> IBuyer : Pick "phone"
+    class Address {
+        <<type>>
+        = IBuyer['address']
+    }
+
+    class Email {
+        <<type>>
+        = IBuyer['email']
+    }
+
+    class Phone {
+        <<type>>
+        = IBuyer['phone']
+    }
+
+    class TPayment {
+        <<type>>
+    }
+
+    IBuyer --> TPayment : payment
+    Address ..|> IBuyer
+    Email ..|> IBuyer
+    Phone ..|> IBuyer
 ```
 
 ### Модели данных (`Model`)

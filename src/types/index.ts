@@ -21,7 +21,7 @@ export interface IApi {
 * @property {number | null} price - цена (750 | null)
 */
 export interface IProduct {
-  id: string;
+  readonly id: string;
   description: string;
   image: string;
   title: string;
@@ -29,15 +29,68 @@ export interface IProduct {
   price: number | null;
 }
 
+/** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
+export type ProductId = IProduct['id'];
+
+ /** СТОИМОСТЬ ТОВАРА */
+export type ProductPrice = IProduct['price'];
+
+/** CALLBACK ДЛЯ БРОКЕРА СОБЫТИЙ */
+export type Callback =  Function | null;
+
 /** СПИСОК ТОВАРОВ
  * 
  * (галерея, корзина)
- * @property {IProduct[]} IProduct - список (массив) товаров
- * @property {string} selectedProductId - id выбранного товара (просмотр крточки товара)
+ * @property {IProduct[]} _products - массив товаров
+ * @property {ProductId | null} selectedProductId - id выбранного товара (для просмотра крточки товара)
+ * 
+ * @method setProducts - метод создания/перезаписи массива товаров _products массивом products, полученным из параметров метода
+ * @param {IProduct} products - новый массив товаров
+ * @param {Function | null} payload - callback для брокера событий (для отрисовки обновленного списка)
+ * @returns {void}
+ * 
+ * @method getProducts - метод, возвращющий массив товаров списка или undefined, если он пустой
+ * @returns {IProduct[] | undefined} - массив товаров списка или undefined, если он пустой
+ * 
+ * @method getProduct - метод, возвращющий товар с заданным id
+ * @param {ProductId} productId - уникальный идентификатор товара
+ * @returns {IProduct[] | undefined} - ссылка на найденный товар или udefined при его отсутствии в списке
+ * 
+ * @method setProducts - метод сохранения товара в _selectedProductId для отображения
+ * @param {ProductId} productId - уникальный идентификатор сохраняемого товара
+ * @param {Function | null} payload - callback для брокера событий (просмотра выбранного товара в отдельном окне)
+ * @returns {void}
+ * 
+ * @method setProducts - метод очмстки выбора товара, хранящегося в _selectedProductId
+ * @returns {void}
+ * 
  */
+
+/** СПИСОК ТОВАРОВ */
 export interface IProductsList {
-  products: IProduct[];
-  selectedProductId: Pick<IProduct, 'id'> | null; /* string | null ??? */
+  _products: IProduct[]; // массив товаров
+  getProducts(): IProduct[] | undefined; // получение массива товаров списка
+}
+
+/** КАТАЛОГ ТОВАРОВ */
+export interface ICatalog extends IProductsList {
+  _selectedProductId: ProductId | null; // товар, выбранный для подробного отображения
+  setProducts(products: IProduct[], payload: Callback): void; // сохранение массива товаров, полученного из products
+  getProduct(productId: ProductId): IProduct | undefined; // получение товара по id
+  set selectedProduct(productId: ProductId); // сохранение товара для подробного отображения
+  get selectedProduct(): IProduct| undefined; // получение товара для подробного отображени
+}
+
+/** КОРЗИНА ТОВАРОВ */
+export interface IBasket extends IProductsList {
+  _basketPrice: ProductPrice; // стоимость товаров в корзине
+  addProduct(productId: ProductId, payload: Callback): void; // добавление товара, который был получен в параметре в массив корзины;
+  delProduct(productId: ProductId, payload: Callback): void; // удаление товара, полученного в параметре из массива корзины;
+  clearBasket(payload: Callback): void; // очистка корзины;
+  calcPrice(): void;  // расчет стоимости корзины (используется после модификаций корзины)
+  get basketPrice(): ProductPrice; // получение стоимости корзины
+  get countProducts(): number; // получение количества товаров в корзине
+  hasProduct(productId: ProductId): boolean; // проверка наличия товара в корзине по его id
 }
 
 /** СПОСОб ОПЛАТЫ
@@ -56,6 +109,7 @@ export interface IBuyer {
   email: string;
   phone: string;
   address: string;
+  checkValidation(): boolean;
 }
 
 /* ПРОИЗВОДНЫЕ ТИПЫ ДАННЫХ ОТ IProduct, ИСПОЛЬЗУЕМЫЕ В... */
@@ -80,15 +134,15 @@ export type BasketCardData = Omit<IProduct, 'description' | 'image'>;
  * 
  * (первое окно оформления заказа)
  */
-export type Address = Pick<IBuyer, 'address'>;
+export type Address = IBuyer['address'];
 
 /** ЭЛЕКТРОННАЯ ПОЧТА
  * (второе окно оформления заказа)
  */
-export type Email = Pick<IBuyer, 'email'>;
+export type Email = IBuyer['email'];
 
 /** ТЕЛЕФОН
  * 
  * (второе окно оформления заказа)
  */
-export type Phone = Pick<IBuyer, 'phone'>;
+export type Phone = IBuyer['phone'];
