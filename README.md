@@ -30,7 +30,7 @@ npm run dev
 
 ```sh
 yarn
-yarn start
+yarn dev
 ```
 
 ## Сборка
@@ -51,11 +51,11 @@ yarn build
 
 ## Архитектура приложения
 
-Код приложения разделен на слои согласно парадигме MVP (Model-View-Presenter), которая обеспечивает четкое разделение ответственности между классами слоев Model и View. Каждый слой несет свой смысл и ответственность:
+Код приложения разделен на слои согласно парадигме `MVP` (`Model-View-Presenter`), которая обеспечивает четкое разделение ответственности между классами слоев `Model` и `View`. Каждый слой несет свой смысл и ответственность:
 
-Model - слой данных, отвечает за хранение и изменение данных.  
-View - слой представления, отвечает за отображение данных на странице.  
-Presenter - презентер содержит основную логику приложения и отвечает за связь представления и данных.
+`Model` - слой данных, отвечает за хранение и изменение данных.  
+`View` - слой представления, отвечает за отображение данных на странице.  
+`Presenter` - презентер содержит основную логику приложения и отвечает за связь представления и данных.
 
 Взаимодействие между классами обеспечивается использованием событийно-ориентированного подхода. Модели и Представления генерируют события при изменении данных или взаимодействии пользователя с приложением, а Презентер обрабатывает эти события используя методы как Моделей, так и Представлений.
 
@@ -110,7 +110,7 @@ Presenter - презентер содержит основную логику п
 
 Описание интерфейсов и их назначения
 
-#### Типы медотов API-запросов
+#### Типы медотов API-запросов - `ApiPostMethods`
 
 Предназначен для обеспечения типизации методов API-запросов.
 
@@ -118,7 +118,7 @@ Presenter - презентер содержит основную логику п
 export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 ```
 
-#### API-интерфейс
+#### API-интерфейс: `IApi`
 
 Определяет наличие у реализующих его сущностей следующих API-методов:
 
@@ -136,7 +136,25 @@ export interface IApi {
 }
 ```
 
-#### Товар
+Представление `IApi` и `ApiPostMethods` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IApi {
+        <<interface>>
+        +get<T>(uri: string) Promise~T~
+        +post<T>(uri: string, data: object, method?: ApiPostMethods) Promise~T~
+    }
+
+    class ApiPostMethods {
+        <<type>>
+        = "POST" | "PUT" | "DELETE"
+    }
+
+    IApi ..> ApiPostMethods : method
+```
+
+#### Товар - `IProduct`
 
 Описывает основную абстракцию - товар, обладающий следующими свойствами:
 
@@ -158,29 +176,72 @@ export interface IProduct {
 }
 ```
 
-#### Список товаров
+Представление `IProduct` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IProduct {
+        <<interface>>
+        +id: string
+        +description: string
+        +image: string
+        +title: string
+        +category: string
+        +price: number | null
+    }
+```
+
+#### Список товаров - `IProductsList`
 
 Описание абстрактного списка товаров. Предполагается, что может использоваться как для описания галереи товаров, так и для списка товаров в корзине. Имеет следующие поля:
 
 - `IProduct` - список товаров, реализующий массив объектов типа `IProduct`
-- `selectedProductId` - уникальный идентификатор (uuid) выбранного товара, тип которого соответствует типу свойства `id` интерфейса `IProduct`
+- `selectedProductId` - уникальный идентификатор (uuid) выбранного товара, тип которого соответствует типу свойства `id` интерфейса `IProduct` или яаляется объектом, соответствующим интерфейсу `IProduct`, или `null`.
 
 ```ts
 export interface IProductsList {
   products: IProduct[];
-  selectedProductId: Pick<IProduct, "id"> | null;
+  selectedProductId: Pick<IProduct, "id"> | IProduct | null;
 }
 ```
 
-#### Способы оплаты
+Представление `IProductsList` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IProductsList {
+        <<interface>>
+        +products: IProduct[]
+        +selectedProductId: Pick~IProduct, "id"~ | IProduct | null
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    IProductsList --> "0..*" IProduct : products
+    IProductsList ..> IProduct : selectedProductId
+```
+
+#### Способы оплаты - `TPayment`
 
 Предназначен для обеспечения типизации при работе со способами оплаты.
 
 ```ts
-export type TPayment = "online" | "При получении"; // уточнить !?
+export type TPayment = "online" | "При получении"; //! уточнить значения!?
 ```
 
-#### Покупатель
+Представление `TPayment` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class TPayment {
+        <<type>>
+        = "online" | "При получении"
+    }
+```
+
+#### Покупатель - `IBuyer`
 
 Описывает данные заказа товара:
 
@@ -198,13 +259,32 @@ export interface IBuyer {
 }
 ```
 
+Представление `IBuyer` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IBuyer {
+        <<interface>>
+        +payment: TPayment
+        +email: string
+        +phone: string
+        +address: string
+    }
+
+    class TPayment {
+        <<type>>
+    }
+
+    IBuyer --> TPayment : payment
+```
+
 #### Типы данных, производные от `IProduct`:
 
 ##### Карточка товара в отдельном окне её просмотра
 
 Не требует отдельного описания (типизации), так как данные карточки полностью описываются интерфейсом `IProduct`
 
-##### Карточка товара в галерее
+##### Карточка товара в галерее - `GaleryCardData`
 
 Данные карточки товара, используемые при ее представлении в галерее.
 
@@ -212,7 +292,7 @@ export interface IBuyer {
 export type GaleryCardData = Omit<IProduct, "description">;
 ```
 
-##### Карточка товара в корзине
+##### Карточка товара в корзине - `BasketCardData`
 
 Данные карточки товара, используемые при ее представлении в корзине.
 
@@ -220,9 +300,31 @@ export type GaleryCardData = Omit<IProduct, "description">;
 export type BasketCardData = Omit<IProduct, "description" | "image">;
 ```
 
+Представление `GaleryCardData` и `BasketCardData` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class GaleryCardData {
+        <<type>>
+        = Omit~IProduct, "description"~
+    }
+
+    class BasketCardData {
+        <<type>>
+        = Omit~IProduct, "description" | "image"~
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    GaleryCardData ..|> IProduct : Omit "description"
+    BasketCardData ..|> IProduct : Omit "description", "image"
+```
+
 #### Типы данных, производные от `IBuyer`:
 
-##### Адрес доставки
+##### Адрес доставки - `Address`
 
 Используется в первом окне оформления заказа.
 
@@ -230,7 +332,7 @@ export type BasketCardData = Omit<IProduct, "description" | "image">;
 export type Address = Pick<IBuyer, "address">;
 ```
 
-##### Электронная почта и телефон
+##### Электронная почта и телефон - `Email`, `Phone`
 
 Используются во втором окне оформления заказа.
 
@@ -239,7 +341,33 @@ export type Email = Pick<IBuyer, "email">;
 export type Phone = Pick<IBuyer, "phone">;
 ```
 
+Представление `Address`, `Email` и `Phone` на UML-диаграмме
 
+```mermaid
+classDiagram
+    class Address {
+        <<type>>
+        = Pick~IBuyer, "address"~
+    }
+
+    class Email {
+        <<type>>
+        = Pick~IBuyer, "email"~
+    }
+
+    class Phone {
+        <<type>>
+        = Pick~IBuyer, "phone"~
+    }
+
+    class IBuyer {
+        <<interface>>
+    }
+
+    Address ..|> IBuyer : Pick "address"
+    Email ..|> IBuyer : Pick "email"
+    Phone ..|> IBuyer : Pick "phone"
+```
 
 ### Модели данных (`Model`)
 
