@@ -12,13 +12,13 @@ export interface IApi {
   post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
-/** ТОВАР
-* @property {string} id - uuid товара ("854cef69-976d-4c2a-a18c-2aa45046c390"),
-* @property {string} description - описание ("Если планируете решать задачи в тренажёре, берите два."),
-* @property {string} image - картинка ("/5_Dots.svg")
-* @property {string} title - название ("+1 час в сутках")
-* @property {string} category - категория ("софт-скил")
-* @property {number | null} price - цена (750 | null)
+/** ТОВАР  
+* @property {readonly string} id - uuid товара,
+* @property {string} description - описание,
+* @property {string} image - картинка
+* @property {string} title - название
+* @property {string} category - категория
+* @property {number | null} price - цена
 */
 export interface IProduct {
   readonly id: string;
@@ -29,14 +29,15 @@ export interface IProduct {
   price: number | null;
 }
 
+
 /** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
 export type ProductId = IProduct['id'];
 
- /** СТОИМОСТЬ ТОВАРА */
+/** СТОИМОСТЬ ТОВАРА */
 export type ProductPrice = IProduct['price'];
 
 /** CALLBACK ДЛЯ БРОКЕРА СОБЫТИЙ */
-export type Callback =  Function | null;
+export type Callback = Function | null;
 
 /** СПИСОК ТОВАРОВ
  * 
@@ -66,40 +67,44 @@ export type Callback =  Function | null;
  * 
  */
 
-/** СПИСОК ТОВАРОВ */
-export interface IProductsList {
-  _products: IProduct[]; // массив товаров
-  getProducts(): IProduct[] | undefined; // получение массива товаров списка
+/** АБСТРАКТНЫЙ СПИСОК */
+interface IList<T, Key extends keyof T> {
+  items: T[]; // массив элементов (товаров)
+  size: number; // количество элементов (товаров) в списке
+  addItem(item: T): void; // метод добавления элемента (товара) в список
+  addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в список
+  getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из списка по его ключу (идентификатору)
+  removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из списка по его ключу (идентификатору)
 }
 
 /** КАТАЛОГ ТОВАРОВ */
-export interface ICatalog extends IProductsList {
-  _selectedProductId: ProductId | null; // товар, выбранный для подробного отображения
+export interface ICatalog extends IList<IProduct, 'id'> {
+  selectedProductId: ProductId | null; // товар, выбранный для подробного отображения
   setProducts(products: IProduct[], payload: Callback): void; // сохранение массива товаров, полученного из products
   getProduct(productId: ProductId): IProduct | undefined; // получение товара по id
   set selectedProduct(productId: ProductId); // сохранение товара для подробного отображения
-  get selectedProduct(): IProduct| undefined; // получение товара для подробного отображени
+  get selectedProduct(): IProduct | undefined; // получение товара для подробного отображени
 }
 
 /** КОРЗИНА ТОВАРОВ */
-export interface IBasket extends IProductsList {
-  _basketPrice: ProductPrice; // стоимость товаров в корзине
+export interface IBasket extends IList<IProduct, 'id'> {
+  basketPrice: ProductPrice; // стоимость товаров в корзине
   addProduct(productId: ProductId, payload: Callback): void; // добавление товара, который был получен в параметре в массив корзины;
   delProduct(productId: ProductId, payload: Callback): void; // удаление товара, полученного в параметре из массива корзины;
   clearBasket(payload: Callback): void; // очистка корзины;
   calcPrice(): void;  // расчет стоимости корзины (используется после модификаций корзины)
-  get basketPrice(): ProductPrice; // получение стоимости корзины
+  get Price(): ProductPrice; // получение стоимости корзины
   get countProducts(): number; // получение количества товаров в корзине
   hasProduct(productId: ProductId): boolean; // проверка наличия товара в корзине по его id
 }
 
 /** СПОСОб ОПЛАТЫ
  */
-export type TPayment = "online" | "При получении";
+export type TPayment = "card" | "cash";
 
 /** ПОКУПАТЕЛЬ
  * @property {string} [id] - uuid заказа ("28c57cb4-3002-4445-8aa1-2a06a5055ae5"). Назначается после оформления заказа
- * @property {PaymentMethod} payment - способ оплаты ("online" | ???)
+ * @property {TPayment} payment - способ оплаты ("online" | ???)
  * @property {string} email - почта заказчика ("test@test.ru")
  * @property {string} phone - телефон заказчика (+71234567890")
  * @property {string} address - адрес доставки
@@ -109,7 +114,20 @@ export interface IBuyer {
   email: string;
   phone: string;
   address: string;
-  checkValidation(): boolean;
+}
+export interface IBuyerData {
+  isValid(buyer: IBuyer): boolean; // проверка валидности данных
+  clear(): void; // очистка данных покупателя
+  // сеттеры свойств
+  set payment(paymentType: TPayment);
+  set email(mail: Email);
+  set phone(phoneNum: Phone);
+  set address(addr: Address);
+  // геттеры свойств
+  get payment(): TPayment;
+  get email(): Email;
+  get phone(): Phone;
+  get address(): Address;
 }
 
 /* ПРОИЗВОДНЫЕ ТИПЫ ДАННЫХ ОТ IProduct, ИСПОЛЬЗУЕМЫЕ В... */

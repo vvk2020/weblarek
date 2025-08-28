@@ -108,8 +108,6 @@ yarn build
 
 ### Данные
 
-Описание интерфейсов и их назначения
-
 #### Типы медотов API-запросов - `ApiPostMethods`
 
 Предназначен для обеспечения типизации методов API-запросов.
@@ -158,16 +156,16 @@ classDiagram
 
 Описывает основную абстракцию, товар, со следующими свойствами:
 
-- `id` - уникальный идентификатор (uuid) товара
+- `id` - уникальный идентификатор (uuid) товара (не должен изменяться - `readonly`)
 - `description` - описание товара
 - `image` - фрагмент пути к файлу картинки товара
 - `title` - название товара
 - `category` - категория товара
-- `price` - цена (опционально)
+- `price` - цена (опционально, может быть NULL для непродаваемых товаров)
 
 ```ts
 interface IProduct {
-  id: string;
+  readonly id: string;
   description: string;
   image: string;
   title: string;
@@ -182,7 +180,7 @@ interface IProduct {
 classDiagram
     class IProduct {
         <<interface>>
-        +id: string
+        +id: string$
         +description: string
         +image: string
         +title: string
@@ -191,18 +189,92 @@ classDiagram
     }
 ```
 
-#### Список товаров - `IProductsList`
+Производные типы от `IProduct`:
 
-Предполагается, что список товаров может использоваться, как для описания галереи товаров, так и для корзины товаров. Имеет следующие свойства
+- уникальный идентификатор товара
 
-- `IProduct` - список товаров, реализующий массив объектов типа `IProduct`
+  ```ts
+  type ProductId = IProduct["id"];
+  ```
+
+- cтоимость товара
+
+  ```ts
+  type ProductPrice = IProduct["price"];
+  ```
+
+#### Список - `IList`
+
+Список - универсальная абстракция, на которой могут быть построены, как список товаров каталога, так и корзина. Исходя из этого, целесообразно создать отдельный базовый интерфейс `IList`. На его базе будут созданы интерфейсы каталога `ICatalog` и корзины `IBasket` со специфическими для них свойствами и методами.
+
+`IList` имеет следующие свойства:
+
+- `items` - массив элементов (товаров), хранимых в списке
+- `size` -  размер коллекции (количество товаров)
+
+и методы:
+
+1. `addItem(item: T): void` - метод добавления элемента (товара) в список
+2. `addItems(items: readonly T[]): void` - метод добавления массива элементов (товаров) в список
+3. `getItemByKey(key: T[Key]): T | undefined` - метод вывода элемента (товара) из списка по его ключу (идентификатору)
+4. `removeByKey(key: T[Key]): boolean` - метод удаления элемента (товара) из списка по его ключу (идентификатору)
+
+```ts
+interface IList<T, Key extends keyof T> {
+  items: T[K]; // массив элементов (товаров)
+  size: number; // количество элементов (товаров) в списке
+  addItem(item: T): void; // метод добавления элемента (товара) в список
+  addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в список
+  getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из списка по его ключу (идентификатору)
+  removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из списка по его ключу (идентификатору)
+}
+```
+
+Представление `IList` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IList~T, Key extends keyof T~ {
+        <<interface>>
+        +items: T[]
+        +size: number
+        +addItem(item: T) void
+        +addItems(items: readonly T[]) void
+        +getItemByKey(key: T[Key]) T | undefined
+        +removeByKey(key: T[Key]) boolean
+    }
+```
+
+#### Каталог товаров - `IProductsList`
+
+`IProductsList` расширяет `IList`, специализируя его спомощью:
+
+- `IProduct`, определяющего тип хранимых в абстрактном списке элементов как товар
+- `'id'`, определяющего имя свойства `IProduct`, выступающего ключом при работе с абстрактным списком, построенным в виде Map-коллекции.
+
+`IProductsList` добавляет следующие свойства и методы:
+
+- `selectedProductId: ProductId | null` - идентификатор товара, выбранного для подробного отображения
+- `setProducts(products: IProduct[], payload: Callback): void` - метод сохранения массива товаров, полученного из `products`
+- `getProduct(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id`
+- `set selectedProduct(productId: ProductId)` - метод выбора товара для подробного отображения
+- `get selectedProduct(): IProduct | undefined` - метод получения товара для подробного отображени
+
+```ts
+export interface ICatalog extends IList<IProduct, 'id'> {
+  selectedProductId: ProductId | null;
+  setProducts(products: IProduct[], payload: Callback): void;
+  getProduct(productId: ProductId): IProduct | undefined;
+  set selectedProduct(productId: ProductId);
+  get selectedProduct(): IProduct | undefined;
+}
+```
+
 - `selectedProductId` - уникальный идентификатор (uuid) выбранного товара (например, для просмотра в отдельном окне), тип которого соответствует типу свойства `id` интерфейса `IProduct` или является объектом, соответствующим интерфейсу `IProduct`, или `null`.
-
-и методы
 
 1. `addProduct(product: IProduct): void` - метод добавления товара в список, принимающий ссылку `product` на товар и ничего не возвращающий.
 
-2. `delProduct(productId: ProductId, payload: Function | null): void` - метод удаления товара из списка, принимающий идентификатор `productId` товара типа `ProductId`, а так же callback `payload` (опционально), вызываемый после удаления товара в частности, для обработки события изменения списка `products` товаров брокером событий. Данный методи ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, удаляет  и вызывает callback `payload`.
+2. `delProduct(productId: ProductId, payload: Function | null): void` - метод удаления товара из списка, принимающий идентификатор `productId` товара типа `ProductId`, а так же callback `payload` (опционально), вызываемый после удаления товара в частности, для обработки события изменения списка `products` товаров брокером событий. Данный методи ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, удаляет и вызывает callback `payload`.
 
 3. `updProduct(product: IProduct, payload: Function | null): void` - метод обновления товара, содержащегося в списке `products`, принимающий ссылку `product` на товар, а так же callback `payload` (опционально), вызываемый после удаления товара товара в частности, для обработки события изменения товара брокером событий. Данный метод ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, модифицирует его на основе данных `product` и вызывает callback `payload`.
 
@@ -210,52 +282,12 @@ classDiagram
 
 Для упрощения работы с уникальным идентификатором и возможности изменения его типа введен тип `ProductId`, являющийся производным от типа свойства `id` интерфейса `IProduct`.
 
-```ts
-type ProductId = IProduct["id"];
+/\*_ CALLBACK ДЛЯ БРОКЕРА СОБЫТИЙ _/
+export type Callback = Function | null;
 
-interface IProductsList {
-  products: IProduct[];
-  selectedProductId: ProductId | null /* string | null ??? */;
-  addProduct(product: IProduct): void;
-  delProduct(productId: ProductId, payload: Function | null): void;
-  updProduct(product: IProduct, payload: Function | null): void;
-  getProduct(productId: ProductId): IProduct | undefined;
-}
-```
 
-Представление `IProductsList` на UML-диаграмме
 
-```mermaid
-classDiagram
-    class ProductId {
-        <<type>>
-        = IProduct['id']
-    }
 
-    class IProductsList {
-        <<interface>>
-        +products: IProduct[]
-        +selectedProductId: ProductId | null
-        +addProduct(product: IProduct) void
-        +delProduct(productId: ProductId, payload: Function | null) void
-        +updProduct(product: IProduct, payload: Function | null) void
-        +getProduct(productId: ProductId) IProduct
-    }
-
-    class IProduct {
-        <<interface>>
-    }
-
-    class Function {
-        <<type>>
-    }
-
-    IProductsList --> "0..*" IProduct : products
-    IProductsList --> ProductId : selectedProductId
-    IProductsList ..> ProductId : delProduct(), getProduct()
-    IProductsList ..> Function : productId
-    ProductId ..|> IProduct : id
-```
 
 #### Способы оплаты - `TPayment`
 
