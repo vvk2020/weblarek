@@ -1,3 +1,5 @@
+// FIXME: Проверить все mermaid-диаграммы
+
 # Проектная работа "Веб-ларек"
 
 Стек: HTML, SCSS, TS, Webpack
@@ -210,7 +212,7 @@ classDiagram
 `IList` имеет следующие свойства:
 
 - `items` - массив элементов (товаров), хранимых в списке (коллекции)
-- `size` -  размер списка (количество товаров в соответствующем списке)
+- `size` - размер списка (количество товаров в соответствующем списке)
 
 и методы:
 
@@ -267,13 +269,39 @@ classDiagram
 - `get selectedProduct(): IProduct | undefined` - метод получения выбранного товара для подробного отображения, использующий метод `getItemByKey()` интерфейса `IList`
 
 ```ts
-interface ICatalog extends IList<IProduct, 'id'> {
+interface ICatalog extends IList<IProduct, "id"> {
   selectedProductId: ProductId | null;
   setProducts(products: IProduct[], payload: Callback): void;
   getProduct(productId: ProductId): IProduct | undefined;
   set selectedProduct(productId: ProductId);
   get selectedProduct(): IProduct | undefined;
 }
+```
+
+`ICatalog` на UML-диаграмме:
+
+```mermaid
+classDiagram
+    class ICatalog {
+        <<interface>>
+        +selectedProductId: ProductId | null
+        +setProducts(products: IProduct[], payload: Callback): void
+        +getProduct(productId: ProductId): IProduct | undefined
+        +set selectedProduct(productId: ProductId)
+        +get selectedProduct(): IProduct | undefined
+    }
+
+    class IList~T, K~ {
+        <<interface>>
+    }
+
+    class IProduct {
+        <<interface>>
+        +id: ProductId
+    }
+
+    ICatalog --|> IList~IProduct, 'id'~
+    IList ..> IProduct : type parameter 'id'
 ```
 
 Аргумент `payload` метода `setProducts()` - это типизированная callback-функция, вызываемая для обработки изменения списка товаров брокером событий:
@@ -295,7 +323,7 @@ type Callback = Function | null;
 - `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasKey()` интерфейса `IList`
 
 ```ts
-interface IBasket extends IList<IProduct, 'id'> {
+interface IBasket extends IList<IProduct, "id"> {
   price: ProductPrice;
   countProducts: number;
   addProduct(productId: ProductId, payload: Callback): void;
@@ -306,12 +334,40 @@ interface IBasket extends IList<IProduct, 'id'> {
 }
 ```
 
+`IBasket` на UML-диаграмме:
+
+```mermaid
+classDiagram
+    class IBasket {
+        <<interface>>
+        +price: ProductPrice
+        +countProducts: number
+        +addProduct(productId: ProductId, payload: Callback): void
+        +delProduct(productId: ProductId, payload: Callback): void
+        +clear(payload: Callback): void
+        +calcPrice(): void
+        +hasProduct(productId: ProductId): boolean
+    }
+
+    class IList~T, K~ {
+        <<interface>>
+    }
+
+    class IProduct {
+        <<interface>>
+        +id: ProductId
+    }
+
+    IBasket --|> IList~IProduct, 'id'~
+    IList ..> IProduct : type parameter 'id'
+```
+
 Аргумент `payload` методов `IBasket`, как и в случае с `ICatalog`, так же является типизированной callback-функцией, вызываемой для обработки изменения списка товаров брокером событий.
 
 Учитывая, что тип свойств `price` (цена товара) интерфейса `IProduct` и `price` (стоимость корзины) интерфейса `IBasket` должен совпадать, выведен тип:
 
 ```ts
-type ProductPrice = IProduct['price'];
+type ProductPrice = IProduct["price"];
 ```
 
 #### Способы оплаты - `TPayment`
@@ -319,7 +375,7 @@ type ProductPrice = IProduct['price'];
 Предназначен для обеспечения типизации при работе со способами оплаты.
 
 ```ts
-type TPayment = "online" | "При получении"; //! уточнить значения!?
+type TPayment = "card" | "cash"; // ! уточнить значения !
 ```
 
 Представление `TPayment` на UML-диаграмме

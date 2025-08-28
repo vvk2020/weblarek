@@ -1,3 +1,5 @@
+// FIXME: Исправить интерфейсы и и их описание в соответствии с README.md
+
 /** ТИПЫ МЕДОТОВ API-ЗАПРОСОВ
  * 
  */
@@ -99,7 +101,7 @@ export interface IBasket extends IList<IProduct, 'id'> {
 
 /** СПОСОб ОПЛАТЫ
  */
-export type TPayment = "card" | "cash";
+export type TPayment = "card" | "cash"; // FIXME уточнить значения TPayment
 
 /** ПОКУПАТЕЛЬ
  * @property {string} [id] - uuid заказа ("28c57cb4-3002-4445-8aa1-2a06a5055ae5"). Назначается после оформления заказа
