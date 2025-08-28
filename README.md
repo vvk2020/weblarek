@@ -219,7 +219,7 @@ classDiagram
 3. `getItemByKey(key: T[Key]): T | undefined` - метод вывода элемента (товара) из списка по его ключу (идентификатору)
 4. `removeByKey(key: T[Key]): boolean` - метод удаления элемента (товара) из списка по его ключу (идентификатору)
 5. `clear(): void` - метод очистки списка
-6. `hasId(key: T[Key]): boolean` - метод проверки наличия элемента (товара) в списке по его ключу (идентификатору)
+6. `hasKey(key: T[Key]): boolean` - метод проверки наличия элемента (товара) в списке по его ключу (идентификатору)
 
 ```ts
 interface IList<T, Key extends keyof T> {
@@ -230,7 +230,7 @@ interface IList<T, Key extends keyof T> {
   getItemByKey(key: T[Key]): T | undefined;
   removeByKey(key: T[Key]): boolean;
   clear(): void;
-  hasId(key: T[Key]): boolean;
+  hasKey(key: T[Key]): boolean;
 }
 ```
 
@@ -292,7 +292,7 @@ type Callback = Function | null;
 - `delProduct(productId: ProductId, payload: Callback): void` - метод удаления товара из корзины по его идентифмкатору `productId`, основанный на методе `removeByKey()` интерфейса `IList`
 - `clear(payload: Callback): void` - метод очистки корзины, основанный на методе `clear()` интерфейса `IList`
 - `calcPrice(): void` - метод расчета стоимости корзины, выполняемый после каждой модификации списка корзины (для хранение актуальной стоимости)
-- `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasId()` интерфейса `IList`
+- `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasKey()` интерфейса `IList`
 
 ```ts
 interface IBasket extends IList<IProduct, 'id'> {

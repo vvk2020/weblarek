@@ -10,7 +10,7 @@ interface IList<T, Key extends keyof T> {
   getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из коллекции по его ключу (идентификатору)
   removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из коллекции по его ключу (идентификатору)
   clear(): void; // метод очистки коллекции
-  hasId(key: T[Key]): boolean; // метод проверки наличия элемента в списке по его ключу
+  hasKey(key: T[Key]): boolean; // метод проверки наличия элемента в списке по его ключу
 }
 
 class List<T, Key extends keyof T> implements IList<T, Key> {
@@ -64,7 +64,7 @@ class List<T, Key extends keyof T> implements IList<T, Key> {
   }
 
   /* Проверка наличия элемента в коллекции по его ключу */
-  hasId(key: T[Key]): boolean {
+  hasKey(key: T[Key]): boolean {
     return this._items.has(key);
   }
 }
@@ -94,7 +94,7 @@ pl.addItems([u7, u8, u9]);
 u5.description = '+++++';
 
 console.log('1 pl(', pl.size, ')', pl);
-// console.log('has', pl.hasKey('4'));
+console.log('has', pl.hasKey('4'));
 console.log('size', pl.size);
 
 console.log('removeById("a"):', pl.removeByKey('a'));
@@ -102,9 +102,8 @@ console.log('removeById("a"):', pl.removeByKey('c'));
 console.log('removeById("a"):', pl.removeByKey('u'));
 console.log('2 pl(', pl.size, ')', pl);
 
-
-console.log('pl.hasId("roby"):', pl.hasId("roby"));
-console.log('pl.hasId("oby"):', pl.hasId("oby"));
+console.log('pl.hasKey("roby"):', pl.hasKey("roby"));
+console.log('pl.hasKey("oby"):', pl.hasKey("oby"));
 
 
 pl.clear();
