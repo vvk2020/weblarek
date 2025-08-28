@@ -1,32 +1,6 @@
 import './scss/styles.scss';
 
-import { IProduct, ProductId } from './types';
-
-// class ProdList<K, T extends { id: K }> {
-//   private _items = new Map<K, T>();
-
-//   add(item: T): void {
-//     this._items.set(item.id, item);
-//   }
-
-//   hasId(id: K): boolean {
-//     return this._items.has(id);
-//   }
-
-//   getById(id: K): T | undefined {
-//     return this._items.get(id);
-//   }
-
-//   get size(): number {
-//     return this._items.size;
-//   }
-
-//   removeById(id: K): boolean {
-//     return this._items.delete(id);
-//   }
-// }
-
-// let pl = new ProdList<ProductId, IProduct>;
+import { IProduct } from './types';
 
 interface IList<T, Key extends keyof T> {
   items: T[]; // коллекция хранимых элементов (товаров)
@@ -35,12 +9,15 @@ interface IList<T, Key extends keyof T> {
   addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в коллекцию
   getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из коллекции по его ключу (идентификатору)
   removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из коллекции по его ключу (идентификатору)
+  clear(): void; // метод очистки коллекции
+  hasId(key: T[Key]): boolean; // метод проверки наличия элемента в списке по его ключу
 }
 
 class List<T, Key extends keyof T> implements IList<T, Key> {
   private _items: Map<T[Key], T>;
   private readonly _key: Key;
 
+  /* Конструктор, позволяющий создать коллекцию с помощью переданного массива элементов */
   constructor(key: Key, Items?: readonly T[]) {
     this._key = key;
     this._items = new Map<T[Key], T>();
@@ -49,30 +26,46 @@ class List<T, Key extends keyof T> implements IList<T, Key> {
     }
   }
 
+  /* Добавление элемента в коллекцию */
   addItem(item: T): void {
     this._items.set(item[this._key], item);
   }
 
+  /* Добавление массива элементов в коллекцию */
   addItems(items: readonly T[]): void {
     for (const item of items) {
       this.addItem(item);
     }
   }
 
+  /* Получение элемента коллекции по его ключу */
   getItemByKey(key: T[Key]): T | undefined {
     return this._items.get(key);
   }
 
+  /* Очистка коллекции */
+  clear(): void {
+    this._items.clear();
+  }
+
+  /* Получение количества элементов в коллекции */
   get size(): number {
     return this._items.size;
   }
 
+  /* Удаление элемента из коллекции по его ключу */
   removeByKey(key: T[Key]): boolean {
     return this._items.delete(key);
   }
 
+  /* Получение всех элементов коллекции */
   get items(): T[] {
     return Array.from(this._items.values());
+  }
+
+  /* Проверка наличия элемента в коллекции по его ключу */
+  hasId(key: T[Key]): boolean {
+    return this._items.has(key);
   }
 }
 
@@ -108,5 +101,14 @@ console.log('removeById("a"):', pl.removeByKey('a'));
 console.log('removeById("a"):', pl.removeByKey('c'));
 console.log('removeById("a"):', pl.removeByKey('u'));
 console.log('2 pl(', pl.size, ')', pl);
+
+
+console.log('pl.hasId("roby"):', pl.hasId("roby"));
+console.log('pl.hasId("oby"):', pl.hasId("oby"));
+
+
+pl.clear();
+console.log('3 pl(', pl.size, ')', pl);
+
 
 

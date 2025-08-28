@@ -88,7 +88,6 @@ export interface ICatalog extends IList<IProduct, 'id'> {
 
 /** КОРЗИНА ТОВАРОВ */
 export interface IBasket extends IList<IProduct, 'id'> {
-  basketPrice: ProductPrice; // стоимость товаров в корзине
   addProduct(productId: ProductId, payload: Callback): void; // добавление товара, который был получен в параметре в массив корзины;
   delProduct(productId: ProductId, payload: Callback): void; // удаление товара, полученного в параметре из массива корзины;
   clearBasket(payload: Callback): void; // очистка корзины;

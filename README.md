@@ -203,14 +203,14 @@ classDiagram
   type ProductPrice = IProduct["price"];
   ```
 
-#### Список - `IList`
+#### Абстрактный список - `IList`
 
-Список - универсальная абстракция, на которой могут быть построены, как список товаров каталога, так и корзина. Исходя из этого, целесообразно создать отдельный базовый интерфейс `IList`. На его базе будут созданы интерфейсы каталога `ICatalog` и корзины `IBasket` со специфическими для них свойствами и методами.
+`IList` - интерфейс, описывающий абстрактный переиспользуемый список, построенный на основе Map-коллекции. На его основе созданы интерфейсы каталога (`ICatalog`) и корзины (`IBasket`) со специфическими для этих сущностей свойствами и методами.
 
 `IList` имеет следующие свойства:
 
-- `items` - массив элементов (товаров), хранимых в списке
-- `size` -  размер коллекции (количество товаров)
+- `items` - массив элементов (товаров), хранимых в списке (коллекции)
+- `size` -  размер списка (количество товаров в соответствующем списке)
 
 и методы:
 
@@ -218,15 +218,19 @@ classDiagram
 2. `addItems(items: readonly T[]): void` - метод добавления массива элементов (товаров) в список
 3. `getItemByKey(key: T[Key]): T | undefined` - метод вывода элемента (товара) из списка по его ключу (идентификатору)
 4. `removeByKey(key: T[Key]): boolean` - метод удаления элемента (товара) из списка по его ключу (идентификатору)
+5. `clear(): void` - метод очистки списка
+6. `hasId(key: T[Key]): boolean` - метод проверки наличия элемента (товара) в списке по его ключу (идентификатору)
 
 ```ts
 interface IList<T, Key extends keyof T> {
-  items: T[K]; // массив элементов (товаров)
-  size: number; // количество элементов (товаров) в списке
-  addItem(item: T): void; // метод добавления элемента (товара) в список
-  addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в список
-  getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из списка по его ключу (идентификатору)
-  removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из списка по его ключу (идентификатору)
+  items: T[K];
+  size: number;
+  addItem(item: T): void;
+  addItems(items: readonly T[]): void;
+  getItemByKey(key: T[Key]): T | undefined;
+  removeByKey(key: T[Key]): boolean;
+  clear(): void;
+  hasId(key: T[Key]): boolean;
 }
 ```
 
@@ -242,26 +246,28 @@ classDiagram
         +addItems(items: readonly T[]) void
         +getItemByKey(key: T[Key]) T | undefined
         +removeByKey(key: T[Key]) boolean
+        +clear(): void
+        +hasId(key: T[Key]): boolean
     }
 ```
 
-#### Каталог товаров - `IProductsList`
+#### Каталог товаров - `ICatalog`
 
-`IProductsList` расширяет `IList`, специализируя его спомощью:
+`ICatalog` расширяет `IList`, специализируя его спомощью:
 
 - `IProduct`, определяющего тип хранимых в абстрактном списке элементов как товар
 - `'id'`, определяющего имя свойства `IProduct`, выступающего ключом при работе с абстрактным списком, построенным в виде Map-коллекции.
 
-`IProductsList` добавляет следующие свойства и методы:
+`ICatalog` добавляет следующие свойства и методы:
 
 - `selectedProductId: ProductId | null` - идентификатор товара, выбранного для подробного отображения
-- `setProducts(products: IProduct[], payload: Callback): void` - метод сохранения массива товаров, полученного из `products`
-- `getProduct(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id`
-- `set selectedProduct(productId: ProductId)` - метод выбора товара для подробного отображения
-- `get selectedProduct(): IProduct | undefined` - метод получения товара для подробного отображени
+- `setProducts(products: IProduct[], payload: Callback): void` - метод сохранения списка товаров, полученного из массива товаров `products`, использующий метод `addItems()` интерфейса `IList`
+- `getProduct(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id` (обертка метода `getItemByKey()` интерфейса `IList`)
+- `set selectedProduct(productId: ProductId)` - метод сохранения идентификатора `productId` выбранного товара для подробного отображения
+- `get selectedProduct(): IProduct | undefined` - метод получения выбранного товара для подробного отображения, использующий метод `getItemByKey()` интерфейса `IList`
 
 ```ts
-export interface ICatalog extends IList<IProduct, 'id'> {
+interface ICatalog extends IList<IProduct, 'id'> {
   selectedProductId: ProductId | null;
   setProducts(products: IProduct[], payload: Callback): void;
   getProduct(productId: ProductId): IProduct | undefined;
@@ -270,24 +276,43 @@ export interface ICatalog extends IList<IProduct, 'id'> {
 }
 ```
 
-- `selectedProductId` - уникальный идентификатор (uuid) выбранного товара (например, для просмотра в отдельном окне), тип которого соответствует типу свойства `id` интерфейса `IProduct` или является объектом, соответствующим интерфейсу `IProduct`, или `null`.
+Аргумент `payload` метода `setProducts()` - это типизированная callback-функция, вызываемая для обработки изменения списка товаров брокером событий:
 
-1. `addProduct(product: IProduct): void` - метод добавления товара в список, принимающий ссылку `product` на товар и ничего не возвращающий.
+```ts
+type Callback = Function | null;
+```
 
-2. `delProduct(productId: ProductId, payload: Function | null): void` - метод удаления товара из списка, принимающий идентификатор `productId` товара типа `ProductId`, а так же callback `payload` (опционально), вызываемый после удаления товара в частности, для обработки события изменения списка `products` товаров брокером событий. Данный методи ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, удаляет и вызывает callback `payload`.
+#### Корзина товаров - `IBasket`
 
-3. `updProduct(product: IProduct, payload: Function | null): void` - метод обновления товара, содержащегося в списке `products`, принимающий ссылку `product` на товар, а так же callback `payload` (опционально), вызываемый после удаления товара товара в частности, для обработки события изменения товара брокером событий. Данный метод ничего не возвращает. Его реализация: с помощью метода `getProduct()` он находит товар в списке `products`, модифицирует его на основе данных `product` и вызывает callback `payload`.
+`IBasket` аналогично `ICatalog` расширяет и специализирует `IList`. Он добавляет к `IList` следующие свойства и методы:
 
-4. `getProduct(productId: ProductId): IProduct` - метод поиска товара в списке `products` по его идентификатору (`product.id`), возвращающий ссылку на найденный товар типа `IProduct` или `undefined`, если он не найден.
+- `price: ProductPrice` - стоимость товаров в корзине
+- `countProducts: number` - количество товаров в корзине, основанный на свойстве `size` интерфейса `IList`
+- `addProduct(productId: ProductId, payload: Callback): void` - метод добавление товара по его идентифмкатору `productId`, основанный на методе `addItem()` интерфейса `IList`
+- `delProduct(productId: ProductId, payload: Callback): void` - метод удаления товара из корзины по его идентифмкатору `productId`, основанный на методе `removeByKey()` интерфейса `IList`
+- `clear(payload: Callback): void` - метод очистки корзины, основанный на методе `clear()` интерфейса `IList`
+- `calcPrice(): void` - метод расчета стоимости корзины, выполняемый после каждой модификации списка корзины (для хранение актуальной стоимости)
+- `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasId()` интерфейса `IList`
 
-Для упрощения работы с уникальным идентификатором и возможности изменения его типа введен тип `ProductId`, являющийся производным от типа свойства `id` интерфейса `IProduct`.
+```ts
+interface IBasket extends IList<IProduct, 'id'> {
+  price: ProductPrice;
+  countProducts: number;
+  addProduct(productId: ProductId, payload: Callback): void;
+  delProduct(productId: ProductId, payload: Callback): void;
+  clear(payload: Callback): void;
+  calcPrice(): void;
+  hasProduct(productId: ProductId): boolean;
+}
+```
 
-/\*_ CALLBACK ДЛЯ БРОКЕРА СОБЫТИЙ _/
-export type Callback = Function | null;
+Аргумент `payload` методов `IBasket`, как и в случае с `ICatalog`, так же является типизированной callback-функцией, вызываемой для обработки изменения списка товаров брокером событий.
 
+Учитывая, что тип свойств `price` (цена товара) интерфейса `IProduct` и `price` (стоимость корзины) интерфейса `IBasket` должен совпадать, выведен тип:
 
-
-
+```ts
+type ProductPrice = IProduct['price'];
+```
 
 #### Способы оплаты - `TPayment`
 
