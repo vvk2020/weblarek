@@ -225,7 +225,7 @@ classDiagram
 
 ```ts
 interface IList<T, Key extends keyof T> {
-  items: T[K];
+  items: T[];
   size: number;
   addItem(item: T): void;
   addItems(items: readonly T[]): void;
@@ -372,7 +372,7 @@ type ProductPrice = IProduct["price"];
 
 #### Способы оплаты - `TPayment`
 
-Предназначен для обеспечения типизации при работе со способами оплаты.
+Обеспечивает типизацию работы со способами оплаты.
 
 ```ts
 type TPayment = "card" | "cash"; // ! уточнить значения !
@@ -384,7 +384,7 @@ type TPayment = "card" | "cash"; // ! уточнить значения !
 classDiagram
     class TPayment {
         <<type>>
-        = "online" | "При получении"
+        = "card" | "cash"
     }
 ```
 
@@ -425,11 +425,11 @@ classDiagram
     IBuyer --> TPayment : payment
 ```
 
-#### Типы данных, производные от `IProduct`:
+#### Типы данных, производные от `IProduct`
 
 ##### Карточка товара в отдельном окне её просмотра
 
-Не требует отдельного описания (типизации), так как данные карточки полностью описываются интерфейсом `IProduct`
+Не требует создания отдельного типа, так как данные карточки полностью описываются интерфейсом `IProduct`
 
 ##### Карточка товара в галерее - `GaleryCardData`
 

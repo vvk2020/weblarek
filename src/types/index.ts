@@ -41,35 +41,37 @@ export type ProductPrice = IProduct['price'];
 /** CALLBACK ДЛЯ БРОКЕРА СОБЫТИЙ */
 export type Callback = Function | null;
 
-/** СПИСОК ТОВАРОВ
+/** АБСТРАКТНЫЙ СПИСОК
  * 
- * (галерея, корзина)
- * @property {IProduct[]} _products - массив товаров
- * @property {ProductId | null} selectedProductId - id выбранного товара (для просмотра крточки товара)
+ * Интерфейс-прототип для списков товаров галереи и корзины.  
+ * Элементаы списков галереи и корзины - товары, ключи - уникальные идентификаторы.
  * 
- * @method setProducts - метод создания/перезаписи массива товаров _products массивом products, полученным из параметров метода
- * @param {IProduct} products - новый массив товаров
- * @param {Function | null} payload - callback для брокера событий (для отрисовки обновленного списка)
+ * @property {T[]} items - набор элементов
+ * @property {number} size - количество элементов в списке
+ * 
+ * @method addItem - метод добавления элемента в список
+ * @param {T} item - элемент
  * @returns {void}
  * 
- * @method getProducts - метод, возвращющий массив товаров списка или undefined, если он пустой
- * @returns {IProduct[] | undefined} - массив товаров списка или undefined, если он пустой
- * 
- * @method getProduct - метод, возвращющий товар с заданным id
- * @param {ProductId} productId - уникальный идентификатор товара
- * @returns {IProduct[] | undefined} - ссылка на найденный товар или udefined при его отсутствии в списке
- * 
- * @method setProducts - метод сохранения товара в _selectedProductId для отображения
- * @param {ProductId} productId - уникальный идентификатор сохраняемого товара
- * @param {Function | null} payload - callback для брокера событий (просмотра выбранного товара в отдельном окне)
+ * @method addItems void; - метод добавления массива элементов в список
+ * @param {readonly T[]} items - массива элементов
  * @returns {void}
  * 
- * @method setProducts - метод очмстки выбора товара, хранящегося в _selectedProductId
+ * @method getItemByKey - метод вывода элемента из списка по его ключу
+ * @param {T[Key]} key - ключ исакомого элемента
+ * @returns {T | undefined} - искомый элемент
+ * 
+ * @method removeByKey - метод удаления элемента из списка по его ключу
+ * @param {T[Key]} key - ключ выводимого элемента
+ * @returns {boolean} - результат удаления: true - успешно, false - нет
+ * 
+ * @method clear() - метод очистки списка элементов
  * @returns {void}
  * 
+ * @method hasKey - метод проверки наличия элемента в списке по его ключу
+ * @param {T[Key]} key - ключ выводимого элемента
+ * @returns {boolean} - результат проерки: true - имеется, false - нет
  */
-
-/** АБСТРАКТНЫЙ СПИСОК */
 interface IList<T, Key extends keyof T> {
   items: T[]; // массив элементов (товаров)
   size: number; // количество элементов (товаров) в списке
@@ -77,15 +79,20 @@ interface IList<T, Key extends keyof T> {
   addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в список
   getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из списка по его ключу (идентификатору)
   removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из списка по его ключу (идентификатору)
+  clear(): void; // метод очистки списка
+  hasKey(key: T[Key]): boolean; // метод проверки наличия элемента (товара) в списке по его ключу (идентификатору)
 }
 
-/** КАТАЛОГ ТОВАРОВ */
+/** КАТАЛОГ ТОВАРОВ 
+ * 
+ * 
+*/
 export interface ICatalog extends IList<IProduct, 'id'> {
-  selectedProductId: ProductId | null; // товар, выбранный для подробного отображения
-  setProducts(products: IProduct[], payload: Callback): void; // сохранение массива товаров, полученного из products
-  getProduct(productId: ProductId): IProduct | undefined; // получение товара по id
-  set selectedProduct(productId: ProductId); // сохранение товара для подробного отображения
-  get selectedProduct(): IProduct | undefined; // получение товара для подробного отображени
+  selectedProductId: ProductId | null; // идентификатор товара, выбранного для подробного отображения
+  setProducts(products: IProduct[], payload: Callback): void; // метод сохранения массива товаров, полученного из products
+  getProduct(productId: ProductId): IProduct | undefined; // метод получения товара по идентификатору 
+  set selectedProduct(productId: ProductId); // метод сохранения товара для подробного отображения
+  get selectedProduct(): IProduct | undefined; // метод получение товара для подробного отображени
 }
 
 /** КОРЗИНА ТОВАРОВ */
