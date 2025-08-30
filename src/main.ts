@@ -1,28 +1,16 @@
 import './scss/styles.scss';
 
-import { IProduct } from './types';
+import { IList, ICatalog, IProduct, ProductId, ID_NAME, IBasket } from './types';
 
-interface IList<T, Key extends keyof T> {
-  items: T[]; // коллекция хранимых элементов (товаров)
-  size: number; // количество элементов (товаров)
-  addItem(item: T): void; // метод добавления элемента (товара) в коллекцию
-  addItems(items: readonly T[]): void; // метод добавления массива элементов (товаров) в коллекцию
-  getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента (товара) из коллекции по его ключу (идентификатору)
-  removeByKey(key: T[Key]): boolean; // метод удаления элемента (товара) из коллекции по его ключу (идентификатору)
-  clear(): void; // метод очистки коллекции
-  hasKey(key: T[Key]): boolean; // метод проверки наличия элемента в списке по его ключу
-}
-
-class List<T, Key extends keyof T> implements IList<T, Key> {
+class List<T, Key extends keyof T = keyof T> implements IList<T, Key> {
   private _items: Map<T[Key], T>;
-  private readonly _key: Key;
+  private _key: Key;
 
-  /* Конструктор, позволяющий создать коллекцию с помощью переданного массива элементов */
-  constructor(key: Key, Items?: readonly T[]) {
+  constructor(key: Key, items?: readonly T[]) {
     this._key = key;
     this._items = new Map<T[Key], T>();
-    if (Items?.length) {
-      this.addItems(Items);
+    if (items?.length) {
+      this.addItems(items);
     }
   }
 
@@ -69,45 +57,71 @@ class List<T, Key extends keyof T> implements IList<T, Key> {
   }
 }
 
-const pl = new List<IProduct, 'id'>('id');
+//! List =========================================================
+interface ABC {
+  a: number;
+  b: string;
+  c: boolean;
+}
 
-let u1 = { id: 'a', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u2 = { id: 'roby', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u3 = { id: 'c', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u4 = { id: 'd', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u5 = { id: 'a', description: 'ooo', image: `string`, title: `string`, category: `string`, price: 777 }
-let u6 = { id: 'b', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u7 = { id: 'x', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u8 = { id: 'y', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
-let u9 = { id: 'z', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 }
+const abc = new List<ABC>('c');
+abc.addItems([
+  { a: 5, b: 'a', c: true },
+  { a: 7, b: 'c', c: false },
+  { a: 9, b: 'c', c: true },
+  { a: 5, b: 'd', c: true },
+]);
+
+console.log('===> abc', abc);
+
+const pl = new List<IProduct>('description');
+// const pl = new List<IProduct>('id');
+
+let data = [
+  { id: 'a', description: 'zxc', image: `s`, title: `string`, category: `string`, price: 777 },
+  { id: 'roby', description: 'zxc', image: `st`, title: `string`, category: `string`, price: 777 },
+  { id: 'c', description: 'zxc', image: `str`, title: `string`, category: `string`, price: 777 },
+  { id: 'd', description: 'zxc', image: `stri`, title: `string`, category: `string`, price: 777 },
+  { id: 'a', description: 'ooo', image: `strin`, title: `string`, category: `string`, price: 777 },
+  { id: 'b', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
+  { id: 'x', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
+  { id: 'y', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
+  { id: 'z', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
+]
 
 // ! Копирование ссылок (не значений - см. u5.description ) !
-pl.addItem(u1);
-pl.addItem(u2);
-pl.addItem(u3);
-pl.addItem(u4);
-pl.addItem(u5);
-pl.addItem(u6);
+pl.addItems(data);
 
-pl.addItems([u7, u8, u9]);
+//! Catalog =========================================================
+// console.clear();
+class Catalog extends List<IProduct> implements ICatalog {
 
-u5.description = '+++++';
+  constructor(key: keyof IProduct) {
+    super(key);
+  }
 
-console.log('1 pl(', pl.size, ')', pl);
-console.log('has', pl.hasKey('4'));
-console.log('size', pl.size);
+  preview: IProduct | null = null; // товар, выбранный для подробного отображения
+  getProductById(productId: ProductId): IProduct | undefined {
+    return;
+  } // метод получения товара по идентификатору   
 
-console.log('removeById("a"):', pl.removeByKey('a'));
-console.log('removeById("a"):', pl.removeByKey('c'));
-console.log('removeById("a"):', pl.removeByKey('u'));
-console.log('2 pl(', pl.size, ')', pl);
+  get products() {
+    return this.items;
+  }
+}
 
-console.log('pl.hasKey("roby"):', pl.hasKey("roby"));
-console.log('pl.hasKey("oby"):', pl.hasKey("oby"));
+// c key='id'
+const c = new Catalog(ID_NAME);
+c.addItems(data);
+console.log('===> c2:', c);
+console.log('has "a":', c.hasKey('a'));
+console.log('products:', c.products);
 
+//! Basket =========================================================
+// class Basket extends List<IProduct> implements IBasket {
 
-pl.clear();
-console.log('3 pl(', pl.size, ')', pl);
+//   constructor(key: keyof IProduct) {
+//     super(key);
+//   }
 
-
-
+// }

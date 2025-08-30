@@ -262,19 +262,15 @@ classDiagram
 
 `ICatalog` добавляет следующие свойства и методы:
 
-- `selectedProductId: ProductId | null` - идентификатор товара, выбранного для подробного отображения
-- `setProducts(products: IProduct[], payload: Callback): void` - метод сохранения списка товаров, полученного из массива товаров `products`, использующий метод `addItems()` интерфейса `IList`
-- `getProduct(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id` (обертка метода `getItemByKey()` интерфейса `IList`)
-- `set selectedProduct(productId: ProductId)` - метод сохранения идентификатора `productId` выбранного товара для подробного отображения
-- `get selectedProduct(): IProduct | undefined` - метод получения выбранного товара для подробного отображения, использующий метод `getItemByKey()` интерфейса `IList`
+- `preview: IProduct | null` - товар, выбранный для подробного отображения
+- `products: IProduct[]` - список товаров каталога
+- `getProductById(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id` (обертка метода `getItemByKey()` интерфейса `IList`)
 
 ```ts
 interface ICatalog extends IList<IProduct, "id"> {
-  selectedProductId: ProductId | null;
-  setProducts(products: IProduct[], payload: Callback): void;
-  getProduct(productId: ProductId): IProduct | undefined;
-  set selectedProduct(productId: ProductId);
-  get selectedProduct(): IProduct | undefined;
+  preview: IProduct | null;
+  products: IProduct[];
+  getProductById(productId: ProductId): IProduct | undefined;
 }
 ```
 
@@ -284,11 +280,9 @@ interface ICatalog extends IList<IProduct, "id"> {
 classDiagram
     class ICatalog {
         <<interface>>
-        +selectedProductId: ProductId | null
-        +setProducts(products: IProduct[], payload: Callback): void
-        +getProduct(productId: ProductId): IProduct | undefined
-        +set selectedProduct(productId: ProductId)
-        +get selectedProduct(): IProduct | undefined
+        +preview: IProduct | null
+        +products: IProduct[]
+        +getProductById(productId: ProductId): IProduct | undefined
     }
 
     class IList~T, K~ {
@@ -300,37 +294,34 @@ classDiagram
         +id: ProductId
     }
 
-    ICatalog --|> IList~IProduct, 'id'~
-    IList ..> IProduct : type parameter 'id'
-```
-
-Аргумент `payload` метода `setProducts()` - это типизированная callback-функция, вызываемая для обработки изменения списка товаров брокером событий:
-
-```ts
-type Callback = Function | null;
+    ICatalog --|> IList~T, K~ : extends (T=IProduct, K="id")
+    ICatalog --> IProduct : contains
+    IList~T, K~ --> IProduct : type parameter 'id'
 ```
 
 #### Корзина товаров - `IBasket`
 
 `IBasket` аналогично `ICatalog` расширяет и специализирует `IList`. Он добавляет к `IList` следующие свойства и методы:
 
+- `products: IProduct[]` - список товаров в корзине
 - `price: ProductPrice` - стоимость товаров в корзине
-- `countProducts: number` - количество товаров в корзине, основанный на свойстве `size` интерфейса `IList`
-- `addProduct(productId: ProductId, payload: Callback): void` - метод добавление товара по его идентифмкатору `productId`, основанный на методе `addItem()` интерфейса `IList`
-- `delProduct(productId: ProductId, payload: Callback): void` - метод удаления товара из корзины по его идентифмкатору `productId`, основанный на методе `removeByKey()` интерфейса `IList`
-- `clear(payload: Callback): void` - метод очистки корзины, основанный на методе `clear()` интерфейса `IList`
+- `countProducts: number` - количество товаров в корзине (свойство `size` интерфейса `IList`)
 - `calcPrice(): void` - метод расчета стоимости корзины, выполняемый после каждой модификации списка корзины (для хранение актуальной стоимости)
+- `addProduct(productId: ProductId): void` - метод добавление товара по его идентифмкатору `productId`, основанный на методе `addItem()` интерфейса `IList`
+- `delProduct(productId: ProductId): void` - метод удаления товара из корзины по его идентифмкатору `productId`, основанный на методе `removeByKey()` интерфейса `IList`
+- `clear(): void` - метод очистки корзины, основанный на методе `clear()` интерфейса `IList`
 - `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasKey()` интерфейса `IList`
 
 ```ts
 interface IBasket extends IList<IProduct, "id"> {
+  products: IProduct[];
   price: ProductPrice;
   countProducts: number;
-  addProduct(productId: ProductId, payload: Callback): void;
-  delProduct(productId: ProductId, payload: Callback): void;
-  clear(payload: Callback): void;
-  calcPrice(): void;
-  hasProduct(productId: ProductId): boolean;
+  calcPrice(): void;  // метод расчета стоимости корзины
+  addProduct(productId: ProductId): void; // метод добавления товара в корзину
+  delProduct(productId: ProductId): void; // метод удаления товараиз корзины
+  clear(): void; // метод очистки корзины
+  hasProduct(productId: ProductId): boolean; // метод проверки наличия товара в корзине по его идентикатору
 }
 ```
 
@@ -340,12 +331,13 @@ interface IBasket extends IList<IProduct, "id"> {
 classDiagram
     class IBasket {
         <<interface>>
+        +products: IProduct[]
         +price: ProductPrice
         +countProducts: number
-        +addProduct(productId: ProductId, payload: Callback): void
-        +delProduct(productId: ProductId, payload: Callback): void
-        +clear(payload: Callback): void
         +calcPrice(): void
+        +addProduct(productId: ProductId): void
+        +delProduct(productId: ProductId): void
+        +clear(): void
         +hasProduct(productId: ProductId): boolean
     }
 
@@ -358,8 +350,20 @@ classDiagram
         +id: ProductId
     }
 
+    class ProductPrice {
+        <<type>>
+    }
+
+    class ProductId {
+        <<type>>
+    }
+
     IBasket --|> IList~IProduct, 'id'~
-    IList ..> IProduct : type parameter 'id'
+    IBasket --> IProduct : contains
+    IBasket --> ProductPrice : uses
+    IBasket --> ProductId : uses
+    IList~T, K~ --> IProduct : type parameter 'id'
+
 ```
 
 Аргумент `payload` методов `IBasket`, как и в случае с `ICatalog`, так же является типизированной callback-функцией, вызываемой для обработки изменения списка товаров брокером событий.
@@ -370,7 +374,7 @@ classDiagram
 type ProductPrice = IProduct["price"];
 ```
 
-#### Способы оплаты - `TPayment`
+#### Способ оплаты - `TPayment`
 
 Обеспечивает типизацию работы со способами оплаты.
 
@@ -423,95 +427,6 @@ classDiagram
     }
 
     IBuyer --> TPayment : payment
-```
-
-#### Типы данных, производные от `IProduct`
-
-##### Карточка товара в отдельном окне её просмотра
-
-Не требует создания отдельного типа, так как данные карточки полностью описываются интерфейсом `IProduct`
-
-##### Карточка товара в галерее - `GaleryCardData`
-
-Данные карточки товара, используемые при ее представлении в галерее.
-
-```ts
-type GaleryCardData = Omit<IProduct, "description">;
-```
-
-##### Карточка товара в корзине - `BasketCardData`
-
-Данные карточки товара, используемые при ее представлении в корзине.
-
-```ts
-type BasketCardData = Omit<IProduct, "description" | "image">;
-```
-
-Представление `GaleryCardData` и `BasketCardData` на UML-диаграмме
-
-```mermaid
-classDiagram
-    class GaleryCardData {
-        <<type>>
-        = Omit~IProduct, "description"~
-    }
-
-    class BasketCardData {
-        <<type>>
-        = Omit~IProduct, "description" | "image"~
-    }
-
-    class IProduct {
-        <<interface>>
-    }
-
-    GaleryCardData ..|> IProduct
-    BasketCardData ..|> IProduct
-```
-
-#### Типы данных, производные от `IBuyer`:
-
-##### Адрес доставки, email и телефон - `Address`, `Email` и `Phone`
-
-Используются при оформлении заказа.
-
-```ts
-type Address = IBuyer["address"];
-type Email = IBuyer["email"];
-type Phone = IBuyer["phone"];
-```
-
-Представление производных от `IBuyer` типов `Address`, `Email` и `Phone` на UML-диаграмме:
-
-```mermaid
-classDiagram
-    class IBuyer {
-        <<interface>>
-    }
-
-    class Address {
-        <<type>>
-        = IBuyer['address']
-    }
-
-    class Email {
-        <<type>>
-        = IBuyer['email']
-    }
-
-    class Phone {
-        <<type>>
-        = IBuyer['phone']
-    }
-
-    class TPayment {
-        <<type>>
-    }
-
-    IBuyer --> TPayment : payment
-    Address ..|> IBuyer
-    Email ..|> IBuyer
-    Phone ..|> IBuyer
 ```
 
 ### Модели данных (`Model`)
