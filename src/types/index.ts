@@ -44,8 +44,8 @@ export interface IList<T, Key extends keyof T> {
 
 /** КАТАЛОГ ТОВАРОВ */
 export interface ICatalog extends IList<IProduct, ID_TYPE> {
-  preview: IProduct | null; // товар, выбранный для подробного отображения
   products: IProduct[]; // список товаров каталога
+  preview: IProduct | undefined; // товар, выбранный для подробного отображения
   getProductById(productId: ProductId): IProduct | undefined; // метод получения товара по идентификатору 
 }
 
@@ -54,22 +54,21 @@ export interface IBasket extends IList<IProduct, ID_TYPE> {
   products: IProduct[]; // список товаров в корзине
   price: ProductPrice; // стоимость корзины
   countProducts: number; // количество товаров в корзине
-  calcPrice(): void;  // метод расчета стоимости корзины
   addProduct(productId: ProductId): void; // метод добавления товара в корзину
-  delProduct(productId: ProductId): void; // метод удаления товараиз корзины
+  delProduct(productId: ProductId): void; // метод удаления товара из корзины
   clear(): void; // метод очистки корзины
   hasProduct(productId: ProductId): boolean; // метод проверки наличия товара в корзине по его идентикатору
 }
 
 /** СПОСОБ ОПЛАТЫ */
-export type TPayment = "card" | "cash"; // FIXME уточнить значения TPayment
+export type TPayment = "card" | "cash" | undefined; // FIXME уточнить значения TPayment
 
 /** ПОКУПАТЕЛЬ */
 export interface IBuyer {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
+  payment: TPayment; // способ оплаты
+  email: string; // email
+  phone: string; // номер телефона
+  address: string; // адрес
 }
 export interface IBuyerData extends IBuyer {
   isValid(buyer: IBuyer): boolean; // проверка валидности данных
