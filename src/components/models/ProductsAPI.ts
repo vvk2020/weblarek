@@ -4,7 +4,7 @@ import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
 /** API 
  * Специализированный класс для работы с API WEBLAREK  
  * (работа с товарами) */
-export class ProductsAPI {
+export class larekAPI {
   #api: IApi;
   /** API-конструктор */
   constructor(api: IApi) {

@@ -9,7 +9,7 @@ import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
 import { List } from './components/models/List';
-import { ProductsAPI } from './components/models/ProductsAPI';
+import { larekAPI } from './components/models/ProductsAPI';
 import { API_URL } from './utils/constants';
 import { Order } from './components/models/Order';
 
@@ -137,7 +137,7 @@ console.groupEnd();
 //* API ----------------------------------------------
 
 const api = new Api(API_URL);
-const productsAPI = new ProductsAPI(api);
+const productsAPI = new larekAPI(api);
 console.groupCollapsed('API');
 productsAPI.getShopProducts()
   .then((data: ILarekProducts) => console.log('Товары в ларьке:', data))
