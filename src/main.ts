@@ -1,87 +1,128 @@
 import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
+import { List } from './components/models/List';
 import './scss/styles.scss';
+import { IProduct } from './types';
 import { apiProducts } from './utils/data';
 
 //! ТЕСТЫ ===========================================================
 
-//* УНИВЕРСАЛЬНЫЙ СПИСОК
-// interface someData {
-//   a: number;
-//   b: string;
-//   c: boolean;
-// }
+console.group('ТЕСТЫ');
+{ //* УНИВЕРСАЛЬНЫЙ СПИСОК
+  console.groupCollapsed('УНИВЕРСАЛЬНЫЙ СПИСОК');
+  { //* МЕТОДЫ
+    interface ISomeType {
+      a: number;
+      b: string;
+      c: boolean;
+    }
 
-// const someList = new List<someData>('c');
-// someList.addItems([
-//   { a: 5, b: 'a', c: true },
-//   { a: 7, b: 'c', c: false },
-//   { a: 9, b: 'c', c: true },
-//   { a: 5, b: 'd', c: true },
-// ]);
+    //Тест создания списка, содержащего элементы типа ISomeType с ключом 'c'
+    const someList = new List<ISomeType>('a');
+    someList.addItem({ a: 17, b: 'x', c: false });
+    someList.addItems([
+      { a: 5, b: 'a', c: true },
+      { a: 7, b: 'c', c: false },
+      { a: 9, b: 'c', c: true },
+      { a: 5, b: 'd', c: true },
+    ]);
+    console.group('МЕТОДЫ');
+    console.log('someList', someList);
+    console.log('someList.getItemByKey(9):', someList.getItemByKey(9));
+    // console.log('someList.clear():', someList.clear());
+    console.log('someList.size:', someList.size);
+    // console.log('someList.removeByKey(5):', someList.removeByKey(5));
+    console.log('someList.items:', someList.items);
+    console.log('someList.hasKey(9):', someList.hasKey(9));
+    console.groupEnd();
+  }
+  { //* РАЗНЫЕ КЛЮЧИ
+    const list1 = new List<IProduct>('description');
+    const list2 = new List<IProduct>('id');
+    console.group('РАЗНЫЕ КЛЮЧИ');
+    console.log('list1("description"):', list1);
+    console.log('list2("id"):', list2);
+    console.groupEnd();
+  }
+  console.groupEnd();
+}
 
-// console.log('===> abc', someList);
 
-//* ТЕСТ ИЗМЕНЕНИЯ КЛЮЧЕЙ
-// const pl1 = new List<IProduct>('description');
-// const pl2 = new List<IProduct>('id');
-// console.log('pl1:', pl1);
-// console.log('pl2:', pl2);
+{ //* КАТАЛОГ ТОВАРОВ И ПРИВЯЗАННАЯ К НЕМУ КОРЗИНА
+  const catalog = new Catalog();
+  catalog.products = apiProducts.items;
+  catalog.preview = "b06cde61-912f-4663-9751-09956c0eed67";
+  console.groupCollapsed('КАТАЛОГ ТОВАРОВ');
+  console.log('catalog:', catalog);
+  console.log('catalog.products:', catalog.products);
+  console.log('catalog.getProductById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"):', catalog.getProductById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"));
+  console.log('catalog.preview:', catalog.preview);
+  console.groupEnd();
 
-//* ДАННЫЕ
-// let data = [
-//   { id: 'a', description: 'zxc', image: `s`, title: `string`, category: `string`, price: 200 },
-//   { id: 'roby', description: 'zxc', image: `st`, title: `string`, category: `string`, price: 700 },
-//   { id: 'c', description: 'zxc', image: `str`, title: `string`, category: `string`, price: 150 },
-//   { id: 'd', description: 'zxc', image: `stri`, title: `string`, category: `string`, price: 777 },
-//   { id: 'a', description: 'ooo', image: `strin`, title: `string`, category: `string`, price: 300 },
-//   { id: 'b', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 500 },
-//   { id: 'x', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
-//   { id: 'y', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
-//   { id: 'z', description: 'zxc', image: `string`, title: `string`, category: `string`, price: 777 },
-// ]
+  //* КОРЗИНА
+  let basket = new Basket(catalog);
+  // b1.products = data;
+  // Добавление товара из каталога в корзину по идентификатору
+  basket.addProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
+  basket.addProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7");
+  basket.addProduct("b06cde61-912f-4663-9751-09956c0eed67");
+  // basket.delProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7");
+  // basket.clear();
+  console.groupCollapsed('КОЗИНА ТОВАРОВ');
+  console.log('basket:', basket);
+  console.log('basket.products:', basket.products);
+  console.log('basket.price:', basket.price);
+  console.log('basket.countProducts:', basket.countProducts);
+  console.log('basket.hasProduct("X"):', basket.hasProduct("X"));
+  console.log('basket.hasProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"):', basket.hasProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"));
+  console.groupEnd();
 
-//* КАТАЛОГ
-const c1 = new Catalog();
-c1.products = apiProducts.items; // или c.addItems(data);
-console.log('01 ===> c1:', c1);
 
-//* КОРЗИНА, ПРИВЯЗАННАЯ К КАТАПОГУ
-let b1 = new Basket(c1);
-// b1.products = data;
-// Добавление товара из каталога в корзину по идентификатору
-b1.addProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
-b1.addProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7");
-b1.addProduct("b06cde61-912f-4663-9751-09956c0eed67");
-console.log('02 ===> b1:', b1);
-// Удаление по идентификатору
-// console.log('03 ===> b1.delProduct("roby"):');
-// b1.delProduct("roby");
-// console.log('04 ===> b1:', b1);
-// Очистка корзины
-// console.log('05 ===> b1.clear():');
-// b1.clear();
-// console.log('06 ===> b1:', b1);
-// Получение стоимости корзины
-console.log('07 ===> b1.price:', b1.price);
-console.log('08 ===> b1.countProducts:', b1.countProducts);
-console.log('09 ===> b1.hasProduct("roby"/"robbbbby"):', b1.hasProduct("roby"), b1.hasProduct("robbbbby"));
+  //* ПОКУПАТЕЛЬ
+  const buyer1 = new Buyer();
+  const buyer2 = new Buyer({
+    payment: 'cash',
+    email: 'xyz@mail.ru',
+    phone: '777-777-777',
+    address: 'Мавзолей'
+  });
+  // buyer1.payment="card"; // для проверки buyer1.isAllValid()
+  buyer1.email = "xyz@kremlin.ru";
+  buyer1.phone = "8-800-200-23-16";
+  buyer1.address = "Горки 9";
 
-//* ПОКУПАТЕЛЬ
-const buyer1 = new Buyer();
-const buyer2 = new Buyer({
-  payment: 'cash',
-  email: 'xyz@mail.ru',
-  phone: '777-777-777',
-  address: 'Мавзолей'
-});
-console.log('buyer:', buyer1);
-console.log('buyer:', buyer2);
-// Проверка валидации
-console.log('buyer1.isEmailValid()', buyer1.isEmailValid());
-console.log('buyer2.isEmailValid()', buyer2.isEmailValid());
-console.log('buyer1.isPaymentValid()', buyer1.isPaymentValid());
-console.log('buyer2.isPaymentValid()', buyer2.isPaymentValid());
-console.log('buyer1.isAllValid()', buyer1.isAllValid());
-console.log('buyer2.isAllValid()', buyer2.isAllValid());
+  const valid = (groupName: string, buyer: Buyer) => {
+    console.group(groupName);
+    {
+      console.group('data');
+      console.log('buyer:', buyer);
+      console.log('payment:', buyer.payment);
+      console.log('address:', buyer.address);
+      console.log('phone:', buyer.phone);
+      console.log('email:', buyer.email);
+      console.groupEnd();
+    }
+    {
+      console.group('validation');
+      console.log('isPaymentValid()', buyer.isPaymentValid());
+      console.log('isAddressValid()', buyer.isAddressValid());
+      console.log('isPhoneValid()', buyer.isPhoneValid());
+      console.log('isEmailValid()', buyer.isEmailValid());
+      console.log('isAllValid()', buyer.isAllValid());
+      console.groupEnd();
+    }
+    console.groupEnd();
+
+  }
+
+  console.groupCollapsed('ПОКУПАТЕЛЬ');
+  {
+    valid('buyer1', buyer1);
+    valid('buyer2', buyer2);
+    console.groupEnd();
+  }
+  console.groupEnd();
+
+}
+console.groupEnd();
