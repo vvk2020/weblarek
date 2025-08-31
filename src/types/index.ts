@@ -70,7 +70,3 @@ export interface IBuyer {
   phone: string; // номер телефона
   address: string; // адрес
 }
-export interface IBuyerData extends IBuyer {
-  isValid(buyer: IBuyer): boolean; // проверка валидности данных
-  clear(): void; // очистка данных покупателя
-}
