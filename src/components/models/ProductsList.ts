@@ -1,4 +1,5 @@
-import { ID_NAME, IProduct } from "../../types";
+import { IProduct } from "../../types";
+import { ID_NAME } from "../../utils/constants";
 import { List } from "./List";
 
 /** АБСТРАКТНЫЙ СПИСОК ТОВАРОВ  

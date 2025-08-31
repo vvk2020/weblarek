@@ -10,3 +10,5 @@ export const settings = {
 
 };
 
+/** Имя уникального ключа товара  */
+export const ID_NAME = 'id';

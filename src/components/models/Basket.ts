@@ -3,13 +3,11 @@ import { ProductsList } from "./ProductsList";
 
 /** КОРЗИНА ПРОДУКТОВ 
 * Класс, специализированный для работы со списком товаров.  
-* Расширяет класс ProductsList, реализует IBasket
-*/
+* Расширяет класс ProductsList, реализует IBasket */
 export class Basket extends ProductsList implements IBasket {
 
   /** Конструктор экземпляра корзины товаров, принимающий в качестве аргумента экземпляр
-   * каталога товаров, соответствующий ICatalog
-   */
+   * каталога товаров, соответствующий ICatalog */
   constructor(private _catalog: ICatalog) {
     super();
   }
@@ -28,8 +26,7 @@ export class Basket extends ProductsList implements IBasket {
 
   /** Добавление товара из каталога в в корзину по его идентификатору productId.  
    * Предварительно проверяется наличие товара по идентификатору в каталоге. 
-   * Товар должен иметь цену.
-   * */
+   * Товар должен иметь цену. */
   public addProduct(productId: ProductId): void {
     const product = this._catalog.getProductById(productId);
     // Проверка наличия товара с идентификатором productId и ценой с в каталоге 

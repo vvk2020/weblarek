@@ -1,3 +1,5 @@
+import { ID_NAME } from "../utils/constants";
+
 /** ТИПЫ МЕДОТОВ API-ЗАПРОСОВ */
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
@@ -6,6 +8,18 @@ export interface IApi {
   get<T extends object>(uri: string): Promise<T>;
   post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
+
+/** ТИП УНИКАЛЬНОГО КЛЮЧА ТОВАРА  */
+export type ID_TYPE = typeof ID_NAME; // тип
+
+/** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
+export type ProductId = IProduct[ID_TYPE];
+
+/** СТОИМОСТЬ ТОВАРА */
+export type ProductPrice = IProduct['price'];
+
+/** СПОСОБ ОПЛАТЫ */
+export type TPayment = "card" | "cash" | undefined; // FIXME уточнить значения TPayment
 
 /** ТОВАР */
 export interface IProduct {
@@ -16,16 +30,6 @@ export interface IProduct {
   category: string; // категория
   price: number | null; // цена
 }
-
-/** ИМЯ И ТИП УНИКАЛЬНОГО КЛЮЧА ТОВАРА  */
-export const ID_NAME = 'id'; // имя
-export type ID_TYPE = typeof ID_NAME; // тип
-
-/** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
-export type ProductId = IProduct[ID_TYPE];
-
-/** СТОИМОСТЬ ТОВАРА */
-export type ProductPrice = IProduct['price'];
 
 /** АБСТРАКТНЫЙ СПИСОК  
  * Интерфейс-прототип для списков товаров галереи и корзины.  
@@ -60,13 +64,16 @@ export interface IBasket extends IList<IProduct, ID_TYPE> {
   hasProduct(productId: ProductId): boolean; // метод проверки наличия товара в корзине по его идентикатору
 }
 
-/** СПОСОБ ОПЛАТЫ */
-export type TPayment = "card" | "cash" | undefined; // FIXME уточнить значения TPayment
-
 /** ПОКУПАТЕЛЬ */
 export interface IBuyer {
   payment: TPayment; // способ оплаты
   email: string; // email
   phone: string; // номер телефона
   address: string; // адрес
+}
+
+/** ОТВЕТ СЕРВЕРА НА GET-ЗАПРОС */
+export interface IResponseAPI {
+  total: number,
+  items: IProduct[],
 }

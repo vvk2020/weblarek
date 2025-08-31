@@ -1,14 +1,28 @@
+import './scss/styles.scss';
+
+import { IProduct } from './types';
+import { apiProducts } from './utils/data';
+
 import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
 import { List } from './components/models/List';
-import './scss/styles.scss';
-import { IProduct } from './types';
-import { apiProducts } from './utils/data';
+import { ProductsAPI } from './components/models/ProductsAPI';
+
 
 //! ТЕСТЫ ===========================================================
 
 console.group('ТЕСТЫ');
+{ //* API
+  // console.groupCollapsed('API');
+  console.group('API');
+  const productsAPI = new ProductsAPI();
+  productsAPI.getProducts()
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
+
+  console.groupEnd();
+}
 { //* УНИВЕРСАЛЬНЫЙ СПИСОК
   console.groupCollapsed('УНИВЕРСАЛЬНЫЙ СПИСОК');
   { //* МЕТОДЫ
@@ -37,19 +51,18 @@ console.group('ТЕСТЫ');
     console.log('someList.hasKey(9):', someList.hasKey(9));
     console.groupEnd();
   }
-  { //* РАЗНЫЕ КЛЮЧИ
+  { //* СПИСКИ С РАЗНЫМИ КЛЮЧАМИ
     const list1 = new List<IProduct>('description');
     const list2 = new List<IProduct>('id');
-    console.group('РАЗНЫЕ КЛЮЧИ');
+    console.group('СПИСКИ С РАЗНЫМИ КЛЮЧАМИ');
     console.log('list1("description"):', list1);
     console.log('list2("id"):', list2);
     console.groupEnd();
   }
   console.groupEnd();
 }
-
-
-{ //* КАТАЛОГ ТОВАРОВ И ПРИВЯЗАННАЯ К НЕМУ КОРЗИНА
+{ //* ПРОИЗВОДНЫЕ ОТ УНИВЕРСАЛЬНОГО СПИСКА
+  //* КАТАЛОГ ТОВАРОВ
   const catalog = new Catalog();
   catalog.products = apiProducts.items;
   catalog.preview = "b06cde61-912f-4663-9751-09956c0eed67";
@@ -60,10 +73,8 @@ console.group('ТЕСТЫ');
   console.log('catalog.preview:', catalog.preview);
   console.groupEnd();
 
-  //* КОРЗИНА
+  //* КОРЗИНА ТОВАРОВ, ПРИВЯЗАННАЯ К КАТАЛОГУ
   let basket = new Basket(catalog);
-  // b1.products = data;
-  // Добавление товара из каталога в корзину по идентификатору
   basket.addProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
   basket.addProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7");
   basket.addProduct("b06cde61-912f-4663-9751-09956c0eed67");
@@ -77,9 +88,8 @@ console.group('ТЕСТЫ');
   console.log('basket.hasProduct("X"):', basket.hasProduct("X"));
   console.log('basket.hasProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"):', basket.hasProduct("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"));
   console.groupEnd();
-
-
-  //* ПОКУПАТЕЛЬ
+}
+{ //* ПОКУПАТЕЛЬ
   const buyer1 = new Buyer();
   const buyer2 = new Buyer({
     payment: 'cash',
@@ -91,7 +101,6 @@ console.group('ТЕСТЫ');
   buyer1.email = "xyz@kremlin.ru";
   buyer1.phone = "8-800-200-23-16";
   buyer1.address = "Горки 9";
-
   const valid = (groupName: string, buyer: Buyer) => {
     console.group(groupName);
     {
@@ -113,16 +122,10 @@ console.group('ТЕСТЫ');
       console.groupEnd();
     }
     console.groupEnd();
-
   }
-
   console.groupCollapsed('ПОКУПАТЕЛЬ');
-  {
-    valid('buyer1', buyer1);
-    valid('buyer2', buyer2);
-    console.groupEnd();
-  }
+  valid('buyer1', buyer1);
+  valid('buyer2', buyer2);
   console.groupEnd();
-
 }
 console.groupEnd();
