@@ -1,34 +1,28 @@
 import { ID_NAME } from "../utils/constants";
 
-/** ТИПЫ МЕДОТОВ API-ЗАПРОСОВ */
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-
-/** API */
-export interface IApi {
-  get<T extends object>(uri: string): Promise<T>;
-  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
-}
+//! СЛОЙ ДАННЫХ ================================================
 
 /** ТИП УНИКАЛЬНОГО КЛЮЧА ТОВАРА  */
 export type ID_TYPE = typeof ID_NAME; // тип
 
 /** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
-export type ProductId = IProduct[ID_TYPE];
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 /** СТОИМОСТЬ ТОВАРА */
-export type ProductPrice = IProduct['price'];
+// export type Price = IProduct['price'];
+export type Price = number;
 
 /** СПОСОБ ОПЛАТЫ */
-export type TPayment = "card" | "cash" | undefined; // FIXME уточнить значения TPayment
+export type TPayment = "online" | "cash" | undefined; // FIXME уточнить значения TPayment
 
 /** ТОВАР */
 export interface IProduct {
-  id: string; // идентификатор
+  id: UUID; // идентификатор
   description: string; // описание
   image: string; // изображение
   title: string; // название
   category: string; // категория
-  price: number | null; // цена
+  price: Price | null; // цена
 }
 
 /** АБСТРАКТНЫЙ СПИСОК  
@@ -50,18 +44,19 @@ export interface IList<T, Key extends keyof T> {
 export interface ICatalog extends IList<IProduct, ID_TYPE> {
   products: IProduct[]; // список товаров каталога
   preview: IProduct | undefined; // товар, выбранный для подробного отображения
-  getProductById(productId: ProductId): IProduct | undefined; // метод получения товара по идентификатору 
+  getProductById(productId: UUID): IProduct | undefined; // метод получения товара по идентификатору 
 }
 
 /** КОРЗИНА ТОВАРОВ */
 export interface IBasket extends IList<IProduct, ID_TYPE> {
   products: IProduct[]; // список товаров в корзине
-  price: ProductPrice; // стоимость корзины
+  total: Price; // стоимость корзины
   countProducts: number; // количество товаров в корзине
-  addProduct(productId: ProductId): void; // метод добавления товара в корзину
-  delProduct(productId: ProductId): void; // метод удаления товара из корзины
+  addProduct(productId: UUID): void; // метод добавления товара в корзину
+  delProduct(productId: UUID): void; // метод удаления товара из корзины
   clear(): void; // метод очистки корзины
-  hasProduct(productId: ProductId): boolean; // метод проверки наличия товара в корзине по его идентикатору
+  hasProduct(productId: UUID): boolean; // метод проверки наличия товара в корзине по его идентикатору
+  getProductsId(): UUID[]; // метод получения массива  идентификаторов товаров в корзине
 }
 
 /** ПОКУПАТЕЛЬ */
@@ -72,8 +67,36 @@ export interface IBuyer {
   address: string; // адрес
 }
 
-/** ОТВЕТ СЕРВЕРА НА GET-ЗАПРОС */
-export interface IResponseAPI {
-  total: number,
-  items: IProduct[],
+/** ПОКУПКА */
+export interface IOrder {
+  orderData: IOrderData; // метод формирования данных для запроса оформления покупки
 }
+
+//! КОММУНИКАЦИОННЫЙ СЛОЙ ======================================
+
+/** ТИПЫ МЕДОТОВ API-ЗАПРОСОВ */
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+/** API */
+export interface IApi {
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+/** УСПЕШНЫЙ ОТВЕТ НА ЗАПРОС СПИСКА ТОВАРОВ */
+export interface ILarekProducts {
+  total: number;
+  items: IProduct[];
+}
+
+/** ДАННЫЕ, ПЕРЕДАВАЕМЫЕ В ЗАПРОСЕ ПРИ ОФОРМЛЕНИИ ЗАКАЗА */
+export interface IOrderData extends IBuyer {
+  total: Price; // стоимость товаров в корзине
+  items: UUID[]; // массив идентификаторов товаров в корзине
+}
+
+/** ОТВЕТ СЕРВЕРА ПРИ УСПЕШНОМ ОФОРМЛЕНИИ ЗАКАЗА (ПОКУПКЕ) */
+export interface IPurchaseData {
+  id: UUID[]; // идентификатор заказа
+  total: Price; // стоимость покупки
+};

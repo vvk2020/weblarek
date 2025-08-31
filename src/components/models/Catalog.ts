@@ -1,4 +1,4 @@
-import { ICatalog, IProduct, ProductId } from "../../types";
+import { ICatalog, IProduct, UUID } from "../../types";
 import { ProductsList } from "./ProductsList";
 
 /** КАТАЛОГ ПРОДУКТОВ  
@@ -10,7 +10,7 @@ export class Catalog extends ProductsList implements ICatalog {
   #preview: IProduct | undefined = undefined;
 
   /** Выбор товара для подробного отображения */
-  set preview(productId: ProductId) {
+  set preview(productId: UUID) {
     this.#preview = this.getItemByKey(productId);
   }
 
@@ -20,7 +20,7 @@ export class Catalog extends ProductsList implements ICatalog {
   }
 
   /** Получение товара по идентификатору */
-  public getProductById(productId: ProductId): IProduct | undefined {
+  public getProductById(productId: UUID): IProduct | undefined {
     return this.getItemByKey(productId);
   }
 }

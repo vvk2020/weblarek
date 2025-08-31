@@ -12,3 +12,9 @@ export const settings = {
 
 /** Имя уникального ключа товара  */
 export const ID_NAME = 'id';
+
+/** Endpoint get-запроса списка товаров */
+export const URI_PRODUCTS = '/product/';
+
+/** Endpoint post-запроса оформления заказа */
+export const URI_ORDER = '/order/';

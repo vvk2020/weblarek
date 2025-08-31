@@ -1,4 +1,4 @@
-import { IBasket, ICatalog, ProductId, ProductPrice } from "../../types";
+import { IBasket, ICatalog, UUID, Price } from "../../types";
 import { ProductsList } from "./ProductsList";
 
 /** КОРЗИНА ПРОДУКТОВ 
@@ -13,7 +13,7 @@ export class Basket extends ProductsList implements IBasket {
   }
 
   /** Расчет и получение стоимости корзины */
-  get price(): ProductPrice {
+  get total(): Price {
     return this.products.reduce(
       (cost, product) => product.price ? cost + product.price : cost,
       0)
@@ -27,18 +27,18 @@ export class Basket extends ProductsList implements IBasket {
   /** Добавление товара из каталога в в корзину по его идентификатору productId.  
    * Предварительно проверяется наличие товара по идентификатору в каталоге. 
    * Товар должен иметь цену. */
-  public addProduct(productId: ProductId): void {
-    const product = this._catalog.getProductById(productId);
+  public addProduct(id: UUID): void {
+    const product = this._catalog.getProductById(id);
     // Проверка наличия товара с идентификатором productId и ценой с в каталоге 
     if (product && product.price) {
       // Добавление найденного товара из каталога в в корзину
-      this.addItem(this._catalog.getProductById(productId)!);
+      this.addItem(this._catalog.getProductById(id)!);
     }
   }
 
   /** Удаление из корзины товара с указанным идентификатором productId.
    * Предварительно проверяется его наличие в корзине. */
-  public delProduct(productId: ProductId): void {
+  public delProduct(productId: UUID): void {
     if (this.hasKey(productId)) this.removeByKey(productId);
   }
 
@@ -48,7 +48,13 @@ export class Basket extends ProductsList implements IBasket {
   }
 
   /** Проверка наличия товара в корзине по его идентикатору */
-  public hasProduct(productId: ProductId): boolean {
+  public hasProduct(productId: UUID): boolean {
     return this.hasKey(productId);
   }
+
+  /** Получение массива идентификаторов товаров в корзине */
+  getProductsId(): UUID[] {
+    return this.products.map(product => product.id)
+  }
+
 }

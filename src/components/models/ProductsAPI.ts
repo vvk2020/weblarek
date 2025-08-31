@@ -1,22 +1,29 @@
-import { IApi, IGetResponseAPI } from "../../types";
-import { API_URL } from "../../utils/constants";
-import { Api } from "../base/Api";
+import { IApi, ILarekProducts, IOrderData, IPurchaseData } from "../../types";
+import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
 
 /** API 
  * Специализированный класс для работы с API WEBLAREK  
  * (работа с товарами) */
-export class ProductsAPI extends Api implements IApi {
+export class ProductsAPI {
+  #api: IApi;
   /** API-конструктор */
-  constructor(options?: RequestInit) {
-    options ? super(API_URL) : super(API_URL, options);
-    console.log('this: ', this);
+  constructor(api: IApi) {
+    this.#api = api;
   }
 
-  public getProducts(): Promise<IGetResponseAPI> {
-    return super.get<IGetResponseAPI>("/product/");
+  /** Запрос списка товаров из ларька (с сервера) */
+  public getShopProducts(): Promise<ILarekProducts> {
+    return this.#api.get<ILarekProducts>(
+      URI_PRODUCTS
+    );
   }
 
-  // post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T> {
-  //     this.post<>();
-  // }
+  /** Запрос на оформление заказа (покупки) */
+  placeOrder(orderData: IOrderData): Promise<IPurchaseData> {
+    return this.#api.post<IPurchaseData>(
+      URI_ORDER,
+      orderData,
+      'POST'
+    );
+  }
 }

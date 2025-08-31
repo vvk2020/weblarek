@@ -1,4 +1,6 @@
-export const apiProducts = {
+import { ILarekProducts } from "../types";
+
+export const apiProducts: ILarekProducts = {
     "total": 10,
     "items": [
         {
