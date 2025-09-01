@@ -24,7 +24,7 @@ export class Basket extends ProductsList implements IBasket {
     return this.size;
   }
 
-  /** Добавление товара из каталога в в корзину по его идентификатору productId.  
+  /** Добавление товара из каталога в в корзину по его идентификатору id.  
    * Предварительно проверяется наличие товара по идентификатору в каталоге. 
    * Товар должен иметь цену. */
   public addProduct(id: UUID): void {
@@ -36,10 +36,10 @@ export class Basket extends ProductsList implements IBasket {
     }
   }
 
-  /** Удаление из корзины товара с указанным идентификатором productId.
+  /** Удаление из корзины товара с указанным идентификатором id.
    * Предварительно проверяется его наличие в корзине. */
-  public delProduct(productId: UUID): void {
-    if (this.hasKey(productId)) this.removeByKey(productId);
+  public delProduct(id: UUID): void {
+    if (this.hasKey(id)) this.removeByKey(id);
   }
 
   /** Очистка корзины */
@@ -48,8 +48,8 @@ export class Basket extends ProductsList implements IBasket {
   }
 
   /** Проверка наличия товара в корзине по его идентикатору */
-  public hasProduct(productId: UUID): boolean {
-    return this.hasKey(productId);
+  public hasProduct(id: UUID): boolean {
+    return this.hasKey(id);
   }
 
   /** Получение массива идентификаторов товаров в корзине */

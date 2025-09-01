@@ -17,6 +17,7 @@ export abstract class ProductsList extends List<IProduct> {
     return this.items;
   }
 
+  /** Товары списка */
   set products(products: IProduct[]) {
     this.addItems(products);
   }

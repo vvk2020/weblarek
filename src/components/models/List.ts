@@ -40,7 +40,7 @@ export class List<T, Key extends keyof T = keyof T> implements IList<T, Key> {
     this._items.clear();
   }
 
-  /** Получение количества объекта в коллекции */
+  /** Получение количества объектов в коллекции */
   get size(): number {
     return this._items.size;
   }

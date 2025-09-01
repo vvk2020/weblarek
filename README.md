@@ -532,19 +532,768 @@ interface IOrder {
 
 ### Модели данных (`Model`)
 
-Описание классов, которыми будет реализована работа с данными:
+#### УНИВЕРСАЛЬНЫЙ СПИСОК - `List`
 
-- [ ] описать назначение и зону ответственности класса;
-- [ ] описать конструктор класса и принимаемые параметры (если они есть). Параметры конструктора нужно указать с типами принимаемых данных;
-- [ ] описать поля класса. Для каждого нужно указать тип данных, который будет сохранён в поле класса. Затем описать поле класса — что оно хранит и за что отвечает;
-- [ ] описать методы класса. Для каждого метода нужно указать входящие параметры и их тип (если они есть). Если метод возвращает какое-то значение, нужно описать его тип.
+##### Назначение
+
+Универсальный список, разработанный как список-прототип для списков товаров каталога и корзины. Объединяет свойства и методы абстрактного списка-прототипа.
+
+##### Реализация
+
+Основана на Map-коллекции объектов типа `T` с ключом `key`, обеспечивающая уникальность хранимых объектов списка по заданному ключу. Реализует `IList`.
+
+##### Конструктор
+
+Cоздает экзепляр списка объектов типа `T` с ключом `key`. Опционально может быть задан стартовый массив объектов `items` типа `T`.
+
+```ts
+  constructor(key: Key, items?: readonly T[]) {
+    this._key = key;
+    this._items = new Map<T[Key], T>();
+    if (items?.length) {
+      this.addItems(items);
+    }
+  }
+```
+
+##### Поля
+
+Все поля класса созданы приватными:
+
+```ts
+  private _items: Map<T[Key], T>;
+  private _key: Key;
+```
+
+- `_items` - хранилище объектов списка типа `T`, реализованное в виде Map-коллекции объектов типа `T` c ключом `key`.
+
+- `_key` - ключ Map-коллеции, являющийся одним из свойств объектов типа `T`.
+
+##### Методы
+
+- `addItem` - добавление объекта типа `T` в список
+
+  ```ts
+  public addItem(item: T): void {
+      this._items.set(item[this._key], item);
+  }
+  ```
+
+- `addItems` - добавление массива элементов типа `T` в список
+
+  ```ts
+  public addItems(items: readonly T[]): void {
+    for (const item of items) {
+      this.addItem(item);
+    }
+  }
+  ```
+
+- `getItemByKey` - получение объекта типа `T` списка по его ключу `key`. Если объекта в списке нет, то возвращает `undefined`.
+
+  ```ts
+  public getItemByKey(key: T[Key]): T | undefined {
+    return this._items.get(key);
+  }
+  ```
+
+- `clear` - очистка списка
+
+  ```ts
+  public clear(): void {
+    this._items.clear();
+  }
+  ```
+
+- `size` - получение количества объектов (типа `number`) в списке
+
+  ```ts
+  get size(): number {
+    return this._items.size;
+  }
+  ```
+
+- `removeByKey` - удаление объекта типа `T` из списка по его ключу `key`. Возврщает `true`, если объект успешно удален, и `false`- если нет.
+
+  ```ts
+  public removeByKey(key: T[Key]): boolean {
+    return this._items.delete(key);
+  }
+  ```
+
+- `items` - получение массива объектов типа `T` списка
+
+  ```ts
+  get items(): T[] {
+    return Array.from(this._items.values());
+  }
+  ```
+
+- `hasKey` - проверка наличия объекта типа `T` в списке по его ключу `key`
+
+  ```ts
+  public hasKey(key: T[Key]): boolean {
+    return this._items.has(key);
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class List~T, Key~ {
+        -_items: Map~T[Key], T~
+        -_key: Key
+
+        +constructor(key: Key, items?: readonly T[])
+        +addItem(item: T): void
+        +addItems(items: readonly T[]): void
+        +getItemByKey(key: T[Key]): T | undefined
+        +clear(): void
+        +size(): number
+        +removeByKey(key: T[Key]): boolean
+        +items(): T[]
+        +hasKey(key: T[Key]): boolean
+
+    }
+
+    class IList~T, Key~ {
+        <<interface>>
+    }
+
+    class Map~K, V~ {
+        <<built-in>>
+    }
+
+    List~T, Key~ ..|> IList~T, Key~ : implements
+    List~T, Key~ --> Map~T[Key], T~ : _items
+```
+
+#### АБСТРАКТНЫЙ СПИСОК ТОВАРОВ - `ProductsList`
+
+##### Назначение
+
+Абстрактный класс, являющийся специализацией (расширением) класса `List` для работы с различными списками товаров, описываемых `IProduct`.
+
+##### Реализация
+
+Разработан на основе `IProduct` для устранения дублирования (переиспользованием) общих свойств и методов в производных классах списков товаров (`Catalog` и `Basket`).
+
+##### Конструктор
+
+Принимает ключ товара (по умолчанию - `ID_NAME='id'`), являющийся свойством `IProduct`, и передает его родительскому (расширяемому) классу `List`:
+
+```ts
+  constructor(key: keyof IProduct = ID_NAME) {
+    super(key);
+  }
+```
+
+##### Методы
+
+- `products` - получение cписка товаров типа `IProduct[]`:
+
+  ```ts
+  get products(): IProduct[] {
+    return this.items;
+  }
+  ```
+
+- `products` - задание списка товаров, передаваемых сеттеру через параметр `products` типа `IProduct[]`:
+
+  ```ts
+  set products(products: IProduct[]) {
+    this.addItems(products);
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class ProductsList {
+        <<abstract>>
+        +constructor(key?: keyof IProduct)
+        +get products() IProduct[]
+        +set products(products: IProduct[]) void
+    }
+
+    class List~T~ {
+        <<generic>>
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    ProductsList --|> List~IProduct~ : extends
+    ProductsList --> IProduct : uses
+```
+
+#### КАТАЛОГ ПРОДУКТОВ - `Catalog`
+
+##### Назначение
+
+Специализированный класс для работы с каталогом товаров.
+
+##### Реализация
+
+Расширяет `ProductsList` и реализует `ICatalog`.
+
+##### Поля
+
+- `#preview` - приватное поле типа `IProduct` (или `undefined`, если товар не выбран) для хранения товара, выбранного для подробного отображения:
+
+```ts
+  #preview: IProduct | undefined = undefined;
+```
+
+##### Методы
+
+- `preview` - определение товара для подробного отображения на основе параметра сеттера `productId`, являющегося идентификатором товара типа `UUID`:
+
+  ```ts
+  set preview(productId: UUID) {
+    this.#preview = this.getItemByKey(productId);
+  }
+  ```
+
+- `preview` - получение товара типа `IProduct` для подробного отображения (если товар не выбран - `undefined`):
+
+  ```ts
+    get preview(): IProduct | undefined {
+    return this.#preview;
+  }
+  ```
+
+- `getProductById` - получение товара типа `IProduct` (или `undefined`, если он не выбран) по его идентификатору `productId` типа `UUID`:
+
+  ```ts
+  public getProductById(productId: UUID): IProduct | undefined {
+    return this.getItemByKey(productId);
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class Catalog {
+        -#preview: IProduct | undefined
+
+        +set preview(productId: UUID) void
+        +get preview() IProduct | undefined
+        +getProductById(productId: UUID) IProduct | undefined
+    }
+
+    class ProductsList {
+        <<abstract>>
+    }
+
+    class ICatalog {
+        <<interface>>
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    class UUID {
+        <<type>>
+    }
+
+    Catalog --|> ProductsList : extends
+    Catalog ..|> ICatalog : implements
+    Catalog --> IProduct : preview
+    Catalog ..> UUID : uses in methods
+```
+
+#### КОРЗИНА ПРОДУКТОВ - `Basket`
+
+##### Назначение
+
+Специализированный класс для работы с корзиной товаров, выбранных из каталога.
+
+##### Реализация
+
+Расширяет `ProductsList` и реализует `IBasket`.
+
+##### Конструктор
+
+Принимает и сохраняет в приватное поле `_catalog` экземпляр каталога товаров типа `ICatalog`, из которого выбираются товары в корзину. Вызывает конструктор родительского (расширяемого) специализированного класса `ProductsList`.
+
+```ts
+  constructor(private _catalog: ICatalog) {
+    super();
+  }
+```
+
+##### Поля
+
+- приватное поле `_catalog` - экземпляр каталога товаров типа `ICatalog`, из которого выбираются товары в корзину.
+
+##### Методы
+
+- `total` - расчет и получение стоимости корзины типа `Price`:
+
+  ```ts
+  get total(): Price {
+    return this.products.reduce(
+      (cost, product) => product.price ? cost + product.price : cost,
+      0)
+  }
+  ```
+
+- `countProducts` - получение количества товаров в корзине типа `number`:
+
+  ```ts
+  get countProducts(): number {
+    return this.size;
+  }
+  ```
+
+- `addProduct` - добавление товара из каталога в в корзину по его идентификатору `id` типа `UUID`. Предварительно проверяется наличие товара по идентификатору в каталоге `_catalog`. Добавляемый товар должен иметь цену.
+
+  ```ts
+  public addProduct(id: UUID): void {
+    const product = this._catalog.getProductById(id);
+    // Проверка наличия товара с идентификатором id и ценой с в каталоге
+    if (product && product.price) {
+      // Добавление найденного товара из каталога в в корзину
+      this.addItem(this._catalog.getProductById(id)!);
+    }
+  }
+  ```
+
+- `delProduct` - удаление из корзины товара с указанным идентификатором `id` типа `UUID`. Предварительно проверяется его наличие в корзине:
+
+  ```ts
+  public delProduct(id: UUID): void {
+    if (this.hasKey(id)) this.removeByKey(id);
+  }
+  ```
+
+- `clear` - очистка корзины:
+
+  ```ts
+  public clear(): void {
+    super.clear();
+  }
+  ```
+
+- `hasProduct` - проверка наличия товара в корзине по его идентикатору `id` типа `UUID`, возвращающая `true`, если имеется, и `false` - при отсутствует:
+
+  ```ts
+  public hasProduct(id: UUID): boolean {
+    return this.hasKey(id);
+  }
+  ```
+
+- `getProductsId` - получение массива идентификаторов типа `UUID` товаров корзины. Разработан для форирования данных, передаваемых в запросе на оформление заказа (покупки).
+
+  ```ts
+  getProductsId(): UUID[] {
+    return this.products.map(product => product.id)
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class Basket {
+        -_catalog: ICatalog
+
+        +total(): Price
+        +countProducts(): number
+        +constructor(_catalog: ICatalog)
+        +addProduct(id: UUID): void
+        +delProduct(id: UUID): void
+        +clear(): void
+        +hasProduct(id: UUID): boolean
+        +getProductsId(): UUID[]
+    }
+
+    class ProductsList {
+        <<abstract>>
+    }
+
+    class IBasket {
+        <<interface>>
+    }
+
+    class ICatalog {
+        <<interface>>
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    class UUID {
+        <<type>>
+    }
+
+    class Price {
+        <<type>>
+    }
+
+    Basket --|> ProductsList : extends
+    Basket ..|> IBasket : implements
+    Basket --> ICatalog : composition
+    Basket ..> UUID : uses
+    Basket ..> Price : uses
+```
+
+#### ПОКУПАТЕЛЬ - `Buyer`
+
+##### Назначение
+
+Описывает работу с данными покупателя.
+
+##### Реализация
+
+Реализует `IBuyer`.
+
+##### Конструктор
+
+Опционально определяет все свойства покупателя через `buyer`, используя одноименный сеттер.
+
+```ts
+  constructor(buyer?: IBuyer) {
+    this.buyer = buyer;
+  }
+```
+
+##### Поля
+
+Все поля - приватные.
+
+- `#payment` - способ оплатиы типа `TPayment`, по умолчанию - не определен (`undefined`)
+- `#email` - электронная почта, тип `string`
+- `#phone` - телефон, тип `string`
+- `#address` - адрес, тип `string`
+
+```ts
+  #payment: TPayment = undefined;
+  #email: string = '';
+  #phone: string = '';
+  #address: string = '';
+```
+
+##### Методы
+
+- методы получения и определения свойств покупателя: 
+  - для каждого отдельного свойства покупателя определены геттеры и сеттеры, принимающие и возвращающие данные соответствующих типов:
+
+    ```ts
+    set payment(payment: TPayment) {
+    this.#payment = payment;
+    }
+
+    get payment() {
+    return this.#payment;
+    }
+
+    set email(email: string) {
+    this.#email = email;
+    }
+
+    get email() {
+    return this.#email;
+    }
+
+    set phone(phone: string) {
+    this.#phone = phone;
+    }
+
+    get phone() {
+    return this.#phone;
+    }
+
+    set address(address: string) {
+    this.#address = address;
+    }
+
+    get address() {
+    return this.#address;
+    }
+    ```
+
+  - для работы одновременно со всеми данными покупателя разработаны геттер и сеттер, принимающий и возвращающий объекты типа `IBuyer`.
+
+```ts
+  set buyer(buyer: IBuyer | undefined) {
+    buyer && ({
+      payment: this.#payment,
+      email: this.#email,
+      phone: this.#phone,
+      address: this.#address
+    } = buyer);
+  }
+
+  get buyer(): IBuyer {
+    return {
+      payment: this.#payment,
+      email: this.#email,
+      phone: this.#phone,
+      address: this.#address
+    }
+  }
+```
+
+- методы проверки валидности каждого отдельного и всех сразу свойства покупателя разработаны следующие методы:
+
+```ts
+  public isEmailValid(): boolean {
+    return this.#email.trim().length > 0;
+  }
+
+  public isPhoneValid(): boolean {
+    return this.#phone.trim().length > 0;
+  }
+
+  public isAddressValid(): boolean {
+    return this.#address.trim().length > 0;
+  }
+
+  public isPaymentValid(): boolean {
+    return !!(this.#payment);
+  }
+
+  public isAllValid(): boolean {
+    return (
+      this.isPaymentValid() &&
+      this.isEmailValid() &&
+      this.isPhoneValid() &&
+      this.isAddressValid()
+    )
+  }
+```
+
+- `clear` - очистка всех полей экземпляра класса покупателя путем сброса к их начальным значениям
+
+```ts
+  public clear() {
+    this.#payment = undefined;
+    this.#email = '';
+    this.#phone = '';
+    this.#address = '';
+  }
+```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class Buyer {
+        -#payment: TPayment
+        -#email: string
+        -#phone: string
+        -#address: string
+        
+        +constructor(buyer?: IBuyer)
+
+        +get payment(): TPayment
+        +get email(): string
+        +get phone(): string
+        +get address(): string
+        +get buyer(): IBuyer
+
+        +set payment(payment: TPayment): TPayment
+        +set email(email: string): string
+        +set phone(phone: string): string
+        +set address(address: string): string
+        +set buyer(buyer: IBuyer | undefined): IBuyer
+
+        +clear(): void
+        +isEmailValid(): boolean
+        +isPhoneValid(): boolean
+        +isAddressValid(): boolean
+        +isPaymentValid(): boolean
+        +isAllValid(): boolean
+    }
+
+    class IBuyer {
+        <<interface>>
+    }
+
+    class TPayment {
+        <<type>>
+    }
+
+    Buyer ..|> IBuyer : implements
+    Buyer --> TPayment : uses
+    IBuyer --> TPayment : uses
+```
+
+#### ЗАКАЗ ТОВАРА (ПОКУПКА) - `Order`
+
+##### Назначение
+
+Описывает работу с данными заказа (покупки), включающие данные покупателя и его корзины товаров, неободимых, в частности, для запроса на оформление заказа (покупки).
+
+##### Реализация
+
+Реализует композицию данных корзины и покупателя, на основе которых формирует данные для отправки заказа на сервер.
+
+##### Конструктор
+
+Принимает ссылки на объекты c данными о покупателе `buyer` и его корзине `basket`, описываемыми, соответственно, `IBuyer` и `IBasket`, и сохраняет их в приватные поля `#buyer` и `#basket`.
+
+```ts
+  constructor(buyer: IBuyer, basket: IBasket) {
+    this.#buyer = buyer;
+    this.#basket = basket;
+  }
+```
+
+##### Поля
+
+`#buyer` - объект с данными о покупателе типа `IBuyer`.
+
+`#basket` - объект с данными о корзине покупателя типа `IBasket`.
+
+##### Методы
+
+- `orderData` - формирование данных типа `IOrderData` для отправки заказа (покупки) на сервер
+
+  ```ts
+  get orderData(): IOrderData {
+    return {
+      payment: this.#buyer.payment,
+      email: this.#buyer.email,
+      phone: this.#buyer.phone,
+      address: this.#buyer.address,
+      total: this.#basket.total,
+      items: this.#basket.getProductsId()
+    };
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class Order {
+        -#buyer: IBuyer
+        -#basket: IBasket
+
+        +constructor(buyer: IBuyer, basket: IBasket)
+        +getOrderData(): IOrderData
+    }
+
+    class IOrder {
+        <<interface>>
+    }
+
+    class IBuyer {
+        <<interface>>
+    }
+
+    class IBasket {
+        <<interface>>
+    }
+
+    class IOrderData {
+        <<interface>>
+    }
+
+    Order ..|> IOrder : implements
+    Order --> IBuyer : composition
+    Order --> IBasket : composition
+    Order --> IOrderData : creates
+```
+
+
+
 
 ### Коммуникационный слой
 
-...
+#### API WEBLAREK - `larekAPI`
 
-## РЕКОМЕНДАЦИИ
+##### Назначение
 
-- [ ] Для настройки селекторов использовать пример с объектом `setting` для автоматизации работы с селекторами HTML-элементов
-- [ ] Список товаров в корзине и каталоге реализовать на одном подходе (классе), только у каталога не будет некоторых методов
-- [ ] попробовать реализовать кэширование карточек товаров в галерее
+Специализированный класс для работы с API WEBLAREK (работа с товарами).
+
+##### Реализация
+
+Реализует композицию объекта типа `IApi` и собственные методы на его основе.
+
+##### Конструктор
+
+Принимает объект типа `IApi` и сохраняет ссылку на него в приватном поле `#api`:
+
+```ts
+  constructor(api: IApi) {
+    this.#api = api;
+  }
+```
+
+##### Поля
+
+- `#api` - ссылка на объект типа `IApi`, реализующий универсальные методы запроса данных.
+
+```ts
+#api: IApi;
+```
+
+##### Методы
+
+- `getShopProducts` - запрос из ларька (с сервера) списка товаров (для каталога), в случае успеха возврающий промис данных типа `ILarekProducts` или данных об ошибке типа `Response`:
+
+  ```ts
+  public getShopProducts(): Promise<ILarekProducts> {
+    return this.#api.get<ILarekProducts>(
+      URI_PRODUCTS
+    );
+  }
+  ```
+
+- `placeOrder` - метод post-запроса на оформление заказа, принимающий объект `orderData` типа `IOrderData` с данными о заказе.  
+  В случае успеха возврает промис с данными о регистрации заказа (покупке) типа `IPurchaseData` или данными об ошибке типа `Response`:
+
+  ```ts
+  placeOrder(orderData: IOrderData): Promise<IPurchaseData> {
+    return this.#api.post<IPurchaseData>(
+      URI_ORDER,
+      orderData,
+      'POST'
+    );
+  }
+  ```
+
+##### UML-диаграмма
+
+```mermaid
+classDiagram
+    class larekAPI {
+        -#api: IApi
+        +constructor(api: IApi)
+        +getShopProducts() Promise~ILarekProducts~
+        +placeOrder(orderData: IOrderData) Promise~IPurchaseData~
+    }
+
+    class IApi {
+        <<interface>>
+    }
+
+    class ILarekProducts {
+        <<interface>>
+    }
+
+    class IOrderData {
+        <<interface>>
+    }
+
+    class IPurchaseData {
+        <<interface>>
+        +id: UUID[]
+        +total: Price
+    }
+
+    larekAPI --> IApi : composition
+    larekAPI ..> ILarekProducts : returns
+    larekAPI ..> IOrderData : parameter
+    larekAPI ..> IPurchaseData : returns
+```
