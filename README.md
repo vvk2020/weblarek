@@ -1,5 +1,3 @@
-// FIXME: Проверить все mermaid-диаграммы
-
 # Проектная работа "Веб-ларек"
 
 Стек: HTML, SCSS, TS, Webpack
@@ -528,6 +526,22 @@ classDiagram
 interface IOrder {
   orderData: IOrderData; // метод формирования данных для запроса оформления покупки
 }
+```
+
+`IOrder` на UML-диаграмме:
+
+```mermaid
+classDiagram
+    class IOrder {
+        <<interface>>
+        +orderData: IOrderData
+    }
+
+    class IOrderData {
+        <<interface>>
+    }
+
+    IOrder --> IOrderData : association
 ```
 
 ### Модели данных (`Model`)
@@ -1294,4 +1308,247 @@ classDiagram
     larekAPI ..> ILarekProducts : returns
     larekAPI ..> IOrderData : parameter
     larekAPI ..> IPurchaseData : returns
+```
+
+### UML-диаграмма приложения
+
+```mermaid
+classDiagram
+    class ApiPostMethods {
+        <<type>>
+        "POST" | "PUT" | "DELETE"
+    }
+
+    class IdType {
+        <<type>>
+        typeof ID_NAME
+    }
+
+    class UUID {
+        <<type>>
+        string pattern
+    }
+
+    class Price {
+        <<type>>
+        number
+    }
+
+    class TPayment {
+        <<type>>
+        "online" | "cash" | undefined
+    }
+
+    class IApi {
+        <<interface>>
+        +get<T>(uri: string): Promise~T~
+        +post<T>(uri: string, data: object, method?: ApiPostMethods): Promise~T~
+    }
+
+    class ILarekProducts {
+        +total: number
+        +items: IProduct[]
+    }
+
+    class IProduct {
+        <<interface>>
+        +id: UUID$
+        +description: string
+        +image: string
+        +title: string
+        +category: string
+        +price: Price | null
+    }
+
+    class IOrderData {
+        <<interface>>
+        +total: Price
+        +items: UUID[]
+        +payment: TPayment
+        +email: string
+        +phone: string
+        +address: string
+    }
+
+    class IBuyer {
+        <<interface>>
+    }
+
+    class IPurchaseData {
+        <<interface>>
+        +id: UUID[]
+        +total: Price
+    }
+
+    class IList~T, Key extends keyof T~ {
+        <<interface>>
+        +items: T[]
+        +size: number
+        +addItem(item: T) void
+        +addItems(items: readonly T[]) void
+        +getItemByKey(key: T[Key]) T | undefined
+        +removeByKey(key: T[Key]) boolean
+        +clear(): void
+        +hasId(key: T[Key]): boolean
+    }
+
+    class ICatalog {
+        <<interface>>
+        +products: IProduct[]
+        +preview: IProduct | undefined
+        +getProductById(productId: ProductId): IProduct | undefined
+    }
+
+    class IBasket {
+        <<interface>>
+        +products: IProduct[]
+        +total Price
+        +countProducts: number
+        +addProduct(productId: UUID): void
+        +delProduct(productId: UUID): void
+        +clear(): void
+        +hasProduct(productId: UUID): boolean
+        +getProductsId(): UUID[]
+    }
+
+    class IBuyer {
+        <<interface>>
+        +payment: TPayment
+        +email: string
+        +phone: string
+        +address: string
+    }
+
+    class IOrder {
+        <<interface>>
+        +orderData: IOrderData
+    }
+
+    class List~T, Key~ {
+        -_items: Map~T[Key], T~
+        -_key: Key
+
+        +constructor(key: Key, items?: readonly T[])
+        +addItem(item: T): void
+        +addItems(items: readonly T[]): void
+        +getItemByKey(key: T[Key]): T | undefined
+        +clear(): void
+        +size(): number
+        +removeByKey(key: T[Key]): boolean
+        +items(): T[]
+        +hasKey(key: T[Key]): boolean
+
+    }
+
+    class Map~K, V~ {
+        <<built-in>>
+    }
+
+    class ProductsList {
+        <<abstract>>
+        +constructor(key?: keyof IProduct)
+        +get products() IProduct[]
+        +set products(products: IProduct[]) void
+    }
+
+    class Catalog {
+        -#preview: IProduct | undefined
+        +set preview(productId: UUID) void
+        +get preview() IProduct | undefined
+        +getProductById(productId: UUID) IProduct | undefined
+    }
+
+    class Basket {
+        -_catalog: ICatalog
+
+        +total(): Price
+        +countProducts(): number
+        +constructor(_catalog: ICatalog)
+        +addProduct(id: UUID): void
+        +delProduct(id: UUID): void
+        +clear(): void
+        +hasProduct(id: UUID): boolean
+        +getProductsId(): UUID[]
+    }
+
+    class Buyer {
+        -#payment: TPayment
+        -#email: string
+        -#phone: string
+        -#address: string
+        +constructor(buyer?: IBuyer)
+        +get payment(): TPayment
+        +get email(): string
+        +get phone(): string
+        +get address(): string
+        +get buyer(): IBuyer
+
+        +set payment(payment: TPayment): TPayment
+        +set email(email: string): string
+        +set phone(phone: string): string
+        +set address(address: string): string
+        +set buyer(buyer: IBuyer | undefined): IBuyer
+
+        +clear(): void
+        +isEmailValid(): boolean
+        +isPhoneValid(): boolean
+        +isAddressValid(): boolean
+        +isPaymentValid(): boolean
+        +isAllValid(): boolean
+    }
+
+    class Order {
+        -#buyer: IBuyer
+        -#basket: IBasket
+        +constructor(buyer: IBuyer, basket: IBasket)
+        +getOrderData(): IOrderData
+    }
+
+    class larekAPI {
+        -#api: IApi
+        +constructor(api: IApi)
+        +getShopProducts() Promise~ILarekProducts~
+        +placeOrder(orderData: IOrderData) Promise~IPurchaseData~
+    }
+
+    larekAPI --> IApi : composition
+    larekAPI ..> ILarekProducts : returns
+    larekAPI ..> IOrderData : parameter
+    larekAPI ..> IPurchaseData : returns
+    Order ..|> IOrder : implements
+    Order --> IBuyer : composition
+    Order --> IBasket : composition
+    Order --> IOrderData : creates
+    Buyer ..|> IBuyer : implements
+    Buyer --> TPayment : uses
+    IBuyer --> TPayment : uses
+    Basket --|> ProductsList : extends
+    Basket ..|> IBasket : implements
+    Basket --> ICatalog : composition
+    Basket ..> UUID : uses
+    Basket ..> Price : uses
+    Catalog --|> ProductsList : extends
+    Catalog ..|> ICatalog : implements
+    Catalog --> IProduct : preview
+    Catalog ..> UUID : uses in methods
+    ProductsList --|> List~IProduct~ : extends
+    ProductsList --> IProduct : uses
+    List~T, Key~ ..|> IList~T, Key~ : implements
+    List~T, Key~ --> Map~T[Key], T~ : _items
+    IBuyer --> TPayment : payment
+    IBasket --|> IList~IProduct, IdType~ : extends
+    IBasket --> "*" IProduct : products
+    IBasket --> "1" Price : total
+    IBasket ..> UUID : uses in methods
+    ICatalog --|> IList~T, K~ : extends (T=IProduct, K="id")
+    ICatalog --> IProduct : products, preview
+    IList~T, K~ --> IProduct : type parameter 'id'
+    IPurchaseData --> "*" UUID : id
+    IPurchaseData --> "1" Price : total
+    IProduct --> UUID : id
+    IProduct --> Price : price
+    IApi ..> ApiPostMethods : method
+    ILarekProducts --> IProduct : contains
+    IBuyer <|-- IOrderData : extends
+    IOrderData --> UUID : items[]
 ```
