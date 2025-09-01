@@ -124,7 +124,7 @@ type ApiPostMethods = "POST" | "PUT" | "DELETE";
 classDiagram
     class ApiPostMethods {
         <<type>>
-        = "POST" | "PUT" | "DELETE"
+        "POST" | "PUT" | "DELETE"
     }
 ```
 
