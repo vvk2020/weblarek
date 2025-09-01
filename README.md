@@ -1288,8 +1288,6 @@ classDiagram
 
     class IPurchaseData {
         <<interface>>
-        +id: UUID[]
-        +total: Price
     }
 
     larekAPI --> IApi : composition
