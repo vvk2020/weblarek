@@ -997,7 +997,8 @@ classDiagram
 
 ##### Методы
 
-- методы получения и определения свойств покупателя: 
+- методы получения и определения свойств покупателя:
+
   - для каждого отдельного свойства покупателя определены геттеры и сеттеры, принимающие и возвращающие данные соответствующих типов:
 
     ```ts
@@ -1105,7 +1106,7 @@ classDiagram
         -#email: string
         -#phone: string
         -#address: string
-        
+
         +constructor(buyer?: IBuyer)
 
         +get payment(): TPayment
@@ -1218,9 +1219,6 @@ classDiagram
     Order --> IBasket : composition
     Order --> IOrderData : creates
 ```
-
-
-
 
 ### Коммуникационный слой
 
