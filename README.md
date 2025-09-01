@@ -118,12 +118,24 @@ yarn build
 type ApiPostMethods = "POST" | "PUT" | "DELETE";
 ```
 
-#### API-интерфейс: `IApi`
+Представление `IApi` и `ApiPostMethods` на UML-диаграмме
 
-Определяет наличие у реализующих его сущностей следующих API-методов:
+```mermaid
+classDiagram
+    class ApiPostMethods {
+        <<type>>
+        = "POST" | "PUT" | "DELETE"
+    }
+```
+
+#### API-интерфейсы: `IApi`, `ILarekProducts`, `IOrderData` и `IPurchaseData`
+
+##### `IApi`
+
+Определяет наличие у реализующих и использующих в рамках композиции его сущностей, в частности, констуктора специализированного класса `larekAPI`, следующих API-методов:
 
 - `get()` - типизированного метода запроса на получение данных, который принимает адрес `uri` и возвращает типизированный промис ответа
-- `post()` - типизированного метода запроса на внесение изменений ("POST" | "PUT") или удаление ("DELETE") данных, который принимает адрес `uri`, объект с передаваемыми данными `data`, тип метода завпроса `method`, а возвращает промис ответа
+- `post()` - типизированного метода запроса на внесение изменений (`POST` | `PUT`) или удаление (`DELETE`) данных, который принимает адрес `uri`, объект передаваемых данных `data`, тип метода запроса `method`, а возвращает типизированный промис ответа
 
 ```ts
 interface IApi {
@@ -136,43 +148,184 @@ interface IApi {
 }
 ```
 
-Представление `IApi` и `ApiPostMethods` на UML-диаграмме
+Представление `IApi` на UML-диаграмме
 
 ```mermaid
 classDiagram
     class IApi {
         <<interface>>
-        +get<T>(uri: string) Promise~T~
-        +post<T>(uri: string, data: object, method?: ApiPostMethods) Promise~T~
+        +get<T>(uri: string): Promise~T~
+        +post<T>(uri: string, data: object, method?: ApiPostMethods): Promise~T~
     }
 
     class ApiPostMethods {
         <<type>>
-        = "POST" | "PUT" | "DELETE"
     }
 
     IApi ..> ApiPostMethods : method
+```
+
+##### `ILarekProducts` - тип успешного ответа сервера на запрос списка товаров
+
+```ts
+interface ILarekProducts {
+  total: number; // количество товаров
+  items: IProduct[]; // массив товаров типа IProduct
+}
+```
+
+Представление `ILarekProducts` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class ILarekProducts {
+        +total: number
+        +items: IProduct[]
+    }
+
+    class IProduct {
+        <<interface>>
+    }
+
+    ILarekProducts --> IProduct : содержит
+```
+
+##### `IOrderData` - тип данных, передаваемых в теле запроса при оформлении заказа (покупке)
+
+```ts
+interface IOrderData extends IBuyer {
+  total: Price; // стоимость товаров в корзине
+  items: UUID[]; // массив идентификаторов товаров в корзине
+}
+```
+
+Представление `IOrderData` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IOrderData {
+        <<interface>>
+        +total: Price
+        +items: UUID[]
+        +payment: TPayment
+        +email: string
+        +phone: string
+        +address: string
+    }
+
+    class IBuyer {
+        <<interface>>
+    }
+
+    class UUID {
+        <<type>>
+    }
+
+    IBuyer <|-- IOrderData : extends
+    IOrderData --> UUID : items[]
+```
+
+##### `IPurchaseData` - тип ответа сервера при успешном оформлении заказа (покупке)
+
+```ts
+interface IPurchaseData {
+  id: UUID[]; // идентификатор заказа
+  total: Price; // стоимость покупки
+}
+```
+
+Представление `IPurchaseData` на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IPurchaseData {
+        <<interface>>
+        +id: UUID[]
+        +total: Price
+    }
+
+    class UUID {
+        <<type>>
+    }
+
+    class Price {
+        <<type>>
+    }
+
+    IPurchaseData --> "*" UUID : id
+    IPurchaseData --> "1" Price : total
+```
+
+#### Базовые типы для работы со списками и заказом
+
+##### `IdType` - тип уникального ключа товара
+
+Ключом может выступать любое свойство элемента списка, хранящее уникальные значения (для товара - `id`).
+
+```ts
+type IdType = typeof ID_NAME; // ID_NAME - ключ-свойство товара
+```
+
+##### `UUID` - тип, определяющий структуру уникального ключа товара
+
+```ts
+type UUID = `${string}-${string}-${string}-${string}-${string}`;
+```
+
+##### `Price` - стоимость товара
+
+```ts
+type Price = number;
+```
+
+##### `TPayment` - способ оплаты
+
+```ts
+type TPayment = "online" | "cash" | undefined;
+```
+
+Представление базовых типов для работы со списками и заказом на UML-диаграмме
+
+```mermaid
+classDiagram
+    class IdType {
+        <<type>>
+        typeof ID_NAME
+    }
+
+    class UUID {
+        <<type>>
+        string pattern
+    }
+
+    class Price {
+        <<type>>
+        number
+    }
+
+    class TPayment {
+        <<type>>
+        "online" | "cash" | undefined
+    }
 ```
 
 #### Товар - `IProduct`
 
 Описывает основную абстракцию, товар, со следующими свойствами:
 
-- `id` - уникальный идентификатор (uuid) товара (не должен изменяться - `readonly`)
-- `description` - описание товара
-- `image` - фрагмент пути к файлу картинки товара
-- `title` - название товара
-- `category` - категория товара
-- `price` - цена (опционально, может быть NULL для непродаваемых товаров)
+- `image` -
+- `title` -
+- `category` -
+- `price` -
 
 ```ts
 interface IProduct {
-  readonly id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number | null;
+  readonly id: UUID; // уникальный идентификатор товара типа `UUID` (не должен изменяться)
+  description: string; // описание товара
+  image: string; // фрагмент пути к файлу картинки товара
+  title: string; // название товара
+  category: string; // категория товара
+  price: Price | null; // цена (null для непродаваемых товаров)
 }
 ```
 
@@ -182,57 +335,40 @@ interface IProduct {
 classDiagram
     class IProduct {
         <<interface>>
-        +id: string$
+        +id: UUID$
         +description: string
         +image: string
         +title: string
         +category: string
-        +price: number | null
+        +price: Price | null
     }
+
+    class UUID {
+        <<type>>
+    }
+
+    class Price {
+        <<type>>
+    }
+
+    IProduct --> UUID : id
+    IProduct --> Price : price
 ```
 
-Производные типы от `IProduct`:
+#### Универсальный список - `IList`
 
-- уникальный идентификатор товара
-
-  ```ts
-  type ProductId = IProduct["id"];
-  ```
-
-- cтоимость товара
-
-  ```ts
-  type ProductPrice = IProduct["price"];
-  ```
-
-#### Абстрактный список - `IList`
-
-`IList` - интерфейс, описывающий абстрактный переиспользуемый список, построенный на основе Map-коллекции. На его основе созданы интерфейсы каталога (`ICatalog`) и корзины (`IBasket`) со специфическими для этих сущностей свойствами и методами.
-
-`IList` имеет следующие свойства:
-
-- `items` - массив элементов (товаров), хранимых в списке (коллекции)
-- `size` - размер списка (количество товаров в соответствующем списке)
-
-и методы:
-
-1. `addItem(item: T): void` - метод добавления элемента (товара) в список
-2. `addItems(items: readonly T[]): void` - метод добавления массива элементов (товаров) в список
-3. `getItemByKey(key: T[Key]): T | undefined` - метод вывода элемента (товара) из списка по его ключу (идентификатору)
-4. `removeByKey(key: T[Key]): boolean` - метод удаления элемента (товара) из списка по его ключу (идентификатору)
-5. `clear(): void` - метод очистки списка
-6. `hasKey(key: T[Key]): boolean` - метод проверки наличия элемента (товара) в списке по его ключу (идентификатору)
+`IList` - интерфейс, описывающий абстрактный переиспользуемый список, построенный на основе Map-коллекции. На его основе созданы расширением специализированные интерфейсы каталога (`ICatalog`) и корзины (`IBasket`) со специфическими для этих сущностей свойствами и методами. Элементы списков каталога и корзины - товары, ключи - их уникальные идентификаторы. Обладает следующими свойствами и методами:
 
 ```ts
 interface IList<T, Key extends keyof T> {
-  items: T[];
-  size: number;
-  addItem(item: T): void;
-  addItems(items: readonly T[]): void;
-  getItemByKey(key: T[Key]): T | undefined;
-  removeByKey(key: T[Key]): boolean;
-  clear(): void;
-  hasKey(key: T[Key]): boolean;
+  items: T[]; // массив элементов списка
+  size: number; // количество элементов в списке
+  addItem(item: T): void; // метод добавления элемента в список
+  addItems(items: readonly T[]): void; // метод добавления массива элементов в список
+  getItemByKey(key: T[Key]): T | undefined; // метод вывода элемента из списка по его ключу
+  removeByKey(key: T[Key]): boolean; // метод удаления элемента из списка по его ключу
+  clear(): void; // метод очистки списка
+  hasKey(key: T[Key]): boolean; // метод проверки наличия элемента в списке по его ключу
 }
 ```
 
@@ -255,22 +391,18 @@ classDiagram
 
 #### Каталог товаров - `ICatalog`
 
-`ICatalog` расширяет `IList`, специализируя его спомощью:
+`ICatalog` определяет методы и свойства каталога товаров, расширяя и специализируя `IList` с помощью:
 
-- `IProduct`, определяющего тип хранимых в абстрактном списке элементов как товар
-- `'id'`, определяющего имя свойства `IProduct`, выступающего ключом при работе с абстрактным списком, построенным в виде Map-коллекции.
+- `IProduct`, определяющего тип хранимых в списке элементов как товар
+- `'id'`, определяющего имя свойства `IProduct` как ключ для работы со списком (каталогом).
 
-`ICatalog` добавляет следующие свойства и методы:
-
-- `preview: IProduct | null` - товар, выбранный для подробного отображения
-- `products: IProduct[]` - список товаров каталога
-- `getProductById(productId: ProductId): IProduct | undefined` - метод получения товара по его идентификатору `id` (обертка метода `getItemByKey()` интерфейса `IList`)
+`ICatalog` расширяет `IList` следующими свойствами и методом:
 
 ```ts
-interface ICatalog extends IList<IProduct, "id"> {
-  preview: IProduct | null;
-  products: IProduct[];
-  getProductById(productId: ProductId): IProduct | undefined;
+interface ICatalog extends IList<IProduct, IdType> {
+  products: IProduct[]; // список (массив) товаров каталога
+  preview: IProduct | undefined; // товар, выбранный для подробного отображения
+  getProductById(productId: UUID): IProduct | undefined; // метод получения товара по идентификатору
 }
 ```
 
@@ -280,8 +412,8 @@ interface ICatalog extends IList<IProduct, "id"> {
 classDiagram
     class ICatalog {
         <<interface>>
-        +preview: IProduct | null
         +products: IProduct[]
+        +preview: IProduct | undefined
         +getProductById(productId: ProductId): IProduct | undefined
     }
 
@@ -291,37 +423,29 @@ classDiagram
 
     class IProduct {
         <<interface>>
-        +id: ProductId
     }
 
     ICatalog --|> IList~T, K~ : extends (T=IProduct, K="id")
-    ICatalog --> IProduct : contains
+    ICatalog --> IProduct : products, preview
     IList~T, K~ --> IProduct : type parameter 'id'
 ```
 
 #### Корзина товаров - `IBasket`
 
-`IBasket` аналогично `ICatalog` расширяет и специализирует `IList`. Он добавляет к `IList` следующие свойства и методы:
+`IBasket` аналогично `ICatalog` расширяет и специализирует `IList`, аналогично `ICatalog`. Он добавляет к `IList` следующие свойства и методы:
 
-- `products: IProduct[]` - список товаров в корзине
-- `price: ProductPrice` - стоимость товаров в корзине
-- `countProducts: number` - количество товаров в корзине (свойство `size` интерфейса `IList`)
-- `calcPrice(): void` - метод расчета стоимости корзины, выполняемый после каждой модификации списка корзины (для хранение актуальной стоимости)
-- `addProduct(productId: ProductId): void` - метод добавление товара по его идентифмкатору `productId`, основанный на методе `addItem()` интерфейса `IList`
-- `delProduct(productId: ProductId): void` - метод удаления товара из корзины по его идентифмкатору `productId`, основанный на методе `removeByKey()` интерфейса `IList`
-- `clear(): void` - метод очистки корзины, основанный на методе `clear()` интерфейса `IList`
 - `hasProduct(productId: ProductId): boolean` - метод проверки наличия товара в корзине по его идентификатору, являющийся оберткой метода `hasKey()` интерфейса `IList`
 
 ```ts
-interface IBasket extends IList<IProduct, "id"> {
-  products: IProduct[];
-  price: ProductPrice;
-  countProducts: number;
-  calcPrice(): void;  // метод расчета стоимости корзины
-  addProduct(productId: ProductId): void; // метод добавления товара в корзину
-  delProduct(productId: ProductId): void; // метод удаления товараиз корзины
+interface IBasket extends IList<IProduct, IdType> {
+  products: IProduct[]; // список товаров в корзине
+  total: Price; // стоимость корзины
+  countProducts: number; // количество товаров в корзине
+  addProduct(productId: UUID): void; // метод добавления товара в корзину по его идентифмкатору productId
+  delProduct(productId: UUID): void; // метод удаления товара из корзины по его идентифмкатору productId
   clear(): void; // метод очистки корзины
-  hasProduct(productId: ProductId): boolean; // метод проверки наличия товара в корзине по его идентикатору
+  hasProduct(productId: UUID): boolean; // метод проверки наличия товара в корзине по его идентикатору
+  getProductsId(): UUID[]; // метод получения массива идентификаторов товаров корзины
 }
 ```
 
@@ -332,81 +456,47 @@ classDiagram
     class IBasket {
         <<interface>>
         +products: IProduct[]
-        +price: ProductPrice
+        +total Price
         +countProducts: number
-        +calcPrice(): void
-        +addProduct(productId: ProductId): void
-        +delProduct(productId: ProductId): void
+        +addProduct(productId: UUID): void
+        +delProduct(productId: UUID): void
         +clear(): void
-        +hasProduct(productId: ProductId): boolean
+        +hasProduct(productId: UUID): boolean
+        +getProductsId(): UUID[]
     }
 
-    class IList~T, K~ {
+    class IList~IProduct, IdType~ {
         <<interface>>
     }
 
     class IProduct {
         <<interface>>
-        +id: ProductId
     }
 
-    class ProductPrice {
+    class UUID {
         <<type>>
     }
 
-    class ProductId {
+    class Price {
         <<type>>
     }
 
-    IBasket --|> IList~IProduct, 'id'~
-    IBasket --> IProduct : contains
-    IBasket --> ProductPrice : uses
-    IBasket --> ProductId : uses
-    IList~T, K~ --> IProduct : type parameter 'id'
-
-```
-
-Аргумент `payload` методов `IBasket`, как и в случае с `ICatalog`, так же является типизированной callback-функцией, вызываемой для обработки изменения списка товаров брокером событий.
-
-Учитывая, что тип свойств `price` (цена товара) интерфейса `IProduct` и `price` (стоимость корзины) интерфейса `IBasket` должен совпадать, выведен тип:
-
-```ts
-type ProductPrice = IProduct["price"];
-```
-
-#### Способ оплаты - `TPayment`
-
-Обеспечивает типизацию работы со способами оплаты.
-
-```ts
-type TPayment = "card" | "cash"; // ! уточнить значения !
-```
-
-Представление `TPayment` на UML-диаграмме
-
-```mermaid
-classDiagram
-    class TPayment {
-        <<type>>
-        = "card" | "cash"
-    }
+    IBasket --|> IList~IProduct, IdType~ : extends
+    IBasket --> "*" IProduct : products
+    IBasket --> "1" Price : total
+    IBasket ..> UUID : uses in methods
 ```
 
 #### Покупатель - `IBuyer`
 
-Описывает данные заказа товара:
-
-- `payment` - способ оплаты, определяемый типом `TPayment`
-- `email` - электронная почта заказчика
-- `phone` - телефон заказчика
-- `address` - адрес доставки
+Описывает данные заказчика (покупателя):
 
 ```ts
 interface IBuyer {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
+  payment: TPayment; // способ оплаты
+  email: string; // email
+  phone: string; // номер телефона
+  address: string; // адрес
 }
 ```
 
@@ -427,6 +517,17 @@ classDiagram
     }
 
     IBuyer --> TPayment : payment
+```
+
+#### Заказ (покупка) - `IOrder`
+
+Интегрирует данные корзины и покупателя для описания ключевой сущности - ЗАКАЗ.  
+Используется для описания типа данных, формируемых для отправки (оформления/регистрации) заказа.
+
+```ts
+interface IOrder {
+  orderData: IOrderData; // метод формирования данных для запроса оформления покупки
+}
 ```
 
 ### Модели данных (`Model`)

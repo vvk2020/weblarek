@@ -3,21 +3,20 @@ import { ID_NAME } from "../utils/constants";
 //! СЛОЙ ДАННЫХ ================================================
 
 /** ТИП УНИКАЛЬНОГО КЛЮЧА ТОВАРА  */
-export type ID_TYPE = typeof ID_NAME; // тип
+export type IdType = typeof ID_NAME; // тип
 
 /** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 /** СТОИМОСТЬ ТОВАРА */
-// export type Price = IProduct['price'];
 export type Price = number;
 
 /** СПОСОБ ОПЛАТЫ */
-export type TPayment = "online" | "cash" | undefined; // FIXME уточнить значения TPayment
+export type TPayment = "online" | "cash" | undefined;
 
 /** ТОВАР */
 export interface IProduct {
-  id: UUID; // идентификатор
+  readonly id: UUID; // идентификатор
   description: string; // описание
   image: string; // изображение
   title: string; // название
@@ -25,7 +24,7 @@ export interface IProduct {
   price: Price | null; // цена
 }
 
-/** АБСТРАКТНЫЙ СПИСОК  
+/** УНИВЕРСАЛЬНЫЙ СПИСОК  
  * Интерфейс-прототип для списков товаров галереи и корзины.  
  * Элементы списков галереи и корзины - товары, ключи - уникальные идентификаторы.
  */
@@ -41,14 +40,14 @@ export interface IList<T, Key extends keyof T> {
 }
 
 /** КАТАЛОГ ТОВАРОВ */
-export interface ICatalog extends IList<IProduct, ID_TYPE> {
+export interface ICatalog extends IList<IProduct, IdType> {
   products: IProduct[]; // список товаров каталога
   preview: IProduct | undefined; // товар, выбранный для подробного отображения
   getProductById(productId: UUID): IProduct | undefined; // метод получения товара по идентификатору 
 }
 
 /** КОРЗИНА ТОВАРОВ */
-export interface IBasket extends IList<IProduct, ID_TYPE> {
+export interface IBasket extends IList<IProduct, IdType> {
   products: IProduct[]; // список товаров в корзине
   total: Price; // стоимость корзины
   countProducts: number; // количество товаров в корзине
