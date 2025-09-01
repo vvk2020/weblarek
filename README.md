@@ -658,7 +658,6 @@ classDiagram
     class List~T, Key~ {
         -_items: Map~T[Key], T~
         -_key: Key
-
         +constructor(key: Key, items?: readonly T[])
         +addItem(item: T): void
         +addItems(items: readonly T[]): void
@@ -794,7 +793,6 @@ classDiagram
 classDiagram
     class Catalog {
         -#preview: IProduct | undefined
-
         +set preview(productId: UUID) void
         +get preview() IProduct | undefined
         +getProductById(productId: UUID) IProduct | undefined
@@ -917,7 +915,6 @@ classDiagram
 classDiagram
     class Basket {
         -_catalog: ICatalog
-
         +total(): Price
         +countProducts(): number
         +constructor(_catalog: ICatalog)
@@ -1106,21 +1103,17 @@ classDiagram
         -#email: string
         -#phone: string
         -#address: string
-
         +constructor(buyer?: IBuyer)
-
         +get payment(): TPayment
         +get email(): string
         +get phone(): string
         +get address(): string
         +get buyer(): IBuyer
-
         +set payment(payment: TPayment): TPayment
         +set email(email: string): string
         +set phone(phone: string): string
         +set address(address: string): string
         +set buyer(buyer: IBuyer | undefined): IBuyer
-
         +clear(): void
         +isEmailValid(): boolean
         +isPhoneValid(): boolean
@@ -1193,7 +1186,6 @@ classDiagram
     class Order {
         -#buyer: IBuyer
         -#basket: IBasket
-
         +constructor(buyer: IBuyer, basket: IBasket)
         +getOrderData(): IOrderData
     }
@@ -1458,7 +1450,6 @@ classDiagram
 
     class Basket {
         -_catalog: ICatalog
-
         +total(): Price
         +countProducts(): number
         +constructor(_catalog: ICatalog)
@@ -1480,13 +1471,11 @@ classDiagram
         +get phone(): string
         +get address(): string
         +get buyer(): IBuyer
-
         +set payment(payment: TPayment): TPayment
         +set email(email: string): string
         +set phone(phone: string): string
         +set address(address: string): string
         +set buyer(buyer: IBuyer | undefined): IBuyer
-
         +clear(): void
         +isEmailValid(): boolean
         +isPhoneValid(): boolean
