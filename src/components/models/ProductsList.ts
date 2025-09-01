@@ -12,12 +12,11 @@ export abstract class ProductsList extends List<IProduct> {
     super(key);
   }
 
-  /** Получение списка товаров */
+  /** Список товаров */
   get products(): IProduct[] {
     return this.items;
   }
 
-  /** Сохранение массива товаров в списке товаров */
   set products(products: IProduct[]) {
     this.addItems(products);
   }

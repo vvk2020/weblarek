@@ -12,6 +12,7 @@ export class Order implements IOrder {
     this.#basket = basket;
   }
 
+  /** Формирование данных для отправки заказа на сервер */
   get orderData(): IOrderData {
     return {
       payment: this.#buyer.payment,

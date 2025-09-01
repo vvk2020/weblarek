@@ -9,12 +9,11 @@ export class Catalog extends ProductsList implements ICatalog {
   /** Товар, выбранный для подробного отображения */
   #preview: IProduct | undefined = undefined;
 
-  /** Выбор товара для подробного отображения */
+  /** Товар для подробного отображения */
   set preview(productId: UUID) {
     this.#preview = this.getItemByKey(productId);
   }
 
-  /** Получение товара, выбранного для подробного отображения */
   get preview(): IProduct | undefined {
     return this.#preview;
   }
