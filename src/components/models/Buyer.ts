@@ -1,4 +1,4 @@
-import { IBuyer, TPayment } from "../../types";
+import { IBasket, IBuyer, IOrder, TPayment } from "../../types";
 
 /** ПОКУПАТЕЛЬ */
 export class Buyer implements IBuyer {
@@ -8,11 +8,15 @@ export class Buyer implements IBuyer {
   protected _phone: string = '';
   protected _address: string = '';
 
-  /** Конструктор покупателя.  
-   * Опционально определяет все свойства покупетля через buyer
-   */
-  constructor(buyer?: IBuyer) {
-    this.buyer = buyer;
+  /** Конструктор покупателя  
+   * Опционально могут определены все или часть свойств покупетля */
+  constructor(buyer?: Partial<IBuyer>) {
+    if (buyer) {
+      if (buyer.payment) this.payment = buyer.payment;
+      if (buyer.email) this.email = buyer.email;
+      if (buyer.phone) this.phone = buyer.phone;
+      if (buyer.address) this.address = buyer.address;
+    }
   }
 
   /** Определение способа оплаты */
@@ -55,29 +59,20 @@ export class Buyer implements IBuyer {
     return this._address;
   }
 
-  /** Определение всех данных покупателя */
-  set buyer(buyer: IBuyer | undefined) {
-    buyer && ({
-      payment: this.payment,
-      email: this._email,
-      phone: this._phone,
-      address: this._address
-    } = buyer);
-  }
 
-  /** Получение всех данных покупателя */
-  get buyer(): IBuyer {
+  get data(): Omit<IBuyer, 'data'> {
     return {
-      payment: this.payment,
+      payment: this._payment,
       email: this._email,
       phone: this._phone,
       address: this._address
     }
   }
 
+
   /** Очистка всех данных покупателя */
   public clear() {
-    this.payment = undefined;
+    this._payment = undefined;
     this._email = '';
     this._phone = '';
     this._address = '';

@@ -11,7 +11,10 @@ export const settings = {
 };
 
 /** Имя уникального ключа товара  */
-export const ID_NAME = 'id';
+export const KEY_FIELD_NAME = 'id';
+
+/** Имя поля цены товара  */
+export const PRICE_FIELD_NAME = 'price';
 
 /** Endpoint get-запроса списка товаров */
 export const URI_PRODUCTS = '/product/';

@@ -1,60 +1,51 @@
-import { IBasket, ICatalog, UUID, Price } from "../../types";
-import { ProductsList } from "./ProductsList";
+import { IBasket, IBuyer, ICatalog, IOrder, Price, UUID } from "../../types";
+import { Catalog } from "./Catalog";
 
 /** КОРЗИНА ПРОДУКТОВ 
 * Класс, специализированный для работы со списком товаров.  
 * Расширяет класс ProductsList, реализует IBasket */
-export class Basket extends ProductsList implements IBasket {
+export class Basket<T extends { readonly id: UUID; price: Price }> extends Catalog<T> implements IBasket<T> {
 
-  /** Конструктор экземпляра корзины товаров, принимающий в качестве аргумента экземпляр
-   * каталога товаров, соответствующий ICatalog */
-  constructor(private _catalog: ICatalog) {
+  protected _catalog: ICatalog<T>; // каталог с товарами
+
+  /** Конструктор экземпляра корзины товаров, принимающий в качестве аргумента  
+   * экземпляр каталога товаров, реализующий ICatalog */
+  constructor(catalog: ICatalog<T>) {
     super();
+    this._catalog = catalog;
   }
 
   /** Расчет и получение стоимости корзины */
   get total(): Price {
-    return this.products.reduce(
-      (cost, product) => product.price ? cost + product.price : cost,
+    return this.items.reduce(
+      (cost, item) => item.price ? cost + item.price : cost,
       0)
   }
 
-  /** Количество товаров в корзине */
-  get countProducts(): number {
-    return this.size;
+  /** Данные заказа */
+  get order(): Omit<IOrder, keyof IBuyer> {
+    return {
+      total: this.total, // стоимость товаров в корзине
+      items: this.getItemsIds(), // массив идентификаторов товаров в корзине
+    }
   }
 
-  /** Добавление товара из каталога в в корзину по его идентификатору id.  
-   * Предварительно проверяется наличие товара по идентификатору в каталоге. 
-   * Товар должен иметь цену. */
-  public addProduct(id: UUID): void {
-    const product = this._catalog.getProductById(id);
-    // Проверка наличия товара с идентификатором productId и ценой с в каталоге 
-    if (product && product.price) {
-      // Добавление найденного товара из каталога в в корзину
-      this.addItem(this._catalog.getProductById(id)!);
-    }
+  /** Добавление товара из каталога в корзину по его ключу  
+   * Проверяется наличие товара по идентификатору в каталоге и цены (не null) */
+  public addItemByKey(id: UUID): void {
+    const item = this._catalog.getItemByKey(id);
+    if (item && item.price) this.addItem(item);
   }
 
   /** Удаление из корзины товара с указанным идентификатором id.
    * Предварительно проверяется его наличие в корзине. */
-  public delProduct(id: UUID): void {
-    if (this.hasKey(id)) this.removeByKey(id);
-  }
-
-  /** Очистка корзины */
-  public clear(): void {
-    super.clear();
-  }
-
-  /** Проверка наличия товара в корзине по его идентикатору */
-  public hasProduct(id: UUID): boolean {
-    return this.hasKey(id);
+  public delItem(id: UUID): void {
+    if (this.hasItem(id)) this.removeItemByKey(id);
   }
 
   /** Получение массива идентификаторов товаров в корзине */
-  getProductsId(): UUID[] {
-    return this.products.map(product => product.id)
+  getItemsIds(): UUID[] {
+    return this.items.map(item => item.id)
   }
 
 }

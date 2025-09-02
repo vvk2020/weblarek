@@ -1,4 +1,4 @@
-import { IBasket, IBuyer, IOrder, IOrderData } from "../../types";
+import { IBasket, IBuyer, IOrder, IOrder } from "../../types";
 
 /** ЗАКАЗ ТОВАРА (ПОКУПКА)  
  * На основе данных корзины и покупателя формирует данные для отправки заказа на сервер */
@@ -13,7 +13,7 @@ export class Order implements IOrder {
   }
 
   /** Формирование данных для отправки заказа на сервер */
-  get orderData(): IOrderData {
+  get orderData(): IOrder {
     return {
       payment: this._buyer.payment,
       email: this._buyer.email,
