@@ -5,8 +5,8 @@ import { IList } from "../../types";
  * Создает список сущностей типа T, имеющих ключ Key.
 */
 export class List<T, Key extends keyof T = keyof T> implements IList<T, Key> {
-  private _items: Map<T[Key], T>;
-  private _key: Key;
+  protected _items: Map<T[Key], T>;
+  protected _key: Key;
 
   /** Создание экзепляра списка в виде коллекции объектов типа T с ключом key.  
    * Опционально задается стартовый массив объектов items типа T. */

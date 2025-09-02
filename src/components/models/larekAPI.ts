@@ -6,6 +6,7 @@ import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
  * (работа с товарами) */
 export class larekAPI {
   protected _api: IApi;
+  
   /** API-конструктор */
   constructor(api: IApi) {
     this._api = api;
