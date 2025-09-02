@@ -1,4 +1,4 @@
-import { IBasket, IBuyer, IOrder, TPayment } from "../../types";
+import { IBuyer, TPayment } from "../../types";
 
 /** ПОКУПАТЕЛЬ */
 export class Buyer implements IBuyer {

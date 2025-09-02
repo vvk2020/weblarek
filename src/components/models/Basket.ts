@@ -1,4 +1,4 @@
-import { IBasket, IBuyer, ICatalog, IOrder, Price, UUID } from "../../types";
+import { IBasket, IBuyer, ICatalog, IOrderData, Price, UUID } from "../../types";
 import { Catalog } from "./Catalog";
 
 /** КОРЗИНА ПРОДУКТОВ 
@@ -23,7 +23,7 @@ export class Basket<T extends { readonly id: UUID; price: Price }> extends Catal
   }
 
   /** Данные заказа */
-  get order(): Omit<IOrder, keyof IBuyer> {
+  get order(): Omit<IOrderData, keyof IBuyer> {
     return {
       total: this.total, // стоимость товаров в корзине
       items: this.getItemsIds(), // массив идентификаторов товаров в корзине

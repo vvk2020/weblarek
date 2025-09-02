@@ -8,7 +8,7 @@ import { Api } from './components/base/Api';
 import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
-import { API_URL, KEY_FIELD_NAME } from './utils/constants';
+import { API_URL } from './utils/constants';
 import { LarekAPI } from './components/models/larekAPI';
 
 //! ТЕСТЫ ===========================================================

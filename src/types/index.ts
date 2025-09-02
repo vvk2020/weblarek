@@ -35,7 +35,7 @@ export interface ICatalog<T> {
 /** КОРЗИНА ТОВАРОВ */
 export interface IBasket<T extends { price: Price }> extends ICatalog<T> {
   total: Price; // стоимость корзины
-  order: Omit<IOrder, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
+  order: Omit<IOrderData, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
   addItemByKey(id: UUID): void; // метод добавления товара в корзину
   delItem(id: UUID): void // метод удаления товара из корзины
   getItemsIds(): UUID[]; // массива идентификаторов товаров в корзине
@@ -68,7 +68,7 @@ export interface ILarekProducts<T = IProduct> {
 }
 
 /** ДАННЫЕ, ПЕРЕДАВАЕМЫЕ В ЗАПРОСЕ ПРИ ОФОРМЛЕНИИ ЗАКАЗА */
-export interface IOrder extends IBuyer {
+export interface IOrderData extends IBuyer {
   total: Price; // стоимость товаров в корзине
   items: UUID[]; // массив идентификаторов товаров в корзине
 }

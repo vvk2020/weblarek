@@ -1,4 +1,4 @@
-import { IApi, IBasket, IBuyer, ILarekProducts, IOrder, IProduct, IPurchaseData } from "../../types";
+import { IApi, IBasket, IBuyer, ILarekProducts, IOrderData, IProduct, IPurchaseData } from "../../types";
 import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
 
 /** API 
@@ -16,6 +16,14 @@ export class LarekAPI {
     this._buyer = buyer;
   }
 
+  /** Формирование данных для тела запроса */
+  get orderData(): IOrderData {
+    return {
+      ...this._buyer.data,
+      ...this._basket.order,
+    } as IOrderData;
+  }
+
   /** Запрос списка товаров из ларька (с сервера) */
   public getShopProducts(): Promise<ILarekProducts> {
     return this._api.get<ILarekProducts>(URI_PRODUCTS);
@@ -25,10 +33,7 @@ export class LarekAPI {
   placeOrder(): Promise<IPurchaseData> {
     return this._api.post<IPurchaseData>(
       URI_ORDER,
-      {
-        ...this._buyer.data,
-        ...this._basket.order,
-      },
+      this.orderData,
       'POST'
     );
   }
