@@ -5,22 +5,22 @@ import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
  * Специализированный класс для работы с API WEBLAREK  
  * (работа с товарами) */
 export class larekAPI {
-  #api: IApi;
+  protected _api: IApi;
   /** API-конструктор */
   constructor(api: IApi) {
-    this.#api = api;
+    this._api = api;
   }
 
   /** Запрос списка товаров из ларька (с сервера) */
   public getShopProducts(): Promise<ILarekProducts> {
-    return this.#api.get<ILarekProducts>(
+    return this._api.get<ILarekProducts>(
       URI_PRODUCTS
     );
   }
 
   /** Запрос на оформление заказа (покупки) */
   placeOrder(orderData: IOrderData): Promise<IPurchaseData> {
-    return this.#api.post<IPurchaseData>(
+    return this._api.post<IPurchaseData>(
       URI_ORDER,
       orderData,
       'POST'

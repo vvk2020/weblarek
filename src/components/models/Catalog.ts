@@ -7,15 +7,15 @@ import { ProductsList } from "./ProductsList";
 export class Catalog extends ProductsList implements ICatalog {
 
   /** Товар, выбранный для подробного отображения */
-  #preview: IProduct | undefined = undefined;
+  protected _preview: IProduct | undefined = undefined;
 
   /** Товар для подробного отображения */
   set preview(productId: UUID) {
-    this.#preview = this.getItemByKey(productId);
+    this._preview = this.getItemByKey(productId);
   }
 
   get preview(): IProduct | undefined {
-    return this.#preview;
+    return this._preview;
   }
 
   /** Получение товара по идентификатору */
