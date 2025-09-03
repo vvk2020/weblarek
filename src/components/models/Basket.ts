@@ -22,14 +22,6 @@ export class Basket<T extends { readonly id: UUID; price: Price }> extends Catal
       0)
   }
 
-  /** Данные заказа */
-  get order(): Omit<IOrderData, keyof IBuyer> {
-    return {
-      total: this.total, // стоимость товаров в корзине
-      items: this.getItemsIds(), // массив идентификаторов товаров в корзине
-    }
-  }
-
   /** Добавление товара из каталога в корзину по его ключу  
    * Проверяется наличие товара по идентификатору в каталоге и цены (не null) */
   public addItemByKey(id: UUID): void {
@@ -46,6 +38,14 @@ export class Basket<T extends { readonly id: UUID; price: Price }> extends Catal
   /** Получение массива идентификаторов товаров в корзине */
   getItemsIds(): UUID[] {
     return this.items.map(item => item.id)
+  }
+
+  /** Данные заказа */
+  get order(): Omit<IOrderData, keyof IBuyer> {
+    return {
+      total: this.total, // стоимость товаров в корзине
+      items: this.getItemsIds(), // массив идентификаторов товаров в корзине
+    }
   }
 
 }

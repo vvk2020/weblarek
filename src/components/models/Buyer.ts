@@ -60,6 +60,7 @@ export class Buyer implements IBuyer {
   }
 
 
+  /** Получение данных корзины для оформления заказа (покупки) */
   get data(): Omit<IBuyer, 'data'> {
     return {
       payment: this._payment,

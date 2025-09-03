@@ -2,8 +2,7 @@ import { IApi, IBasket, IBuyer, ILarekProducts, IOrderData, IProduct, IPurchaseD
 import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
 
 /** API 
- * Специализированный класс для работы с API WEBLAREK  
- * (работа с товарами) */
+ * Специализированный класс для работы с API WEBLAREK (работа с товарами) */
 export class LarekAPI {
   protected _api: IApi;
   protected _basket: IBasket<IProduct>;
@@ -34,7 +33,7 @@ export class LarekAPI {
     return this._api.post<IPurchaseData>(
       URI_ORDER,
       this.orderData,
-      'POST'
+      'POST' 
     );
   }
 }

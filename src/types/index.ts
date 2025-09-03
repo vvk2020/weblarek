@@ -33,7 +33,7 @@ export interface ICatalog<T> {
 }
 
 /** КОРЗИНА ТОВАРОВ */
-export interface IBasket<T extends { price: Price }> extends ICatalog<T> {
+export interface IBasket<T> extends ICatalog<T> {
   total: Price; // стоимость корзины
   order: Omit<IOrderData, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
   addItemByKey(id: UUID): void; // метод добавления товара в корзину
