@@ -70,7 +70,6 @@ export class Buyer implements IBuyer {
     }
   }
 
-
   /** Очистка всех данных покупателя */
   public clear() {
     this._payment = undefined;
