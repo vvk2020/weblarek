@@ -21,7 +21,7 @@ const catalog = new Catalog<IProduct>();
 catalog.items = apiProducts.items; // сохранение массива товаров
 catalog.selectedItem = "b06cde61-912f-4663-9751-09956c0eed67"; // сохранение товара для подробного отображения
 
-console.groupCollapsed('КАТАЛОГ ТОВАРОВ');
+console.group('КАТАЛОГ ТОВАРОВ');
 console.log('Каталог товаров:\n', catalog);
 console.log('Массив товаров каталога:\n', catalog.items); // получение массива товаров
 console.log('Выбранный товар каталога:\n', catalog.selectedItem); // получение товара для подробного отображения
@@ -40,7 +40,7 @@ basket.addItemByKey("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"); // price = 1450
 basket.delItem("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"); // удаление товара по id
 // basket.clear(); // очистка корзины
 
-console.groupCollapsed('КОЗИНА ТОВАРОВ');
+console.group('КОЗИНА ТОВАРОВ');
 console.log('Корзина товаров:\n', basket);
 console.log('Массив товаров в корзине:\n', basket.items);
 console.log('Расчет стоимости товаров в корзине:', basket.total);
@@ -71,7 +71,7 @@ b2 = {
   address: 'Питер'
 }
 
-console.groupCollapsed('ПОКУПАТЕЛЬ');
+console.group('ПОКУПАТЕЛЬ');
 console.group('ДАННЫЕ');
 console.log('Покупатель:', buyer);
 console.log('Способ оплаты:', buyer.payment);
@@ -93,7 +93,7 @@ console.groupEnd(); // ПОКУПАТЕЛЬ
 
 const api = new Api(API_URL);
 const productsAPI = new LarekAPI(api, basket, buyer);
-console.groupCollapsed('API');
+console.group('API');
 productsAPI.getShopProducts()
   .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
   .catch((err: Response) => console.error(err));
