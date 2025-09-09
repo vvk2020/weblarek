@@ -91,7 +91,7 @@ productsAPI.getShopProducts()
   .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
   .catch((err: Response) => console.error(err));
 productsAPI.placeOrder()
-  .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
+  .then((data: IPurchaseData) => console.log('Заказ оформлен успешно+++++\n', data))
   .catch((err: Response) => console.error(err));
 
 setTimeout(() => {

@@ -9,7 +9,7 @@ export class Basket extends Catalog implements IBasket {
   protected _catalog: ICatalog; // каталог с товарами
 
   /** Конструктор экземпляра корзины товаров, принимающий в качестве аргумента  
-   * экземпляр каталога товаров, реализующий ICatalog */
+   * экземпляр каталога товаров */
   constructor(catalog: ICatalog) {
     super();
     this._catalog = catalog;
@@ -23,15 +23,14 @@ export class Basket extends Catalog implements IBasket {
   }
 
   /** Добавление товара из каталога в корзину по его ключу  
-   * Проверяется наличие товара по идентификатору в каталоге 
-   * и цены (не null) */
+   * (проверяется наличие товара по идентификатору в каталоге и цены по !null) */
   public addItemById(id: string): void {
     const item = this._catalog.getItemById(id);
     if (item && item.price) this.addItem(item);
   }
 
-  /** Удаление из корзины товара с указанным идентификатором id.
-   * Предварительно проверяется его наличие в корзине. */
+  /** Удаление из корзины товара с указанным идентификатором id  
+   * (предварительно проверяется его наличие в корзине) */
   public delItemById(id: string): void {
     this.removeItemById(id);
   }

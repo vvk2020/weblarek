@@ -16,19 +16,20 @@ export interface IProduct {
   price: Price; // цена
 }
 
-export type Products = { [id: string]: IProduct }; // объект-хранилище продуктов
+/** ХРАНИЛИЩЕ ТОВАРОВ */
+export type Storage = { [id: string]: IProduct };
 
 /** КАТАЛОГ ТОВАРОВ */
 export interface ICatalog {
-  items: IProduct[]; // массив предметов в каталоге
-  size: number; // количество предметов в каталоге
-  selectedItem: IProduct | undefined; // предмет, выбранный из каталога
-  addItem(item: IProduct): void; // метод добавления предмета в каталог
-  addItems(items: IProduct[]): void; // метод добавления массива предметов в каталоге
-  getItemById(id: string): IProduct | undefined; // метод вывода предмета из каталога по его ключу
-  removeItemById(id: string): boolean; // метод удаления предмета из каталога по его ключу
+  items: IProduct[]; // массив товаров в каталоге
+  size: number; // количество товаров в каталоге
+  selectedItem: IProduct | undefined; // товар, выбранный из каталога
+  addItem(item: IProduct): void; // метод добавления товара в каталог
+  addItems(items: IProduct[]): void; // метод добавления массива товаров в каталог
+  getItemById(id: string): IProduct | undefined; // метод вывода товара из каталога по его id
+  removeItemById(id: string): boolean; // метод удаления товара из каталога по его id
   clear(): void; // метод очистки каталога
-  hasItem(id: string): boolean; // метод проверки наличия предмета в списке по его ключу
+  hasItem(id: string): boolean; // метод проверки наличия товара в каталоге по его id
 }
 
 /** КОРЗИНА ТОВАРОВ */
@@ -61,9 +62,9 @@ export interface IApi {
 }
 
 /** ОТВЕТ ПРИ УСПЕШНОМ ЗАПРОСЕ СПИСКА ТОВАРОВ */
-export interface ILarekProducts<T = IProduct> {
+export interface ILarekProducts {
   total: number;
-  items: T[];
+  items: IProduct[];
 }
 
 /** ДАННЫЕ, ПЕРЕДАВАЕМЫЕ В ЗАПРОСЕ ПРИ ОФОРМЛЕНИИ ЗАКАЗА */

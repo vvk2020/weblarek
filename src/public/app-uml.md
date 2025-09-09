@@ -2,62 +2,10 @@
 
 ```mermaid
 classDiagram
-    class ApiPostMethods {
-        <<type>>
-        "POST" | "PUT" | "DELETE"
-    }
-
-    class IApi {
-        <<interface>>
-        +get<T>(uri: string): Promise~T~
-        +post<T>(uri: string, data: object, method?: ApiPostMethods): Promise~T~
-    }
-
-    class ILarekProducts {
-        <<interface>>
-        +total: number
-        +items: IProduct[]
-    }
-
-    class IProduct {
-        <<interface>>
-        +id: UUID$
-        +description: string
-        +image: string
-        +title: string
-        +category: string
-        +price: Price | null
-    }
-
-    class IOrderData {
-        <<interface>>
-        +total: Price
-        +items: UUID[]
-    }
-
-    class IBuyer {
-        <<interface>>
-        +payment: TPayment
-        +email: string
-        +phone: string
-        +address: string
-        +data?: IBuyerWithoutData (readonly)
-    }
-
-    class UUID {
-        <<type>>
-        string pattern
-    }
-
-    class IPurchaseData {
-        <<interface>>
-        +id: UUID[]
-        +total: Price
-    }
-
+    %% ========= БАЗОВЫЕ ТИПЫ =========
     class Price {
         <<type>>
-        number  | null
+        number | null
     }
 
     class TPayment {
@@ -65,162 +13,161 @@ classDiagram
         "online" | "cash" | undefined
     }
 
-    class ICatalog~T~ {
-        <<interface>>
-        +items: T[]
-        +size: number
-        +selectedItem: T | undefined
-        +addItem(item: T) void
-        +addItems(items: T[]) void
-        +getItemByKey(id: UUID) T | undefined
-        +removeItemByKey(id: UUID) boolean
-        +clear() void
-        +hasItem(id: UUID) boolean
-    }
-
-    class IBasket~T~ {
-        <<interface>>
-        +total: Price
-        +order: Omit~IOrderData, keyof IBuyer~
-        +addItemByKey(id: UUID) void
-        +delItem(id: UUID) void
-        +getItemsIds() UUID[]
-    }
-
-    class Omit~IBuyer, 'data'~ {
+    class ApiPostMethods {
         <<type>>
+        'POST' | 'PUT' | 'DELETE'
     }
 
-    class Catalog~T~ {
+    class Storage {
+        <<type>>
+        [id: string]: IProduct
+        ---
+        Dictionary<string, IProduct>
+    }
+
+    %% ========= ИНТЕРФЕЙСЫ =========
+    class IProduct {
+        <<interface>>
+        + id: string
+        + description: string
+        + image: string
+        + title: string
+        + category: string
+        + price: Price
+    }
+
+    class ICatalog {
+        <<interface>>
+        + items: IProduct[]
+        + size: number
+        + selectedItem: IProduct
+        + addItem(item: IProduct): void
+        + addItems(items: IProduct[]): void
+        + getItemById(id: string): IProduct
+        + removeItemById(id: string): boolean
+        + clear(): void
+        + hasItem(id: string): boolean
+    }
+
+    class IBasket {
+        <<interface>>
+        + total: Price
+        + order: Omit~IOrderData, keyof IBuyer~
+        + addItemById(id: string): void
+        + delItemById(id: string): void
+        + getItemsIds(): string[]
+    }
+
+    class IBuyer {
+        <<interface>>
+        + payment: TPayment
+        + email: string
+        + phone: string
+        + address: string
+        + data?: Omit~IBuyer, 'data'~
+    }
+
+    class IApi {
+        <<interface>>
+        + get<T>(uri: string): Promise<T>
+        + post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>
+    }
+
+    class IOrderData {
+        <<interface>>
+        + total: Price
+        + items: string[]
+        + payment: TPayment
+        + email: string
+        + phone: string
+        + address: string
+    }
+
+    class IPurchaseData {
+        <<interface>>
+        + id: string[]
+        + total: Price
+    }
+
+    %% ========= КЛАССЫ =========
+    class Catalog {
         <<class>>
-        -_items: Map~UUID, T~
-        -_selectedItem: T | undefined
-        +constructor(items?: T[])
-        +addItem(item: T) void
-        +addItems(items: T[]) void
-        +getItemByKey(id: UUID) T | undefined
-        +clear() void
-        +removeItemByKey(id: UUID) boolean
-        +hasItem(id: UUID) boolean
-        +size: number
-        +items: T[]
-        +items=(items: T[]) void
-        +selectedItem: T | undefined
-        +selectedItem=(id: UUID | undefined) void
+        - _items: Storage
+        - _selectedItem: IProduct
+        + addItem(item: IProduct): void
+        + addItems(items: IProduct[]): void
+        + getItemById(id: string): IProduct
+        + clear(): void
+        + size: number
+        + removeItemById(id: string): boolean
+        + items: IProduct[]
+        + hasItem(id: string): boolean
+        + selectedItem: IProduct
     }
 
-    class Map~K, V~ {
-        <<built-in>>
-        +set(key: K, value: V) void
-        +get(key: K) V | undefined
-        +delete(key: K) boolean
-        +has(key: K) boolean
-        +clear() void
-        +size: number
-        +values() Iterable~V~
-    }
-
-    class Basket~T~ {
+    class Basket {
         <<class>>
-        -_catalog: ICatalog~T~
-        +constructor(catalog: ICatalog~T~)
-        +addItemByKey(id: UUID) void
-        +delItem(id: UUID) void
-        +getItemsIds() UUID[]
-        +total(): Price
-        +order(): Omit~IOrderData, keyof IBuyer~
+        - _catalog: ICatalog
+        + total: Price
+        + addItemById(id: string): void
+        + delItemById(id: string): void
+        + getItemsIds(): string[]
+        + order: Omit~IOrderData, keyof IBuyer~
     }
 
     class Buyer {
         <<class>>
-        -_payment: TPayment
-        -_email: string
-        -_phone: string
-        -_address: string
-        +constructor(buyer?: Partial~IBuyer~)
-        +payment: TPayment
-        +payment=(payment: TPayment) void
-        +email: string
-        +email=(email: string) void
-        +phone: string
-        +phone=(phone: string) void
-        +address: string
-        +address=(address: string) void
-        +data: Omit~IBuyer, 'data'~
-        +clear() void
-        +isEmailValid() boolean
-        +isPhoneValid() boolean
-        +isAddressValid() boolean
-        +isPaymentValid() boolean
-        +isAllValid() boolean
-    }
-
-    class Partial~IBuyer~ {
-        <<utility type>>
-        +payment?: TPayment
-        +email?: string
-        +phone?: string
-        +address?: string
-    }
-
-    class Omit~IBuyer, 'data'~ {
-        <<utility type>>
-        +payment: TPayment
-        +email: string
-        +phone: string
-        +address: string
+        - _payment: TPayment
+        - _email: string
+        - _phone: string
+        - _address: string
+        + payment: TPayment
+        + email: string
+        + phone: string
+        + address: string
+        + data: Omit~IBuyer, 'data'~
+        + clear(): void
+        + isEmailValid(): boolean
+        + isPhoneValid(): boolean
+        + isAddressValid(): boolean
+        + isPaymentValid(): boolean
+        + isAllValid(): boolean
     }
 
     class LarekAPI {
         <<class>>
-        -_api: IApi
-        -_basket: IBasket~IProduct~
-        -_buyer: IBuyer
-        +constructor(api: IApi, basket: IBasket~IProduct~, buyer: IBuyer)
-        +getShopProducts() Promise~ILarekProducts~
-        +placeOrder() Promise~IPurchaseData~
-        +orderData: IOrderData
+        - _api: IApi
+        - _basket: IBasket
+        - _buyer: IBuyer
+        + orderData: IOrderData
+        + getShopProducts(): Promise<ILarekProducts>
+        + placeOrder(): Promise<IPurchaseData>
     }
 
-    note for Catalog "T extends { readonly id: UUID }"
-    note for Basket~T~ "T extends { readonly id: UUID; price: Price }"
+    %% ========= НАСЛЕДОВАНИЯ =========
+    ICatalog <|.. Catalog
+    ICatalog <|.. IBasket
+    Catalog <|-- Basket
+    IBasket <|.. Basket
+    IBuyer <|.. Buyer
 
-    IApi ..> ApiPostMethods : method
-    ILarekProducts --> IProduct : contains
-    IPurchaseData --> "*" UUID : id
-    IPurchaseData --> "1" Price : total
-	IBuyer <|-- IOrderData : extends
-    IOrderData --> UUID : items[]
-	IProduct --> UUID : id
-    IProduct --> Price : price
-    ICatalog --> UUID : use
-	IBasket --|> ICatalog : extends
-    IBasket --> Price : use
-    IBasket --> UUID : use
-    IBasket --> IOrderData : use
-    IBasket --> IBuyer : use
-	IBuyer --> TPayment : payment
-    IBuyer --> Omit~IBuyer, 'data'~ : data
-    Omit~IBuyer, 'data'~ --> TPayment : payment
-	Basket --|> Catalog : extends
-    Basket ..|> IBasket : implements
-    Basket --> ICatalog : composition
-    Basket ..> Price : uses
-    Basket ..> UUID : uses
-    Basket ..> IOrderData : uses
-    Basket ..> IBuyer : uses
-	Buyer --|> IBuyer : implements
-    Buyer ..> TPayment : uses
-    Buyer ..> Partial~IBuyer~ : constructor parameter
-    Buyer ..> Omit~IBuyer, 'data'~ : return type
-	LarekAPI --> IApi : composition
-    LarekAPI --> IBasket~IProduct~ : composition
-    LarekAPI --> IBuyer : composition
-    LarekAPI ..> ILarekProducts : returns
-    LarekAPI ..> IPurchaseData : returns
-    LarekAPI ..> IOrderData : uses
-	Catalog --|> ICatalog : implements
-    Catalog --> Map~UUID, T~ : use
-    Catalog ..> UUID : uses for keys
-    ICatalog ..> UUID : uses for methods
+    %% ========= СВЯЗИ =========
+    IApi --> ApiPostMethods : uses
+    Storage --> IProduct : values
+    Catalog --> Storage : uses
+    Catalog --> IProduct
+    Basket --> Catalog
+    Basket --> ICatalog
+    Buyer --> TPayment
+    LarekAPI --> IApi
+    LarekAPI --> IBasket
+    LarekAPI --> IBuyer
+
+    %% ========= СВЯЗИ С Price =========
+    IProduct --> Price
+    IBasket --> Price
+    IOrderData --> Price
+    IPurchaseData --> Price
+    Basket --> Price
+
 ```
