@@ -1,8 +1,5 @@
 //! СЛОЙ ДАННЫХ ================================================
 
-/** УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ТОВАРА */
-export type UUID = `${string}-${string}-${string}-${string}-${string}`;
-
 /** СТОИМОСТЬ ТОВАРА */
 export type Price = number | null;
 
@@ -11,7 +8,7 @@ export type TPayment = "online" | "cash" | undefined;
 
 /** ТОВАР */
 export interface IProduct {
-  readonly id: UUID; // идентификатор
+  readonly id: string; // идентификатор
   description: string; // описание
   image: string; // изображение
   title: string; // название
@@ -26,19 +23,19 @@ export interface ICatalog<T> {
   selectedItem: T | undefined; // предмет, выбранный из каталога
   addItem(item: T): void; // метод добавления предмета в каталог
   addItems(items: T[]): void; // метод добавления массива предметов в каталоге
-  getItemByKey(id: UUID): T | undefined; // метод вывода предмета из каталога по его ключу
-  removeItemByKey(id: UUID): boolean; // метод удаления предмета из каталога по его ключу
+  getItemByKey(id: string): T | undefined; // метод вывода предмета из каталога по его ключу
+  removeItemByKey(id: string): boolean; // метод удаления предмета из каталога по его ключу
   clear(): void; // метод очистки каталога
-  hasItem(id: UUID): boolean; // метод проверки наличия предмета в списке по его ключу
+  hasItem(id: string): boolean; // метод проверки наличия предмета в списке по его ключу
 }
 
 /** КОРЗИНА ТОВАРОВ */
 export interface IBasket<T> extends ICatalog<T> {
   total: Price; // стоимость корзины
   order: Omit<IOrderData, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
-  addItemByKey(id: UUID): void; // метод добавления товара в корзину
-  delItem(id: UUID): void // метод удаления товара из корзины
-  getItemsIds(): UUID[]; // массива идентификаторов товаров в корзине
+  addItemByKey(id: string): void; // метод добавления товара в корзину
+  delItem(id: string): void // метод удаления товара из корзины
+  getItemsIds(): string[]; // массива идентификаторов товаров в корзине
 }
 
 /** ПОКУПАТЕЛЬ */
@@ -70,11 +67,11 @@ export interface ILarekProducts<T = IProduct> {
 /** ДАННЫЕ, ПЕРЕДАВАЕМЫЕ В ЗАПРОСЕ ПРИ ОФОРМЛЕНИИ ЗАКАЗА */
 export interface IOrderData extends IBuyer {
   total: Price; // стоимость товаров в корзине
-  items: UUID[]; // массив идентификаторов товаров в корзине
+  items: string[]; // массив идентификаторов товаров в корзине
 }
 
 /** ОТВЕТ СЕРВЕРА ПРИ УСПЕШНОМ ОФОРМЛЕНИИ ЗАКАЗА (ПОКУПКЕ) */
 export interface IPurchaseData {
-  id: UUID[]; // идентификатор заказа
+  id: string[]; // идентификатор заказа
   total: Price; // стоимость покупки
 };

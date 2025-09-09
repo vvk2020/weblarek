@@ -1,15 +1,15 @@
-import { ICatalog, UUID } from "../../types";
+import { ICatalog } from "../../types";
 
 /** КАТАЛОГ ОБЪЕКТОВ  
 * Класс универсального переиспользуемого хранилища объектов типа `T`, имеющих  
-* readonly-свойство `id` типа `UUID` - уникальный ключ для CRUD-операций с  
-* данными хранилища (каталога товаров). */
-export class Catalog<T extends { readonly id: UUID }> implements ICatalog<T> {
-  protected _items: Map<UUID, T>; // коллекция объектов
+* readonly-свойство `id` - уникальный ключ для CRUD-операций с данными хранилища 
+* (каталога товаров). */
+export class Catalog<T extends { readonly id: string }> implements ICatalog<T> {
+  protected _items: Map<string, T>; // коллекция объектов
   protected _selectedItem?: T; // объект, выбранный из каталога
 
   constructor(items?: T[]) {
-    this._items = new Map<UUID, T>();
+    this._items = new Map<string, T>();
     if (items?.length) {
       this.items = items;
     }
@@ -28,7 +28,7 @@ export class Catalog<T extends { readonly id: UUID }> implements ICatalog<T> {
   }
 
   /** Получение объекта по его ключу из каталога */
-  public getItemByKey(id: UUID): T | undefined {
+  public getItemByKey(id: string): T | undefined {
     return this._items.get(id);
   }
 
@@ -44,7 +44,7 @@ export class Catalog<T extends { readonly id: UUID }> implements ICatalog<T> {
   }
 
   /** Удаление объекта из каталога по его ключу */
-  public removeItemByKey(id: UUID): boolean {
+  public removeItemByKey(id: string): boolean {
     return this._items.delete(id);
   }
 
@@ -61,12 +61,12 @@ export class Catalog<T extends { readonly id: UUID }> implements ICatalog<T> {
   }
 
   /** Проверка наличия объекта в каталоге по его ключу */
-  public hasItem(id: UUID): boolean {
+  public hasItem(id: string): boolean {
     return this._items.has(id);
   }
 
   /** Выбранный объект */
-  set selectedItem(id: UUID | undefined) {
+  set selectedItem(id: string | undefined) {
     if (id && this.hasItem(id)) this._selectedItem = this.getItemByKey(id);
     else this._selectedItem = undefined;
   }
