@@ -1,15 +1,15 @@
-import { IApi, IBasket, IBuyer, ILarekProducts, IOrderData, IProduct, IPurchaseData } from "../../types";
+import { IApi, IBasket, IBuyer, ILarekProducts, IOrderData, IPurchaseData } from "../../types";
 import { URI_PRODUCTS, URI_ORDER } from "../../utils/constants";
 
 /** API 
  * Специализированный класс для работы с API WEBLAREK (работа с товарами) */
 export class LarekAPI {
   protected _api: IApi;
-  protected _basket: IBasket<IProduct>;
+  protected _basket: IBasket;
   protected _buyer: IBuyer;
 
   /** API-конструктор */
-  constructor(api: IApi, basket: IBasket<IProduct>, buyer: IBuyer) {
+  constructor(api: IApi, basket: IBasket, buyer: IBuyer) {
     this._api = api;
     this._basket = basket;
     this._buyer = buyer;
@@ -33,7 +33,7 @@ export class LarekAPI {
     return this._api.post<IPurchaseData>(
       URI_ORDER,
       this.orderData,
-      'POST' 
+      'POST'
     );
   }
 }

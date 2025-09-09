@@ -16,25 +16,27 @@ export interface IProduct {
   price: Price; // цена
 }
 
+export type Products = { [id: string]: IProduct }; // объект-хранилище продуктов
+
 /** КАТАЛОГ ТОВАРОВ */
-export interface ICatalog<T> {
-  items: T[]; // массив предметов в каталоге
+export interface ICatalog {
+  items: IProduct[]; // массив предметов в каталоге
   size: number; // количество предметов в каталоге
-  selectedItem: T | undefined; // предмет, выбранный из каталога
-  addItem(item: T): void; // метод добавления предмета в каталог
-  addItems(items: T[]): void; // метод добавления массива предметов в каталоге
-  getItemByKey(id: string): T | undefined; // метод вывода предмета из каталога по его ключу
-  removeItemByKey(id: string): boolean; // метод удаления предмета из каталога по его ключу
+  selectedItem: IProduct | undefined; // предмет, выбранный из каталога
+  addItem(item: IProduct): void; // метод добавления предмета в каталог
+  addItems(items: IProduct[]): void; // метод добавления массива предметов в каталоге
+  getItemById(id: string): IProduct | undefined; // метод вывода предмета из каталога по его ключу
+  removeItemById(id: string): boolean; // метод удаления предмета из каталога по его ключу
   clear(): void; // метод очистки каталога
   hasItem(id: string): boolean; // метод проверки наличия предмета в списке по его ключу
 }
 
 /** КОРЗИНА ТОВАРОВ */
-export interface IBasket<T> extends ICatalog<T> {
+export interface IBasket extends ICatalog {
   total: Price; // стоимость корзины
   order: Omit<IOrderData, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
-  addItemByKey(id: string): void; // метод добавления товара в корзину
-  delItem(id: string): void // метод удаления товара из корзины
+  addItemById(id: string): void; // метод добавления товара в корзину
+  delItemById(id: string): void // метод удаления товара из корзины
   getItemsIds(): string[]; // массива идентификаторов товаров в корзине
 }
 
