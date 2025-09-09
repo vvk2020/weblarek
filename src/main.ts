@@ -9,7 +9,7 @@ import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
 import { API_URL } from './utils/constants';
-import { LarekAPI } from './components/models/larekAPI';
+import { LarekAPI } from './components/models/LarekAPI';
 
 //! ТЕСТЫ ===========================================================
 
