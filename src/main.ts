@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { IBuyer, ILarekProducts, IPurchaseData } from './types';
+import { IBuyer, ILarekProducts, IOrderData, IPurchaseData } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
@@ -85,12 +85,23 @@ console.groupEnd(); // ПОКУПАТЕЛЬ
 //* API ----------------------------------------------
 
 const api = new Api(API_URL);
-const productsAPI = new LarekAPI(api, basket, buyer);
+const orderData: IOrderData = // данные для запроса на оформление заказа
+{
+  // Данные покупателя
+  payment: buyer.payment,
+  email: buyer.email,
+  phone: buyer.phone,
+  address: buyer.address,
+  // Данные корзины
+  total: basket.total,
+  items: Object.values(basket.items).map(item => item.id),
+};
+const productsAPI = new LarekAPI(api);
 console.group('API');
 productsAPI.getShopProducts()
   .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
   .catch((err: Response) => console.error(err));
-productsAPI.placeOrder()
+productsAPI.placeOrder(orderData)
   .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
   .catch((err: Response) => console.error(err));
 

@@ -129,12 +129,9 @@ classDiagram
 
     class LarekAPI {
         -IApi _api
-        -IBasket _basket
-        -IBuyer _buyer
-        +LarekAPI(api: IApi, basket: IBasket, buyer: IBuyer)
-        +IOrderData orderData
+        +LarekAPI(api: IApi)
         +getShopProducts() Promise~ILarekProducts~
-        +placeOrder() Promise~IPurchaseData~
+        +placeOrder(orderData: IOrderData) Promise~IPurchaseData~
     }
 
     %% Наследование интерфейсов
@@ -148,11 +145,9 @@ classDiagram
     %% Ассоциации
     Basket "1" -- "*" IProduct : contains
     Catalog "1" -- "*" IProduct : contains
-    LarekAPI "1" -- "1" IBasket : uses
-    LarekAPI "1" -- "1" IBuyer : uses
     LarekAPI "1" -- "1" IApi : uses
 
-    %% Зависимости (добавлены связи с ILarekProducts и ApiPostMethodsType)
+    %% Зависимости
     Basket ..> StorageType
     Catalog ..> StorageType
     IOrderData ..> TPaymentType
@@ -161,9 +156,10 @@ classDiagram
     IProduct ..> PriceType
     Buyer ..> TPaymentType
     
-    %% Связи LarekAPI с ILarekProducts
-    LarekAPI ..> ILarekProducts : returns
-    LarekAPI ..> IPurchaseData : returns
+    %% Связи LarekAPI с возвращаемыми типами
+    LarekAPI ..> ILarekProducts : returns from getShopProducts()
+    LarekAPI ..> IPurchaseData : returns from placeOrder()
+    LarekAPI ..> IOrderData : accepts in placeOrder()
     
     %% Связи IApi с типами
     IApi ..> ApiPostMethodsType : uses in post method
@@ -171,9 +167,6 @@ classDiagram
     
     %% Связи ILarekProducts с IProduct
     ILarekProducts "1" -- "*" IProduct : contains items
-    
-    %% Связи методов LarekAPI
-    LarekAPI ..> IOrderData : creates
 
     %% Композиция
     IOrderData *-- IBuyer : extends
