@@ -17,10 +17,19 @@ export class LarekAPI {
 
   /** Формирование данных для тела запроса */
   get orderData(): IOrderData {
+    // Массив id товаров корзины
+    const ids: string[] = Object.values(this._basket.items)
+      .map(item => item.id);
     return {
-      ...this._buyer.data,
-      ...this._basket.order,
-    } as IOrderData;
+      // Данные покупателя
+      payment: this._buyer.payment,
+      email: this._buyer.email,
+      phone: this._buyer.phone,
+      address: this._buyer.address,
+      // Данные корзины
+      total: this._basket.total,
+      items: ids,
+    };
   }
 
   /** Запрос списка товаров из ларька (с сервера) */

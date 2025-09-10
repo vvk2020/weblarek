@@ -22,23 +22,18 @@ export type Storage = { [id: string]: IProduct };
 /** КАТАЛОГ ТОВАРОВ */
 export interface ICatalog {
   items: IProduct[]; // массив товаров в каталоге
-  size: number; // количество товаров в каталоге
   selectedItem: IProduct | undefined; // товар, выбранный из каталога
-  addItem(item: IProduct): void; // метод добавления товара в каталог
   addItems(items: IProduct[]): void; // метод добавления массива товаров в каталог
   getItemById(id: string): IProduct | undefined; // метод вывода товара из каталога по его id
-  removeItemById(id: string): boolean; // метод удаления товара из каталога по его id
-  clear(): void; // метод очистки каталога
-  hasItem(id: string): boolean; // метод проверки наличия товара в каталоге по его id
 }
 
 /** КОРЗИНА ТОВАРОВ */
-export interface IBasket extends ICatalog {
-  total: Price; // стоимость корзины
-  order: Omit<IOrderData, keyof IBuyer>; // часть данных заказа, отправляемых в запросе
-  addItemById(id: string): void; // метод добавления товара в корзину
+export interface IBasket {
+  items: IProduct[]; // массив товаров в корзине
+  itemCount: number; // количество товаров в корзине
+  total: Price; // стоимость товаров в корзине
+  addItem(item: IProduct): void; // метод добавления товара в корзину
   delItemById(id: string): void // метод удаления товара из корзины
-  getItemsIds(): string[]; // массива идентификаторов товаров в корзине
 }
 
 /** ПОКУПАТЕЛЬ */
@@ -47,7 +42,6 @@ export interface IBuyer {
   email: string; // email
   phone: string; // номер телефона
   address: string; // адрес
-  readonly data?: Omit<IBuyer, 'data'>; // все данные IBuyer
 }
 
 //! КОММУНИКАЦИОННЫЙ СЛОЙ ======================================
@@ -61,7 +55,7 @@ export interface IApi {
   post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
-/** ОТВЕТ ПРИ УСПЕШНОМ ЗАПРОСЕ СПИСКА ТОВАРОВ */
+/** ОТВЕТ ПРИ УСПЕШНОМ ЗАПРОСЕ КАТАЛОГА ТОВАРОВ */
 export interface ILarekProducts {
   total: number;
   items: IProduct[];

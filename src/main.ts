@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { IBuyer, ILarekProducts, IProduct, IPurchaseData } from './types';
+import { IBuyer, ILarekProducts, IPurchaseData } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
@@ -24,19 +24,21 @@ catalog.selectedItem = "b06cde61-912f-4663-9751-09956c0eed67"; // сохране
 console.group('КАТАЛОГ ТОВАРОВ');
 console.log('Каталог товаров:\n', catalog);
 console.log('Массив товаров каталога:\n', catalog.items); // получение массива товаров
-console.log('Выбранный товар каталога:\n', catalog.selectedItem); // получение товара для подробного отображения
-console.log('Выбор товара по id="412bcf81-7e75-4e70-bdb9-d3c73c9803b7":\n',
-  catalog.getItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7")); // получение товара по id
+console.log('Выбранный товар каталога:', catalog.selectedItem); // получение товара для подробного отображения
+console.log(
+  'Товар с id="412bcf81-7e75-4e70-bdb9-d3c73c9803b7":',
+  catalog.getItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"
+  )); // получение товара по id
 console.groupEnd(); // КАТАЛОГ ТОВАРОВ
 
 //* КОРЗИНА ТОВАРОВ, ПРИВЯЗАННАЯ К КАТАЛОГУ ----------
 
-let basket = new Basket(catalog);
-// Добавление товаров по id
-basket.addItemById("854cef69-976d-4c2a-a18c-2aa45046c390"); // price = 750
-basket.addItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"); // price = 2500
-basket.addItemById("b06cde61-912f-4663-9751-09956c0eed67"); // price = null => не добавлен
-basket.addItemById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"); // price = 1450
+let basket = new Basket();
+// Добавление товаров из каталога catalog
+basket.addItem(catalog.getItemById("854cef69-976d-4c2a-a18c-2aa45046c390")); // price = 750
+basket.addItem(catalog.getItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7")); // price = 2500
+basket.addItem(catalog.getItemById("b06cde61-912f-4663-9751-09956c0eed67")); // price = null => не добавлен
+basket.addItem(catalog.getItemById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9")); // price = 1450
 basket.delItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"); // удаление товара по id
 // basket.clear(); // очистка корзины
 
@@ -44,14 +46,12 @@ console.group('КОЗИНА ТОВАРОВ');
 console.log('Корзина товаров:\n', basket);
 console.log('Массив товаров в корзине:\n', basket.items);
 console.log('Расчет стоимости товаров в корзине:', basket.total);
-console.log('Количество товаров в корзине:', basket.size);
+console.log('Количество товаров в корзине:', basket.itemCount);
 
 console.group('ПРОВЕРКА НАЛИЧИЯ ТОВАРА В КОРЗИНЕ');
 console.log('badId:', basket.hasItem("badId"));
 console.log('854cef69-976d-4c2a-a18c-2aa45046c390:', basket.hasItem("854cef69-976d-4c2a-a18c-2aa45046c390"));
 console.groupEnd(); // ПРОВЕРКА НАЛИЧИЯ ТОВАРА В КОРЗИНЕ
-
-console.log('Массив идентификаторов товаров в корзине:\n', basket.getItemsIds());
 console.groupEnd(); // КОЗИНА ТОВАРОВ
 
 //* ПОКУПАТЕЛЬ ---------------------------------------

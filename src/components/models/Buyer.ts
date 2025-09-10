@@ -20,54 +20,39 @@ export class Buyer implements IBuyer {
   }
 
   /** Определение способа оплаты */
-  set payment(payment: TPayment) {
-    this._payment = payment;
-  }
-
-  /** Получение способа оплаты покупателя */
   get payment() {
     return this._payment;
   }
 
-  /** Определение email */
-  set email(email: string) {
-    this._email = email;
+  set payment(payment: TPayment) {
+    this._payment = payment;
   }
 
-  /** Получение email покупателя */
+  /** email */
   get email() {
     return this._email;
   }
 
-  /** Определение номера телефона */
-  set phone(phone: string) {
-    this._phone = phone;
+  set email(email: string) {
+    this._email = email;
   }
 
-  /** Получение номера телефона покупателя */
+  /** Номер телефона */
   get phone() {
     return this._phone;
   }
 
-  /** Определение адреса покупателя */
-  set address(address: string) {
-    this._address = address;
+  set phone(phone: string) {
+    this._phone = phone;
   }
 
-  /** Получение адреса покупателя */
+  /** Адрес покупателя */
   get address() {
     return this._address;
   }
 
-
-  /** Получение данных корзины для оформления заказа (покупки) */
-  get data(): Omit<IBuyer, 'data'> {
-    return {
-      payment: this._payment,
-      email: this._email,
-      phone: this._phone,
-      address: this._address
-    }
+  set address(address: string) {
+    this._address = address;
   }
 
   /** Очистка всех данных покупателя */
@@ -79,32 +64,32 @@ export class Buyer implements IBuyer {
   }
 
   /** Валидация email */
-  public isEmailValid(): boolean {
-    return this._email.trim().length > 0;
+  public isEmailValid(): string {
+    return this._email.trim().length > 0 ? "" : "Email не указан";
   }
 
   /** Валидация номера телефона */
-  public isPhoneValid(): boolean {
-    return this._phone.trim().length > 0;
+  public isPhoneValid(): string {
+    return this._phone.trim().length > 0 ? "" : "Телефон не указан";
   }
 
   /** Валидация адреса покупателя */
-  public isAddressValid(): boolean {
-    return this._address.trim().length > 0;
+  public isAddressValid(): string {
+    return this._address.trim().length > 0 ? "" : "Адрес доставки не указан";
   }
 
   /** Валидация способа оплаты */
-  public isPaymentValid(): boolean {
-    return !!(this.payment);
+  public isPaymentValid(): string {
+    return !!(this._payment) ? "" : "Способ оплаты не выбран";
   }
 
   /** Валидация всех полей */
   public isAllValid(): boolean {
     return (
-      this.isPaymentValid() &&
-      this.isEmailValid() &&
-      this.isPhoneValid() &&
-      this.isAddressValid()
+      !!this.isPaymentValid() &&
+      !!this.isEmailValid() &&
+      !!this.isPhoneValid() &&
+      !!this.isAddressValid()
     )
   }
 

@@ -1,52 +1,57 @@
-import { IBasket, IBuyer, ICatalog, IOrderData, Price } from "../../types";
-import { Catalog } from "./Catalog";
+import { IBasket, IProduct, Price, Storage } from "../../types";
 
 /** КОРЗИНА ПРОДУКТОВ 
 * Класс, специализированный для работы со списком товаров.  
 * Расширяет класс ProductsList, реализует IBasket */
-export class Basket extends Catalog implements IBasket {
+export class Basket implements IBasket {
+  protected _items: Storage = {}; // хранилище товаров корзины
 
-  protected _catalog: ICatalog; // каталог с товарами
+  /** Массив товаров в корзине */
+  get items(): IProduct[] {
+    return Object.values(this._items);
+  }
 
-  /** Конструктор экземпляра корзины товаров, принимающий в качестве аргумента  
-   * экземпляр каталога товаров */
-  constructor(catalog: ICatalog) {
-    super();
-    this._catalog = catalog;
+  set items(items: IProduct[]) {
+    this.clear();
+    for (const item of items) {
+      this.addItem(item);
+    }
+  }
+
+  /** Получение количества товаров в корзине */
+  get itemCount(): number {
+    return Object.keys(this._items).length;
   }
 
   /** Расчет и получение стоимости корзины */
   get total(): Price {
-    return this.items.reduce(
+    return Object.values(this._items).reduce(
       (cost, item) => item.price ? cost + item.price : cost,
-      0)
+      0);
   }
 
-  /** Добавление товара из каталога в корзину по его ключу  
-   * (проверяется наличие товара по идентификатору в каталоге и цены по !null) */
-  public addItemById(id: string): void {
-    const item = this._catalog.getItemById(id);
-    if (item && item.price) this.addItem(item);
-  }
-
-  /** Удаление из корзины товара с указанным идентификатором id  
-   * (предварительно проверяется его наличие в корзине) */
-  public delItemById(id: string): void {
-    this.removeItemById(id);
-  }
-
-  /** Получение массива идентификаторов товаров в корзине */
-  getItemsIds(): string[] {
-    return Object.keys(this._items)
-    // this.items.map(item => item.id)
-  }
-
-  /** Данные заказа */
-  get order(): Omit<IOrderData, keyof IBuyer> {
-    return {
-      total: this.total, // стоимость товаров в корзине
-      items: this.getItemsIds(), // массив идентификаторов товаров в корзине
+  /** Добавление товара в корзину  
+   * 1. Если товар с таким же id существует, то он модифицируется
+   * 2. Товар должен иметь цену (!null) */
+  public addItem(item?: IProduct): void {
+    if (item && item.price) {
+      this._items[item.id] = item;
     }
   }
 
+  /** Удаление из корзины товара с указанным id  
+   * (возвращает false, если товар не найден или не может быть удален) */
+  public delItemById(id: string): boolean {
+    return (this.hasItem(id)) ? delete this._items[id] : false;
+  }
+
+  /** Проверка наличия товара в корзине по его id */
+  public hasItem(id: string): boolean {
+    return !!this._items[id];
+  }
+
+  /** Очистка корзины */
+  public clear(): void {
+    this._items = {};
+  }
 }
