@@ -74,12 +74,12 @@ classDiagram
 
     class TPaymentType {
         <<type>>
-        "online" | "cash" | undefined
+        online | cash | undefined
     }
 
     class ApiPostMethodsType {
         <<type>>
-        POST, PUT, DELETE
+        POST | PUT | DELETE
     }
 
     %% Классы
@@ -111,6 +111,7 @@ classDiagram
         -string _phone
         -string _address
         +Buyer(buyer?: Partial~IBuyer~)
+        +set(field: keyof IBuyer, value: any) void
         +TPaymentType payment
         +string email
         +string phone
@@ -150,16 +151,16 @@ classDiagram
     IProduct ..> PriceType
     Buyer ..> TPaymentType
     
-    %% Связи LarekAPI с возвращаемыми типами
+    %% Связи LarekAPI
     LarekAPI ..> ILarekProducts : returns
     LarekAPI ..> IPurchaseData : returns
     LarekAPI ..> IOrderData : accepts
     
-    %% Связи IApi с типами
+    %% Связи IApi
     IApi ..> ApiPostMethodsType : uses
     IApi ..> ILarekProducts : returns
     
-    %% Связи ILarekProducts с IProduct
+    %% Связи ILarekProducts
     ILarekProducts "1" -- "*" IProduct : contains
 
     %% Композиция
