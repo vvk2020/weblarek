@@ -16,9 +16,6 @@ export interface IProduct {
   price: Price; // цена
 }
 
-/** ХРАНИЛИЩЕ ТОВАРОВ */
-export type Storage = { [id: string]: IProduct };
-
 /** КАТАЛОГ ТОВАРОВ */
 export interface ICatalog {
   items: IProduct[]; // массив товаров в каталоге

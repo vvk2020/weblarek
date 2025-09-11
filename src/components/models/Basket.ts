@@ -1,18 +1,18 @@
-import { IBasket, IProduct, Price, Storage } from "../../types";
+import { IBasket, IProduct, Price } from "../../types";
 
 /** КОРЗИНА ПРОДУКТОВ 
 * Класс, специализированный для работы со списком товаров.  
 * Расширяет класс ProductsList, реализует IBasket */
 export class Basket implements IBasket {
-  protected _items: Storage = {}; // хранилище товаров корзины
+  protected _items: IProduct[] = []; // хранилище товаров корзины
 
   /** Массив товаров в корзине */
   get items(): IProduct[] {
-    return Object.values(this._items);
+    return this._items;
   }
 
   set items(items: IProduct[]) {
-    this.clear();
+    this._items = [];
     for (const item of items) {
       this.addItem(item);
     }
@@ -20,7 +20,7 @@ export class Basket implements IBasket {
 
   /** Получение количества товаров в корзине */
   get itemCount(): number {
-    return Object.keys(this._items).length;
+    return this._items.length;
   }
 
   /** Расчет и получение стоимости корзины */
@@ -35,23 +35,32 @@ export class Basket implements IBasket {
    * 2. Товар должен иметь цену (!null) */
   public addItem(item?: IProduct): void {
     if (item && item.price) {
-      this._items[item.id] = item;
+      // Товар в корзине с таким же id, как у item
+      let existItem = this._items.find(prod => prod.id === item.id);
+      // Если в корзине товар с item.id уже есть, то перезаписываем его, если нет - добавляем
+      if (existItem) {
+        existItem = item;
+      }
+      else {
+        this._items.push(item);
+      }
     }
   }
 
-  /** Удаление из корзины товара с указанным id  
-   * (возвращает false, если товар не найден или не может быть удален) */
-  public delItemById(id: string): boolean {
-    return (this.hasItem(id)) ? delete this._items[id] : false;
+  /** Удаление из корзины товара с его id */
+  public delItemById(id: string): void {
+    if (this.hasItem(id)) {
+      this._items = this._items.filter((item => item.id !== id))
+    };
   }
 
   /** Проверка наличия товара в корзине по его id */
   public hasItem(id: string): boolean {
-    return !!this._items[id];
+    return !!this._items.find(item => item.id === id);
   }
 
   /** Очистка корзины */
   public clear(): void {
-    this._items = {};
+    this._items = [];
   }
 }

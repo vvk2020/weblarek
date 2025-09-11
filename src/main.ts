@@ -19,7 +19,7 @@ console.group('ТЕСТЫ');
 
 const catalog = new Catalog();
 catalog.items = apiProducts.items; // сохранение массива товаров
-catalog.selectedItem = "b06cde61-912f-4663-9751-09956c0eed67"; // сохранение товара для подробного отображения
+catalog.setSelectedItem("b06cde61-912f-4663-9751-09956c0eed67"); // сохранение товара для подробного отображения
 
 console.group('КАТАЛОГ ТОВАРОВ');
 console.log('Каталог товаров:\n', catalog);

@@ -77,11 +77,6 @@ classDiagram
         "online" | "cash" | undefined
     }
 
-    class StorageType {
-        <<type>>
-        Object with IProduct values
-    }
-
     class ApiPostMethodsType {
         <<type>>
         POST, PUT, DELETE
@@ -89,23 +84,24 @@ classDiagram
 
     %% Классы
     class Catalog {
-        -StorageType _items
+        -IProduct[] _items
         -IProduct _selectedItem
-        +Catalog(items?: StorageType)
+        +Catalog(items?: IProduct[])
         +IProduct[] items
         +IProduct selectedItem
-        +addItems(IProduct[] items) void
-        +getItemById(string id) IProduct
+        +setSelectedItem(id: string) void
+        +addItems(items: IProduct[]) void
+        +getItemById(id: string) IProduct
     }
 
     class Basket {
-        -StorageType _items
+        -IProduct[] _items
         +IProduct[] items
         +number itemCount
         +PriceType total
-        +addItem(IProduct? item) void
-        +delItemById(string id) boolean
-        +hasItem(string id) boolean
+        +addItem(item: IProduct) void
+        +delItemById(id: string) void
+        +hasItem(id: string) boolean
         +clear() void
     }
 
@@ -148,8 +144,6 @@ classDiagram
     LarekAPI "1" -- "1" IApi : uses
 
     %% Зависимости
-    Basket ..> StorageType
-    Catalog ..> StorageType
     IOrderData ..> TPaymentType
     IOrderData ..> PriceType
     IPurchaseData ..> PriceType
@@ -157,16 +151,16 @@ classDiagram
     Buyer ..> TPaymentType
     
     %% Связи LarekAPI с возвращаемыми типами
-    LarekAPI ..> ILarekProducts : returns from getShopProducts()
-    LarekAPI ..> IPurchaseData : returns from placeOrder()
-    LarekAPI ..> IOrderData : accepts in placeOrder()
+    LarekAPI ..> ILarekProducts : returns
+    LarekAPI ..> IPurchaseData : returns
+    LarekAPI ..> IOrderData : accepts
     
     %% Связи IApi с типами
-    IApi ..> ApiPostMethodsType : uses in post method
-    IApi ..> ILarekProducts : returns in get
+    IApi ..> ApiPostMethodsType : uses
+    IApi ..> ILarekProducts : returns
     
     %% Связи ILarekProducts с IProduct
-    ILarekProducts "1" -- "*" IProduct : contains items
+    ILarekProducts "1" -- "*" IProduct : contains
 
     %% Композиция
     IOrderData *-- IBuyer : extends

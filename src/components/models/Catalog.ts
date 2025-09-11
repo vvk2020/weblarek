@@ -1,29 +1,26 @@
-import { ICatalog, IProduct, Storage } from "../../types";
+import { ICatalog, IProduct } from "../../types";
 
 /** КАТАЛОГ ТОВАРОВ  */
 export class Catalog implements ICatalog {
-  protected _items: Storage = {}; // хранилище товаров каталога
+  protected _items: IProduct[] = []; // хранилище товаров каталога
   protected _selectedItem?: IProduct; // товар, выбранный из каталога
 
   /** Конструктор каталога товаров  
    * Опционально позволяет инициализировать каталог товаров объектом items типа Storage */
-  constructor(items?: Storage) {
-    if (items) {
+  constructor(items?: IProduct[]) {
+    if (items && items.length > 0) {
       this._items = items;
     }
   }
 
   /** Массив товаров в каталоге */
   get items(): IProduct[] {
-    return Object.values(this._items);
+    return this._items;
   }
 
   set items(items: IProduct[]) {
-    this.selectedItem = undefined; // сброс выбранного товара
-    this._items = {}; // очистка каталога
-    for (const item of items) {
-      this._items[item.id] = item;
-    }
+    this._selectedItem = undefined; // сброс выбранного товара
+    this._items = items; // перезапись товаров каталога из items
   }
 
   /** Выбранный товар */
@@ -31,21 +28,34 @@ export class Catalog implements ICatalog {
     return this._selectedItem;
   }
 
-  set selectedItem(id: string | undefined) {
-    if (id && !!this._items[id]) this._selectedItem = this.getItemById(id);
-    else this._selectedItem = undefined;
+  set selectedItem(item: IProduct | undefined) {
+    this._selectedItem = item;
+  }
+
+  /** Задание выбранного товара по id */
+  public setSelectedItem(id: string | undefined): void {
+    if (id) this._selectedItem = this.getItemById(id);
   }
 
   /** Добавление массива товаров в каталог  
    * (товары с совпадающим id перезаписываются) */
   public addItems(items: IProduct[]): void {
     for (const item of items) {
-      this._items[item.id] = item;
+      let existItem = this.getItemById(item.id); // товар в каталоге с таким же id, как у item
+      // Если в катологе товар с item.id уже есть, то перезаписываем его, если нет - добавляем
+      if (existItem) {
+        existItem = item;
+      }
+      else {
+        this._items.push(item);
+      }
     }
   }
 
   /** Получение товара по его id из каталога */
   public getItemById(id: string): IProduct | undefined {
-    return this._items[id];
+    if (id) {
+      return this._items.find(item => item.id === id);
+    }
   }
 }
