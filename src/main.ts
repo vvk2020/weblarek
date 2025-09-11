@@ -67,18 +67,18 @@ const buyer = new Buyer({
 console.group('ПОКУПАТЕЛЬ');
 console.group('ДАННЫЕ');
 console.log('Покупатель:', buyer);
-console.log('Способ оплаты:', buyer.payment);
+console.log('payment - cспособ оплаты:', buyer.payment);
 console.log('address - адрес:', buyer.address);
 console.log('phone - телефон:', buyer.phone);
 console.log('email - электронная почта:', buyer.email);
 console.groupEnd(); // ДАННЫЕ
 
 console.group('ПРОВЕРКА ВАЛИДНОСТИ');
-console.log('- способа оплаты:', buyer.isPaymentValid());
-console.log('- адреса:', buyer.isAddressValid());
-console.log('- телефона:', buyer.isPhoneValid());
-console.log('- email:', buyer.isEmailValid());
-console.log('- всех данных:', buyer.isAllValid());
+console.log('- способа оплаты:', buyer.isPaymentValid() || "✅");
+console.log('- адреса:', buyer.isAddressValid() || "✅");
+console.log('- телефона:', buyer.isPhoneValid() || "✅");
+console.log('- email:', buyer.isEmailValid() || "✅");
+console.log('- всех данных:', buyer.isAllValid()? "✅" : "❌");
 console.groupEnd(); // ПРОВЕРКА ВАЛИДНОСТИ
 console.groupEnd(); // ПОКУПАТЕЛЬ
 

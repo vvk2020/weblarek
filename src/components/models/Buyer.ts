@@ -12,11 +12,16 @@ export class Buyer implements IBuyer {
    * Опционально могут определены все или часть свойств покупетля */
   constructor(buyer?: Partial<IBuyer>) {
     if (buyer) {
-      if (buyer.payment) this.payment = buyer.payment;
-      if (buyer.email) this.email = buyer.email;
-      if (buyer.phone) this.phone = buyer.phone;
-      if (buyer.address) this.address = buyer.address;
+      for (const key of Object.keys(buyer)) {
+        const buyerKey = key as keyof IBuyer;
+        if (buyer[buyerKey]) this.set(buyerKey, buyer[buyerKey]);
+      }
     }
+  }
+
+  /** Универсальный метод определения защищенных свойств, имя которых начинается сипрефикса '_' */
+  public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
+    (this as any)[`_${field}`] = value;
   }
 
   /** Определение способа оплаты */
@@ -24,17 +29,9 @@ export class Buyer implements IBuyer {
     return this._payment;
   }
 
-  set payment(payment: TPayment) {
-    this._payment = payment;
-  }
-
   /** email */
   get email() {
     return this._email;
-  }
-
-  set email(email: string) {
-    this._email = email;
   }
 
   /** Номер телефона */
@@ -42,17 +39,9 @@ export class Buyer implements IBuyer {
     return this._phone;
   }
 
-  set phone(phone: string) {
-    this._phone = phone;
-  }
-
   /** Адрес покупателя */
   get address() {
     return this._address;
-  }
-
-  set address(address: string) {
-    this._address = address;
   }
 
   /** Очистка всех данных покупателя */
@@ -86,10 +75,10 @@ export class Buyer implements IBuyer {
   /** Валидация всех полей */
   public isAllValid(): boolean {
     return (
-      !!this.isPaymentValid() &&
-      !!this.isEmailValid() &&
-      !!this.isPhoneValid() &&
-      !!this.isAddressValid()
+      !this.isPaymentValid() &&
+      !this.isEmailValid() &&
+      !this.isPhoneValid() &&
+      !this.isAddressValid()
     )
   }
 
