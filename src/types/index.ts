@@ -35,10 +35,10 @@ export interface IBasket {
 
 /** ПОКУПАТЕЛЬ */
 export interface IBuyer {
-  payment: TPayment; // способ оплаты
-  email: string; // email
-  phone: string; // номер телефона
-  address: string; // адрес
+    payment: TPayment; // способ оплаты
+    email: string; // email
+    phone: string; // номер телефона
+    address: string; // адрес
 }
 
 //! КОММУНИКАЦИОННЫЙ СЛОЙ ======================================

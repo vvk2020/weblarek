@@ -5,164 +5,142 @@ classDiagram
     %% Интерфейсы
     class IProduct {
         <<interface>>
-        +string id
-        +string description
-        +string image
-        +string title
-        +string category
-        +PriceType price
+        +id: string
+        +description: string
+        +image: string
+        +title: string
+        +category: string
+        +price: Price
     }
 
     class ICatalog {
         <<interface>>
-        +IProduct[] items
-        +IProduct selectedItem
-        +addItems(IProduct[] items) void
-        +getItemById(string id) IProduct
+        +items: IProduct[]
+        +selectedItem: IProduct | undefined
+        +addItems(items: IProduct[]): void
+        +getItemById(id: string): IProduct | undefined
     }
 
     class IBasket {
         <<interface>>
-        +IProduct[] items
-        +number itemCount
-        +PriceType total
-        +addItem(IProduct item) void
-        +delItemById(string id) void
+        +items: IProduct[]
+        +itemCount: number
+        +total: Price
+        +addItem(item: IProduct): void
+        +delItemById(id: string): void
     }
 
     class IBuyer {
         <<interface>>
-        +TPaymentType payment
-        +string email
-        +string phone
-        +string address
+        +payment: TPayment
+        +email: string
+        +phone: string
+        +address: string
     }
 
     class IApi {
         <<interface>>
-        +get(uri: string) Promise~T~
-        +post(uri: string, data: object, method?: ApiPostMethodsType) Promise~T~
+        +get<T>(uri: string): Promise<T>
+        +post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>
     }
 
     class ILarekProducts {
         <<interface>>
-        +number total
-        +IProduct[] items
+        +total: number
+        +items: IProduct[]
     }
 
     class IOrderData {
         <<interface>>
-        +TPaymentType payment
-        +string email
-        +string phone
-        +string address
-        +PriceType total
-        +string[] items
+        +total: Price
+        +items: string[]
     }
 
     class IPurchaseData {
         <<interface>>
-        +string[] id
-        +PriceType total
+        +id: string[]
+        +total: Price
+    }
+
+    %% Классы
+    class Basket {
+        -_items: IProduct[]
+        +items: IProduct[]
+        +itemCount: number
+        +total: Price
+        +addItem(item?: IProduct): void
+        +delItemById(id: string): void
+        +hasItem(id: string): boolean
+        +clear(): void
+    }
+
+    class Buyer {
+        -payment: TPayment
+        -email: string
+        -phone: string
+        -address: string
+        +set<K>(field: K, value: IBuyer[K]): void
+        +data: IBuyer
+        +clear(): void
+        +errors: object
+        +valid: boolean
+    }
+
+    class Catalog {
+        -_items: IProduct[]
+        -_selectedItem: IProduct | undefined
+        +items: IProduct[]
+        +selectedItem: IProduct | undefined
+        +addItems(items: IProduct[]): void
+        +getItemById(id: string): IProduct | undefined
+        +setSelectedItem(id: string | undefined): void
+    }
+
+    class LarekAPI {
+        -_api: IApi
+        +getShopProducts(): Promise<ILarekProducts>
+        +placeOrder(orderData: IOrderData): Promise<IPurchaseData>
     }
 
     %% Типы
-    class PriceType {
+    class Price {
         <<type>>
         number | null
     }
 
-    class TPaymentType {
+    class TPayment {
         <<type>>
-        online | cash | undefined
+        "online" | "cash" | undefined
     }
 
-    class ApiPostMethodsType {
+    class ApiPostMethods {
         <<type>>
-        POST | PUT | DELETE
+        'POST' | 'PUT' | 'DELETE'
     }
 
-    %% Классы
-    class Catalog {
-        -IProduct[] _items
-        -IProduct _selectedItem
-        +Catalog(items?: IProduct[])
-        +IProduct[] items
-        +IProduct selectedItem
-        +setSelectedItem(id: string) void
-        +addItems(items: IProduct[]) void
-        +getItemById(id: string) IProduct
-    }
-
-    class Basket {
-        -IProduct[] _items
-        +IProduct[] items
-        +number itemCount
-        +PriceType total
-        +addItem(item: IProduct) void
-        +delItemById(id: string) void
-        +hasItem(id: string) boolean
-        +clear() void
-    }
-
-    class Buyer {
-        -TPaymentType _payment
-        -string _email
-        -string _phone
-        -string _address
-        +Buyer(buyer?: Partial~IBuyer~)
-        +set(field: keyof IBuyer, value: any) void
-        +TPaymentType payment
-        +string email
-        +string phone
-        +string address
-        +clear() void
-        +isEmailValid() string
-        +isPhoneValid() string
-        +isAddressValid() string
-        +isPaymentValid() string
-        +isAllValid() boolean
-    }
-
-    class LarekAPI {
-        -IApi _api
-        +LarekAPI(api: IApi)
-        +getShopProducts() Promise~ILarekProducts~
-        +placeOrder(orderData: IOrderData) Promise~IPurchaseData~
-    }
-
-    %% Наследование интерфейсов
-    IOrderData --|> IBuyer
-
-    %% Реализация интерфейсов
-    Catalog ..|> ICatalog
+    %% Наследование и реализация интерфейсов
     Basket ..|> IBasket
     Buyer ..|> IBuyer
+    Catalog ..|> ICatalog
+    LarekAPI --> IApi
 
-    %% Ассоциации
-    Basket "1" -- "*" IProduct : contains
-    Catalog "1" -- "*" IProduct : contains
-    LarekAPI "1" -- "1" IApi : uses
+    %% Композиция и агрегация
+    Basket --> IProduct
+    Catalog --> IProduct
+    IOrderData --|> IBuyer
+    ILarekProducts --> IProduct
 
     %% Зависимости
-    IOrderData ..> TPaymentType
-    IOrderData ..> PriceType
-    IPurchaseData ..> PriceType
-    IProduct ..> PriceType
-    Buyer ..> TPaymentType
-    
-    %% Связи LarekAPI
-    LarekAPI ..> ILarekProducts : returns
-    LarekAPI ..> IPurchaseData : returns
-    LarekAPI ..> IOrderData : accepts
-    
-    %% Связи IApi
-    IApi ..> ApiPostMethodsType : uses
-    IApi ..> ILarekProducts : returns
-    
-    %% Связи ILarekProducts
-    ILarekProducts "1" -- "*" IProduct : contains
+    LarekAPI --> ILarekProducts
+    LarekAPI --> IOrderData
+    LarekAPI --> IPurchaseData
+    Buyer --> TPayment
+    Basket --> Price
+    Catalog --> Price
+    IApi --> ApiPostMethods
 
-    %% Композиция
-    IOrderData *-- IBuyer : extends
+    %% Ассоциации
+    IOrderData --> Price
+    IOrderData --> IProduct
+    IPurchaseData --> Price
 ```

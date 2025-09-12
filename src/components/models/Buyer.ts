@@ -1,12 +1,12 @@
 import { IBuyer, TPayment } from "../../types";
 
 /** ПОКУПАТЕЛЬ */
-export class Buyer implements IBuyer {
+export class Buyer {
 
-  protected _payment: TPayment = undefined;
-  protected _email: string = '';
-  protected _phone: string = '';
-  protected _address: string = '';
+  protected payment: TPayment = undefined;
+  protected email: string = '';
+  protected phone: string = '';
+  protected address: string = '';
 
   /** Конструктор покупателя  
    * Опционально могут определены все или часть свойств покупетля */
@@ -19,67 +19,48 @@ export class Buyer implements IBuyer {
     }
   }
 
-  /** Универсальный метод определения защищенных свойств, имя которых начинается сипрефикса '_' */
+  /** Универсальный метод определения свойств */
   public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
-    (this as any)[`_${field}`] = value;
+    (this as any)[field] = value;
   }
 
-  /** Определение способа оплаты */
-  get payment() {
-    return this._payment;
-  }
-
-  /** email */
-  get email() {
-    return this._email;
-  }
-
-  /** Номер телефона */
-  get phone() {
-    return this._phone;
-  }
-
-  /** Адрес покупателя */
-  get address() {
-    return this._address;
+  /** Данные покупателя в виде объекта */
+  get data(): IBuyer {
+    return {
+      payment: this.payment,
+      email: this.email,
+      phone: this.phone,
+      address: this.address
+    };
   }
 
   /** Очистка всех данных покупателя */
   public clear() {
-    this._payment = undefined;
-    this._email = '';
-    this._phone = '';
-    this._address = '';
+    this.payment = undefined;
+    this.email = '';
+    this.phone = '';
+    this.address = '';
   }
 
-  /** Валидация email */
-  public isEmailValid(): string {
-    return this._email.trim().length > 0 ? "" : "Email не указан";
+
+  /** Ошибки валидации данных покупателя  
+   * Возвращает объект со свойствами, хранящими сообщения об ошибках.  
+   * Если ошибок нет, возвращает пустой объект. */
+  get errors() {
+    const errors = {
+      payment: !!(this.payment) ? "" : "Способ оплаты не выбран",
+      email: this.email.trim().length > 0 ? "" : "Email не указан",
+      phone: this.phone.trim().length > 0 ? "" : "Телефон не указан",
+      address: this.address.trim().length > 0 ? "" : "Адрес доставки не указан"
+    }
+    return Object.fromEntries(
+      Object.entries(errors).filter(([_, value]) => value !== "")
+    );
   }
 
-  /** Валидация номера телефона */
-  public isPhoneValid(): string {
-    return this._phone.trim().length > 0 ? "" : "Телефон не указан";
-  }
-
-  /** Валидация адреса покупателя */
-  public isAddressValid(): string {
-    return this._address.trim().length > 0 ? "" : "Адрес доставки не указан";
-  }
-
-  /** Валидация способа оплаты */
-  public isPaymentValid(): string {
-    return !!(this._payment) ? "" : "Способ оплаты не выбран";
-  }
-
-  /** Валидация всех полей */
-  public isAllValid(): boolean {
-    return (
-      !this.isPaymentValid() &&
-      !this.isEmailValid() &&
-      !this.isPhoneValid() &&
-      !this.isAddressValid()
-    )
+  /** Валидность всех данных покупателя  */
+  get valid(): boolean {
+    return Object.keys(this.errors).length === 0;
   }
 
 }

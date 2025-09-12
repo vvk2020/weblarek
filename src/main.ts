@@ -67,18 +67,18 @@ const buyer = new Buyer({
 console.group('ПОКУПАТЕЛЬ');
 console.group('ДАННЫЕ');
 console.log('Покупатель:', buyer);
-console.log('payment - cспособ оплаты:', buyer.payment);
-console.log('address - адрес:', buyer.address);
-console.log('phone - телефон:', buyer.phone);
-console.log('email - электронная почта:', buyer.email);
+console.log('payment - cспособ оплаты:', buyer.data.payment);
+console.log('address - адрес:', buyer.data.address);
+console.log('phone - телефон:', buyer.data.phone);
+console.log('email - электронная почта:', buyer.data.email);
 console.groupEnd(); // ДАННЫЕ
 
 console.group('ПРОВЕРКА ВАЛИДНОСТИ');
-console.log('- способа оплаты:', buyer.isPaymentValid() || "✅");
-console.log('- адреса:', buyer.isAddressValid() || "✅");
-console.log('- телефона:', buyer.isPhoneValid() || "✅");
-console.log('- email:', buyer.isEmailValid() || "✅");
-console.log('- всех данных:', buyer.isAllValid()? "✅" : "❌");
+console.log('- способа оплаты:', buyer.errors.payment || "✅");
+console.log('- адреса:', buyer.errors.email || "✅");
+console.log('- телефона:', buyer.errors.phone || "✅");
+console.log('- email:', buyer.errors.address || "✅");
+console.log('- всех данных:', buyer.valid ? "✅" : "❌");
 console.groupEnd(); // ПРОВЕРКА ВАЛИДНОСТИ
 console.groupEnd(); // ПОКУПАТЕЛЬ
 
@@ -88,10 +88,7 @@ const api = new Api(API_URL);
 const orderData: IOrderData = // данные для запроса на оформление заказа
 {
   // Данные покупателя
-  payment: buyer.payment,
-  email: buyer.email,
-  phone: buyer.phone,
-  address: buyer.address,
+  ...buyer.data,
   // Данные корзины
   total: basket.total,
   items: Object.values(basket.items).map(item => item.id),
