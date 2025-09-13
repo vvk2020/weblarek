@@ -13,7 +13,7 @@ import { LarekAPI } from './components/models/LarekAPI';
 
 //! ТЕСТЫ ===========================================================
 
-console.group('ТЕСТЫ');
+console.group('%cTESTS', "color: lightcoral");
 
 //* КАТАЛОГ ТОВАРОВ ----------------------------------
 
@@ -95,14 +95,37 @@ const orderData: IOrderData = // данные для запроса на офо�
 };
 const productsAPI = new LarekAPI(api);
 console.group('API');
-productsAPI.getShopProducts()
-  .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
-  .catch((err: Response) => console.error(err));
-productsAPI.placeOrder(orderData)
-  .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
-  .catch((err: Response) => console.error(err));
 
-setTimeout(() => {
+const promiseAPI = Promise.all([
+  productsAPI.getShopProducts()
+    .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
+    .catch((err: Response) => console.error(err)),
+  productsAPI.placeOrder(orderData)
+    .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
+    .catch((err: Response) => console.error(err))
+]).then(() => {
   console.groupEnd(); // API
   console.groupEnd(); // ТЕСТЫ
-}, 250);
+});
+
+//! ПР9 =============================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  promiseAPI.then(() => {
+
+    console.group('%cPRESENTER', "color: lightcoral");
+
+    const gallery = document.querySelector('.gallery');
+    console.log('gallery:', gallery);
+
+    // Тест отрисовки компонентов
+    // gallery?.replaceChildren(component.render());
+
+    console.groupEnd(); // PRESENTER
+
+  })
+});
+
+
+
