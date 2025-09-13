@@ -103,7 +103,7 @@ const promiseAPI = Promise.all([
   productsAPI.placeOrder(orderData)
     .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
     .catch((err: Response) => console.error(err))
-]).then(() => {
+]).finally(() => {
   console.groupEnd(); // API
   console.groupEnd(); // ТЕСТЫ
 });
