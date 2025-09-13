@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { IBuyer, ILarekProducts, IOrderData, IPurchaseData } from './types';
+import { ILarekProducts, IOrderData, IPurchaseData } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
