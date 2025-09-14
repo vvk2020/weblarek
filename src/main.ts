@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { ILarekProducts, IOrderData, IPurchaseData, MainData, MainSettings } from './types';
+import { ILarekProducts, IOrderData, IPurchaseData } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
@@ -12,6 +12,11 @@ import { API_URL, SELECTORS } from './utils/constants';
 import { LarekAPI } from './components/models/LarekAPI';
 import { EventEmitter } from './components/base/Events';
 import { HeaderView } from './components/view/HeaderView';
+import { GalleryCardView } from './components/view/GalleryCardView';
+import { CardsData } from './components/common/CardsData';
+import { Card } from './components/common/Card';
+import { cloneTemplate } from './utils/utils';
+import { Gallery } from './components/view/Gallery';
 
 //! ТЕСТЫ ===========================================================
 
@@ -118,18 +123,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		console.group('%cPRESENTER', "color: lightcoral");
 
-
-
 		const events = new EventEmitter(); // экземпляр брокера событий
 		const headerContainer = document.querySelector(SELECTORS.header.container) as HTMLElement; // header-контейнер
-		// console.log('header:', headerContainer);
+		const galleryCardTemplate = document.querySelector(SELECTORS.template.galleryCard) as HTMLTemplateElement; // шаблон карточки галереи
+		const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
 
-		const header = new HeaderView(headerContainer, events); // header страницы
+
+		// console.log('galleryContainer:', galleryContainer);
+
+		//* HEADER =======================================
+		const header = new HeaderView(headerContainer, events);
 		header.render({ basketCounter: basket.itemCount })
 
-		// Карточка товара галереи
-		const gallery = document.querySelector('.gallery');
-		console.log('gallery:', gallery);
+		//* ГАЛЕРЕЯ КАРТОЧЕК ТОВАРОВ =====================
+		const cardsData = new CardsData(events);
+		cardsData.cards = catalog.items;
+		// console.log('cardsData.cards:', cardsData.cards);
+
+		// Создание карточек
+		// events.on('initialData:loaded', () => {
+		const cardsArray = cardsData.cards.map((card) => {
+			// const cardInstant = new GalleryCardView(gallery, events);
+			const cardInstance = new Card(cloneTemplate(galleryCardTemplate), events);
+			console.log('card:', card.id);
+
+			return cardInstance.render(card);
+		});
+		// Размещенение в галерее
+		const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
+		galleryContainer.render({ gallery: cardsArray });
+		//* ==============================================
+
+
+		// const card = new GalleryCardView(gallery, events);
+		// console.log(
+		// 	'catalog.getItemById("854cef69-976d-4c2a-a18c-2aa45046c390")', 
+		// 	catalog.getItemById("854cef69-976d-4c2a-a18c-2aa45046c390"));
+		// card.render(catalog.getItemById("854cef69-976d-4c2a-a18c-2aa45046c390"));
+		// console.log('card:', card);
+
+
 
 
 

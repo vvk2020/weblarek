@@ -6,10 +6,11 @@ export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
 которое хранится в объекте товара. */
 export const CDN_URL = `${import.meta.env.VITE_API_ORIGIN}/content/weblarek`;
 
+/** Константа селекторов элементов разметки */
 export const SELECTORS = {
   // Header
   header: {
-    container: '.header__container', // контейнер корзины
+    container: '.header__container', // контейнер
     basketCounter: '.header__basket-counter', // счетчик товаров в корзине
   },
 
@@ -17,14 +18,16 @@ export const SELECTORS = {
   template: {
     galleryCard: '#card-catalog', // в галерее
     previewCard: '#card-preview', // в подробном отображении
-    basketCard: '#ccard-basket', // в корзине
+    basketCard: '#card-basket', // в корзине
   },
 
-
-
+  // Галерея карточек
+  gallery: {
+    container: '.gallery', // контейнер
+  },
 
   // Селекторы элементов карточек
-  cardSettings: {
+  card: {
     // <button class="gallery__item card">
     // <span class="card__category card__category_soft">софт-скил</span>
     // <h2 class="card__title">+1 час в сутках</h2>
@@ -47,6 +50,19 @@ export const SELECTORS = {
   // },
 
 };
+
+/** Константа соответствий категорий товара модификаторам, используемым для отображения фона категории. */
+export const categoryMap = new Proxy({
+  'софт-скил': 'card__category_soft',
+  'хард-скил': 'card__category_hard',
+  'кнопка': 'card__category_button',
+  'дополнительное': 'card__category_additional',
+  'другое': 'card__category_other',
+}, {
+  get(target, prop: string) {
+    return target[prop as keyof typeof target] || target['другое'];
+  }
+});
 
 /** Endpoint get-запроса списка товаров */
 export const URI_PRODUCTS = '/product/';

@@ -72,6 +72,17 @@ export interface IPurchaseData {
 
 //! СЛОЙ ПРЕДСТАВЛЕНИЯ =========================================
 
+export interface ICardsData {
+  cards: IProduct[];
+  // preview: string | null;
+  // addCard(card: ICard): void;
+  // deleteCard(cardId: string, payload: Function | null): void;
+  // updateCard(card: ICard, payload: Function | null): void;
+  // getCard(cardId: string): ICard;
+  // checkValidation(data: Record<keyof TCardInfo, string>): boolean;
+}
+
+
 /** Header страницы */
 export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
@@ -82,5 +93,5 @@ export type IGalleryCardData = Pick<IProduct, 'id' | 'category' | 'title' | 'ima
 
 /** Галлерея карточек товара */
 export interface IGalleryData {
-
+  gallery: HTMLElement[];
 }
