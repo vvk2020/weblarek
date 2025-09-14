@@ -35,10 +35,10 @@ export interface IBasket {
 
 /** ПОКУПАТЕЛЬ */
 export interface IBuyer {
-    payment: TPayment; // способ оплаты
-    email: string; // email
-    phone: string; // номер телефона
-    address: string; // адрес
+  payment: TPayment; // способ оплаты
+  email: string; // email
+  phone: string; // номер телефона
+  address: string; // адрес
 }
 
 //! КОММУНИКАЦИОННЫЙ СЛОЙ ======================================
@@ -68,4 +68,19 @@ export interface IOrderData extends IBuyer {
 export interface IPurchaseData {
   id: string[]; // идентификатор заказа
   total: Price; // стоимость покупки
-};
+}
+
+//! СЛОЙ ПРЕДСТАВЛЕНИЯ =========================================
+
+/** Header страницы */
+export interface IHeaderData {
+  basketCounter: number; // счетчик товаров в корзине
+}
+
+/** Абстрактная карточка товара */
+export type IGalleryCardData = Pick<IProduct, 'id' | 'category' | 'title' | 'image' | 'price'>
+
+/** Галлерея карточек товара */
+export interface IGalleryData {
+
+}

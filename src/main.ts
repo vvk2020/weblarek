@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { ILarekProducts, IOrderData, IPurchaseData } from './types';
+import { ILarekProducts, IOrderData, IPurchaseData, MainData, MainSettings } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
@@ -8,12 +8,14 @@ import { Api } from './components/base/Api';
 import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
-import { API_URL } from './utils/constants';
+import { API_URL, SELECTORS } from './utils/constants';
 import { LarekAPI } from './components/models/LarekAPI';
+import { EventEmitter } from './components/base/Events';
+import { HeaderView } from './components/view/HeaderView';
 
 //! ТЕСТЫ ===========================================================
 
-console.group('%cTESTS', "color: lightcoral");
+console.group('%cDATA MODEL TESTS', "color: lightcoral");
 
 //* КАТАЛОГ ТОВАРОВ ----------------------------------
 
@@ -26,9 +28,9 @@ console.log('Каталог товаров:\n', catalog);
 console.log('Массив товаров каталога:\n', catalog.items); // получение массива товаров
 console.log('Выбранный товар каталога:', catalog.selectedItem); // получение товара для подробного отображения
 console.log(
-  'Товар с id="412bcf81-7e75-4e70-bdb9-d3c73c9803b7":',
-  catalog.getItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"
-  )); // получение товара по id
+	'Товар с id="412bcf81-7e75-4e70-bdb9-d3c73c9803b7":',
+	catalog.getItemById("412bcf81-7e75-4e70-bdb9-d3c73c9803b7"
+	)); // получение товара по id
 console.groupEnd(); // КАТАЛОГ ТОВАРОВ
 
 //* КОРЗИНА ТОВАРОВ, ПРИВЯЗАННАЯ К КАТАЛОГУ ----------
@@ -58,10 +60,10 @@ console.groupEnd(); // КОЗИНА ТОВАРОВ
 
 // Покупатель
 const buyer = new Buyer({
-  payment: 'online',
-  email: 'xyz@mail.ru',
-  phone: '+7 (777) 777-77-77',
-  address: 'Мавзолей'
+	payment: 'online',
+	email: 'xyz@mail.ru',
+	phone: '+7 (777) 777-77-77',
+	address: 'Мавзолей'
 });
 
 console.group('ПОКУПАТЕЛЬ');
@@ -81,51 +83,65 @@ console.log('- email:', buyer.errors.address || "✅");
 console.log('- всех данных:', buyer.valid ? "✅" : "❌");
 console.groupEnd(); // ПРОВЕРКА ВАЛИДНОСТИ
 console.groupEnd(); // ПОКУПАТЕЛЬ
+console.groupEnd(); // DATA MODEL TESTS
 
 //* API ----------------------------------------------
 
 const api = new Api(API_URL);
 const orderData: IOrderData = // данные для запроса на оформление заказа
 {
-  // Данные покупателя
-  ...buyer.data,
-  // Данные корзины
-  total: basket.total,
-  items: Object.values(basket.items).map(item => item.id),
+	// Данные покупателя
+	...buyer.data,
+	// Данные корзины
+	total: basket.total,
+	items: Object.values(basket.items).map(item => item.id),
 };
 const productsAPI = new LarekAPI(api);
-console.group('API');
+console.group('%cCOMMUNICATION LAYER (API)', "color: lightcoral");
 
 const promiseAPI = Promise.all([
-  productsAPI.getShopProducts()
-    .then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
-    .catch((err: Response) => console.error(err)),
-  productsAPI.placeOrder(orderData)
-    .then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
-    .catch((err: Response) => console.error(err))
+	productsAPI.getShopProducts()
+		.then((data: ILarekProducts) => console.log('Товары в ларьке:\n', data))
+		.catch((err: Response) => console.error(err)),
+	productsAPI.placeOrder(orderData)
+		.then((data: IPurchaseData) => console.log('Заказ оформлен успешно\n', data))
+		.catch((err: Response) => console.error(err))
 ]).finally(() => {
-  console.groupEnd(); // API
-  console.groupEnd(); // ТЕСТЫ
+	console.groupEnd(); // API
 });
 
 //! ПР9 =============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  promiseAPI.then(() => {
+	promiseAPI.then(() => {
 
-    console.group('%cPRESENTER', "color: lightcoral");
+		console.group('%cPRESENTER', "color: lightcoral");
 
-    const gallery = document.querySelector('.gallery');
-    console.log('gallery:', gallery);
 
-    // Тест отрисовки компонентов
-    // gallery?.replaceChildren(component.render());
 
-    console.groupEnd(); // PRESENTER
+		const events = new EventEmitter(); // экземпляр брокера событий
+		const headerContainer = document.querySelector(SELECTORS.header.container) as HTMLElement; // header-контейнер
+		// console.log('header:', headerContainer);
 
-  })
+		const header = new HeaderView(headerContainer, events); // header страницы
+		header.render({ basketCounter: basket.itemCount })
+
+		// Карточка товара галереи
+		const gallery = document.querySelector('.gallery');
+		console.log('gallery:', gallery);
+
+
+
+
+
+		// // Галерея карточек товаров
+		// const gallery = document.querySelector('.gallery');
+		// console.log('gallery:', gallery);
+		// gallery?.replaceChildren(component.render());
+
+		console.groupEnd(); // PRESENTER
+
+	})
 });
-
-
 
