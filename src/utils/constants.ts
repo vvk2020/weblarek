@@ -1,6 +1,3 @@
-import { Card } from "../components/common/Card";
-import { Basket } from "../components/models/Basket";
-
 /* Константа для получения полного пути для сервера. Для выполнения запроса 
 необходимо к API_URL добавить только ендпоинт. */
 export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
