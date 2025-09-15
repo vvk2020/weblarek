@@ -1,3 +1,6 @@
+import { Card } from "../components/common/Card";
+import { Basket } from "../components/models/Basket";
+
 /* Константа для получения полного пути для сервера. Для выполнения запроса 
 необходимо к API_URL добавить только ендпоинт. */
 export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
@@ -26,6 +29,18 @@ export const SELECTORS = {
     container: '.gallery', // контейнер
   },
 
+  basket: {
+    container: '.gallery', // контейнер
+    card: {
+      index: '.basket__item-index', // порядковый номер в корзине
+    }
+  },
+
+  preview: {
+    // container: '.gallery', // контейнер
+    buttonBasket: '.card__button', // кнопка добавления/удаления товара из корзины
+  },
+
   // Селекторы элементов карточек
   card: {
     // <button class="gallery__item card">
@@ -34,12 +49,12 @@ export const SELECTORS = {
     // <img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
     // <span class="card__price">750 синапсов</span>
     // </button>
+    selector: '.card',
     category: '.card__category',
     title: '.card__title',
     image: '.card__image',
     price: '.card__price',
-    description: '.card__text'
-
+    description: '.card__text',
   },
 
 

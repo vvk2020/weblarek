@@ -4,19 +4,19 @@ import { ILarekProducts, IOrderData, IPurchaseData } from './types';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 
-
 import { Basket } from './components/models/Basket';
 import { Buyer } from './components/models/Buyer';
 import { Catalog } from './components/models/Catalog';
 import { API_URL, SELECTORS } from './utils/constants';
 import { LarekAPI } from './components/models/LarekAPI';
 import { EventEmitter } from './components/base/Events';
-import { HeaderView } from './components/view/HeaderView';
-import { GalleryCardView } from './components/view/GalleryCardView';
-import { CardsData } from './components/common/CardsData';
-import { Card } from './components/common/Card';
+import { Header } from './components/view/Header';
+import { CardsData as CardsData } from './components/common/CardsData';
 import { cloneTemplate } from './utils/utils';
 import { Gallery } from './components/view/Gallery';
+import { GalleryCard } from './components/view/GalleryCard';
+import { BasketCard } from './components/view/BasketCard';
+import { PreviewCard } from './components/view/PreviewCard';
 
 //! ТЕСТЫ ===========================================================
 
@@ -125,30 +125,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		const events = new EventEmitter(); // экземпляр брокера событий
 		const headerContainer = document.querySelector(SELECTORS.header.container) as HTMLElement; // header-контейнер
+
+		//* ОПРЕДЕЛЕНИЕ ЭЛЕМЕНТОВ РАЗМЕТКИ ===============
+
+		// Шаблоны карточек
 		const galleryCardTemplate = document.querySelector(SELECTORS.template.galleryCard) as HTMLTemplateElement; // шаблон карточки галереи
+		const basketCardTemplate = document.querySelector(SELECTORS.template.basketCard) as HTMLTemplateElement; // шаблон карточки галереи
+		const previewCardTemplate = document.querySelector(SELECTORS.template.previewCard) as HTMLTemplateElement; // шаблон карточки подробного просмотра
+
+		// Контейнеры для вывода карточек
 		const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
-
-
-		// console.log('galleryContainer:', galleryContainer);
+		// const basketElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
+		// const previewElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
 
 		//* HEADER =======================================
-		const header = new HeaderView(headerContainer, events);
+
+		const header = new Header(headerContainer, events);
 		header.render({ basketCounter: basket.itemCount })
 
 		//* ГАЛЕРЕЯ КАРТОЧЕК ТОВАРОВ =====================
+
+		// Список карточек галереи
 		const cardsData = new CardsData(events);
 		cardsData.cards = catalog.items;
 		// console.log('cardsData.cards:', cardsData.cards);
 
 		// Создание карточек
 		// events.on('initialData:loaded', () => {
-		const cardsArray = cardsData.cards.map((card) => {
-			// const cardInstant = new GalleryCardView(gallery, events);
-			const cardInstance = new Card(cloneTemplate(galleryCardTemplate), events);
-			console.log('card:', card.id);
+		const cardsArray = cardsData.cards.map((card, index) => {
+			// Галерея
+			// const cardInstance = new GalleryCard(cloneTemplate(galleryCardTemplate), events);
+			// return cardInstance.render(card);
 
+			// Корзина
+			// const cardInstance = new BasketCard(cloneTemplate(basketCardTemplate), events); // корзина
+			// return cardInstance.render(card, ++index);
+
+			// Подробное отображение карточки
+			const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
 			return cardInstance.render(card);
 		});
+
 		// Размещенение в галерее
 		const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
 		galleryContainer.render({ gallery: cardsArray });

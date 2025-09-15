@@ -88,10 +88,12 @@ export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
 }
 
-/** Абстрактная карточка товара */
-export type IGalleryCardData = Pick<IProduct, 'id' | 'category' | 'title' | 'image' | 'price'>
+/** Поля класса карточки товара в галлерее */
+export type IGalleryCardData = Pick<IProduct, 'id' | 'category' | 'title' | 'image' | 'price'>;
+export type IBasketCardData = Pick<IProduct, 'id' | 'title' | 'price'>;
+export type IPreviewCardData = IProduct;
 
 /** Галлерея карточек товара */
-export interface IGalleryData {
+export interface IGallery {
   gallery: HTMLElement[];
 }
