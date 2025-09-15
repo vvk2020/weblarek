@@ -17,6 +17,7 @@ import { Gallery } from './components/view/Gallery';
 import { GalleryCard } from './components/view/GalleryCard';
 import { BasketCard } from './components/view/BasketCard';
 import { PreviewCard } from './components/view/PreviewCard';
+import { Modal } from './components/common/Modal';
 
 //! ТЕСТЫ ===========================================================
 
@@ -137,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
 		// const basketElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
 		// const previewElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
+		const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модальное окно
 
 		//* HEADER =======================================
 
@@ -152,23 +154,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Создание карточек
 		// events.on('initialData:loaded', () => {
-		const cardsArray = cardsData.cards.map((card, index) => {
-			// Галерея
-			// const cardInstance = new GalleryCard(cloneTemplate(galleryCardTemplate), events);
-			// return cardInstance.render(card);
+		// const cardsArray = cardsData.cards.map((card, index) => {
+		// Галерея
+		// const cardInstance = new GalleryCard(cloneTemplate(galleryCardTemplate), events);
+		// return cardInstance.render(card);
 
-			// Корзина
-			// const cardInstance = new BasketCard(cloneTemplate(basketCardTemplate), events); // корзина
-			// return cardInstance.render(card, ++index);
+		// Корзина
+		// const cardInstance = new BasketCard(cloneTemplate(basketCardTemplate), events); // корзина
+		// return cardInstance.render(card, ++index);
 
-			// Подробное отображение карточки
-			const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
-			return cardInstance.render(card);
-		});
+		// Подробное отображение карточки
+		// const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
+		// return cardInstance.render(card);
+		// });
 
 		// Размещенение в галерее
-		const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
-		galleryContainer.render({ gallery: cardsArray });
+		// const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
+		// galleryContainer.render({ gallery: cardsArray });
+
+
+		//* МОДАЛЬНОЕ ОКНО
+		
+		// Карточка для модального окна
+		const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
+		const modal = new Modal(modalContainer, events, [cardInstance.render(cardsData.cards[0])]);
+		// Размещение карточки в контейнере
+		// const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
+		// galleryContainer.render({ gallery: cardsArray });
+
+
+		modal.open()
+
 		//* ==============================================
 
 

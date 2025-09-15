@@ -83,17 +83,25 @@ export interface ICardsData {
 }
 
 
-/** Header страницы */
+/** HEADER СТРАНИЦЫ */
 export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
 }
 
-/** Поля класса карточки товара в галлерее */
+/** ДАННЫЕ КАРТОЧКИ ТОВАРА В ГАЛЛЕРЕЕ, КОРЗИНЕ И ОКНЕ ПОДРОБНОГО ПРОСМОТРА */
 export type IGalleryCardData = Pick<IProduct, 'id' | 'category' | 'title' | 'image' | 'price'>;
 export type IBasketCardData = Pick<IProduct, 'id' | 'title' | 'price'>;
 export type IPreviewCardData = IProduct;
 
-/** Галлерея карточек товара */
+/** МОДАЛЬНОЕ ОКНО */
+export interface IModal {
+  content: HTMLElement[] // контент окна
+  open(): void; // метод открытия окна
+  close(): void; // метод закрытия окна
+}
+
+
+/** ГАЛЛЕРЕЯ КАРТОЧЕК ТОВАРА */
 export interface IGallery {
   gallery: HTMLElement[];
 }

@@ -54,6 +54,13 @@ export const SELECTORS = {
     description: '.card__text',
   },
 
+  // Модальное окно
+  modal: {
+    container: '#modal-container', // контейнер
+    closeButton: '.modal__close',
+    contentContainer: '.modal__content', // контейнер контента окна
+  }
+
 
   // gallerySelector: '.gallery',
   // gallerySettings: {
