@@ -18,7 +18,7 @@ export class Form<T> extends Component<T> {
     // console.log('this.errorsElement:', this.errorsElement);
   }
 
-  /** Вывод текста ошибки валидации формы */
+  /** Задание выводимого текста ошибки валидации формы */
   set errors(text: string) {
     this.errorsElement.textContent = text;
   }
