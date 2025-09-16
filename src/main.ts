@@ -186,9 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		//* ФОРМЫ В МОДАЛЬНОМ ОКНЕ =======================
 
-		console.log('contactsFormTemplate', contactsFormTemplate);
+		console.log('contactsFormTemplate++', contactsFormTemplate);
 		
-		const form1 = new Form(contactsFormTemplate, events)
+		const form1 = new Form(cloneTemplate(contactsFormTemplate), events)
 		
 		// Первая форма оформления заказа
 		// const formBuyer1 = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview

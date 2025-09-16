@@ -14,7 +14,6 @@ export class Form<T> extends Component<T> {
 
     // Определение HTML-элементов в контейнере container
     this.errorsElement = this.container.querySelector(SELECTORS.form.errors) as HTMLElement;
-    console.log('this.container:', this.container);
     console.log('this.errorsElement:', this.errorsElement);
 
     // this.priceElement = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
