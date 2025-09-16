@@ -18,6 +18,7 @@ import { GalleryCard } from './components/view/GalleryCard';
 import { BasketCard } from './components/view/BasketCard';
 import { PreviewCard } from './components/view/PreviewCard';
 import { Modal } from './components/common/Modal';
+import { Form } from './components/common/Form';
 
 //! ТЕСТЫ ===========================================================
 
@@ -130,15 +131,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		//* ОПРЕДЕЛЕНИЕ ЭЛЕМЕНТОВ РАЗМЕТКИ ===============
 
 		// Шаблоны карточек
-		const galleryCardTemplate = document.querySelector(SELECTORS.template.galleryCard) as HTMLTemplateElement; // шаблон карточки галереи
-		const basketCardTemplate = document.querySelector(SELECTORS.template.basketCard) as HTMLTemplateElement; // шаблон карточки галереи
-		const previewCardTemplate = document.querySelector(SELECTORS.template.previewCard) as HTMLTemplateElement; // шаблон карточки подробного просмотра
+		// const galleryCardTemplate = document.querySelector(SELECTORS.template.galleryCard) as HTMLTemplateElement; // шаблон карточки галереи
+		// const basketCardTemplate = document.querySelector(SELECTORS.template.basketCard) as HTMLTemplateElement; // шаблон карточки галереи
+		// const previewCardTemplate = document.querySelector(SELECTORS.template.previewCard) as HTMLTemplateElement; // шаблон карточки подробного просмотра
+
+		// Шаблоны форм
+		const contactsFormTemplate = document.querySelector(SELECTORS.templates.forms.contacts) as HTMLTemplateElement; // шаблон карточки подробного просмотра
 
 		// Контейнеры для вывода карточек
-		const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
+		// const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
 		// const basketElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
 		// const previewElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
-		const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модальное окно
+		// const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модальное окно
 
 		//* HEADER =======================================
 
@@ -174,13 +178,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 		//* МОДАЛЬНОЕ ОКНО ===============================
-		
+
 		// Preview карточки в модальном окне
 		// const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
 		// const modal = new Modal(modalContainer, events, [cardInstance.render(cardsData.cards[0])]);
 		// modal.open()
 
-		//* 
+		//* ФОРМЫ В МОДАЛЬНОМ ОКНЕ =======================
+
+		console.log('contactsFormTemplate', contactsFormTemplate);
+		
+		const form1 = new Form(contactsFormTemplate, events)
+		
+		// Первая форма оформления заказа
+		// const formBuyer1 = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
+		// const modal = new Modal(modalContainer, events, [cardInstance.render(cardsData.cards[0])]);
+		// modal.open()
 
 		//* ==============================================
 

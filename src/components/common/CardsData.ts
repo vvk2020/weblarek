@@ -1,8 +1,3 @@
-// import validate from "validate.js";
-// import { ICard, ICardsData, TCardInfo } from "../types";
-// import { IEvents } from "./base/events";
-// import { constraintsCard } from "../utils/constants";
-
 import { ICardsData, IProduct } from "../../types";
 import { IEvents } from "../base/Events";
 

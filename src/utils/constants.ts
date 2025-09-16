@@ -15,10 +15,16 @@ export const SELECTORS = {
   },
 
   // id шаблонов карточек товаров
-  template: {
+  templates: {
+    // Карточка
     galleryCard: '#card-catalog', // в галерее
     previewCard: '#card-preview', // в подробном отображении
     basketCard: '#card-basket', // в корзине
+    forms: {
+      // Формы
+      order: '#order', // форма ввода email и телефона
+      contacts: '#contacts', // форма ввода способа оплаты и адреса
+    }
   },
 
   // Галерея карточек
@@ -59,7 +65,14 @@ export const SELECTORS = {
     container: '#modal-container', // контейнер
     closeButton: '.modal__close',
     contentContainer: '.modal__content', // контейнер контента окна
+  },
+
+  // Форма
+  form: {
+    errors: '.form__errors', // поле вывода сообщения об ошибках формы (валидации)
   }
+
+  // }
 
 
   // gallerySelector: '.gallery',
