@@ -20,11 +20,6 @@ export const SELECTORS = {
     galleryCard: '#card-catalog', // в галерее
     previewCard: '#card-preview', // в подробном отображении
     basketCard: '#card-basket', // в корзине
-    forms: {
-      // Формы
-      order: '#order', // форма ввода email и телефона
-      contacts: '#contacts', // форма ввода способа оплаты и адреса
-    }
   },
 
   // Галерея карточек
@@ -67,9 +62,17 @@ export const SELECTORS = {
     contentContainer: '.modal__content', // контейнер контента окна
   },
 
-  // Форма
-  form: {
+  // Формы
+  forms: {
+    templates: { // шаблоны
+      order: '#order', // форма ввода email и телефона
+      contacts: '#contacts', // форма ввода способа оплаты и адреса
+    },
     errors: '.form__errors', // поле вывода сообщения об ошибках формы (валидации)
+    inputs: { // поля ввода данных
+      selector: '.form__input' // поле ввода форм
+      // address: 'input[name="address"]', // адрес доставки
+    }
   }
 
   // }

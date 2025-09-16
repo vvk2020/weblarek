@@ -7,38 +7,26 @@ import { IEvents } from "../base/Events";
  * при оформлении заказа */
 export class Form<T> extends Component<T> {
   protected errorsElement: HTMLElement; // <span> вывода ошибок формы
-  // protected priceElement: HTMLElement; // <span> вывода цены товара
+  protected inputsElements: NodeListOf<HTMLInputElement>; // лист <input>'ов формы
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
 
     // Определение HTML-элементов в контейнере container
-    this.errorsElement = this.container.querySelector(SELECTORS.form.errors) as HTMLElement;
-    console.log('this.errorsElement:', this.errorsElement);
-
-    // this.priceElement = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
+    this.errorsElement = this.container.querySelector(SELECTORS.forms.errors) as HTMLElement;
+    this.inputsElements = this.container.querySelectorAll(SELECTORS.forms.inputs.selector) as NodeListOf<HTMLInputElement>; // <input>'ы формы
+    // console.log('this.errorsElement:', this.errorsElement);
   }
 
-  /** Задание заголовка товара в карточке */
-  // set title(text: string) {
-  //   this.titleElement.textContent = text;
-  // }
+  /** Вывод текста ошибки валидации формы */
+  set errors(text: string) {
+    this.errorsElement.textContent = text;
+  }
 
-  /** Задание цены товара в карточке  
-   * (если цена не указана, то выводится "Бесценно") */
-  // set price(value: Price) {
-  //   this.priceElement.textContent = value ? value.toString() + ' синапсов' : 'Бесценно';
-  // }
-
-  /** Рендер карточки товара на основе данных data   
-   * 1. Если данные не определены, то возврат исходного контейнера 
-   * 2. Контейнеру присваивается id карточки */
-  // public render(data?: Partial<T>): HTMLElement {
-  //   if (data) {
-  //     // Присвоение контейнеру уникального идентификатора карточки
-  //     if ('id' in data) setElementData(this.container, { id: data.id });
-  //     return super.render(data);
-  //   }
-  //   return this.container; // возврат исходного контейнера
-  // }
+  // Задание полей ввода данных
+  set inputValues(data: Record<string, string>) {
+    this.inputsElements.forEach((element) => {
+      element.value = data[element.name];
+    });
+  }
 }

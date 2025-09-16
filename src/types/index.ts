@@ -105,3 +105,12 @@ export interface IModal {
 export interface IGallery {
   gallery: HTMLElement[];
 }
+
+/** АбСТРАКТНАЯ ФОРМА */
+export interface IForm {
+  errors: string; // текст ошибок валидации
+}
+
+/**  ФОРМА ЗАКАЗА */
+export interface IOrderForm {
+}

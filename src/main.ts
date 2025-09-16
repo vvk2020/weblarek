@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		// const previewCardTemplate = document.querySelector(SELECTORS.template.previewCard) as HTMLTemplateElement; // шаблон карточки подробного просмотра
 
 		// Шаблоны форм
-		const contactsFormTemplate = document.querySelector(SELECTORS.templates.forms.contacts) as HTMLTemplateElement; // шаблон карточки подробного просмотра
+		const contactsFormTemplate = document.querySelector(SELECTORS.forms.templates.contacts) as HTMLTemplateElement; // шаблон карточки подробного просмотра
 
 		// Контейнеры для вывода карточек
 		// const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галерея
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		console.log('contactsFormTemplate++', contactsFormTemplate);
 		
-		const form1 = new Form(cloneTemplate(contactsFormTemplate), events)
+		const contactsForm = new Form(cloneTemplate(contactsFormTemplate), events)
 		
 		// Первая форма оформления заказа
 		// const formBuyer1 = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
