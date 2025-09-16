@@ -95,7 +95,7 @@ export type IPreviewCardData = IProduct;
 
 /** МОДАЛЬНОЕ ОКНО */
 export interface IModal {
-  content: HTMLElement[] // контент окна
+  setСontent(elements: HTMLElement[]): void; // размещение контента в контейнере окна
   open(): void; // метод открытия окна
   close(): void; // метод закрытия окна
 }

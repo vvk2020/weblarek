@@ -3,35 +3,34 @@ import { SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-/** КЛАСС МОДАЛЬНОГО ОКНА */
+/** КЛАСС МОДАЛЬНОГО ОКНА  
+ * Модальное окно предоставляет контейнер для размещения контента */
 export class Modal<T> extends Component<T> implements IModal {
-  // protected modal: HTMLElement;
-  // protected events: IEvents; // брокер событий
   protected closeButtonElement: HTMLButtonElement; // кнопка ✖ закрытия окна
-  protected contentContainer: HTMLElement;
-  // protected contentElements: HTMLElement[] = [];
+  protected contentContainer: HTMLElement; // контейнер для размещения контента в окне
 
+  /** Конструктор окна, предоставляет контейнер для размещения контента*/
   constructor(
-    protected container: HTMLElement,
-    protected events: IEvents,
-    protected contentElements: HTMLElement[] = []
+    container: HTMLElement, // контейнер для размещения окна
+    protected events: IEvents, // брокер событий
+    protected contentElements: HTMLElement[] = [] // контент, размещаемый в окне
   ) {
     console.log('container', container);
     console.log('contentElements:', contentElements);
     super(container);
-    // this.events = events;
-
-    ОТСЮДА
 
     // Определение HTML-элементов в контейнере container
-    this.closeButtonElement = this.container.querySelector(SELECTORS.modal.closeButton) as HTMLButtonElement; // кнопка закрытия окна ✖
-    this.contentContainer = this.container.querySelector(SELECTORS.modal.contentContainer) as HTMLElement; // контейнер для контента окна
+    this.closeButtonElement = container.querySelector(SELECTORS.modal.closeButton) as HTMLButtonElement; // кнопка закрытия окна ✖
+    this.contentContainer = container.querySelector(SELECTORS.modal.contentContainer) as HTMLElement; // контейнер для контента окна
+
+    // Размещение контента в контейнере
+    if (contentElements) this.setСontent(contentElements);
 
     // Навешивание обработчика закрытия окна по кнопке ✖ окна
     this.closeButtonElement?.addEventListener("click", this.close.bind(this));
 
     // Навешивание обработчика закрытия окна по click вне окна
-    this.container.addEventListener("mousedown", (evt) => {
+    container.addEventListener("mousedown", (evt) => {
       if (evt.target === evt.currentTarget) {
         this.close();
       }
@@ -40,14 +39,10 @@ export class Modal<T> extends Component<T> implements IModal {
     this.handleEscUp = this.handleEscUp.bind(this);
   }
 
-  /** Контент окна */
-  set content(elements: HTMLElement[]) {
+  /** Размещение контента в контейнере окна */
+  setСontent(elements: HTMLElement[]): void {
     this.contentElements = elements;
-    this.container.replaceChildren(...elements);
-  }
-
-  get content(): HTMLElement[] {
-    return this.contentElements;
+    this.contentContainer.replaceChildren(...elements);
   }
 
   /** Открытие модального окна */

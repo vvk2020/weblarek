@@ -173,17 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		// galleryContainer.render({ gallery: cardsArray });
 
 
-		//* МОДАЛЬНОЕ ОКНО
+		//* МОДАЛЬНОЕ ОКНО ===============================
 		
-		// Карточка для модального окна
-		const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
-		const modal = new Modal(modalContainer, events, [cardInstance.render(cardsData.cards[0])]);
-		// Размещение карточки в контейнере
-		// const galleryContainer = new Gallery(galleryElement); // галерея как контейнер карточек
-		// galleryContainer.render({ gallery: cardsArray });
+		// Preview карточки в модальном окне
+		// const cardInstance = new PreviewCard(cloneTemplate(previewCardTemplate), events); // preview
+		// const modal = new Modal(modalContainer, events, [cardInstance.render(cardsData.cards[0])]);
+		// modal.open()
 
-
-		modal.open()
+		//* 
 
 		//* ==============================================
 
