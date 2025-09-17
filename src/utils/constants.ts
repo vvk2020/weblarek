@@ -73,18 +73,29 @@ export const SELECTORS = {
       selector: '.form__input' // поле ввода форм
       // address: 'input[name="address"]', // адрес доставки
     }
-  }
-
-  // }
-
-
-  // gallerySelector: '.gallery',
-  // gallerySettings: {
-  //   activeItemClass: 'gallery__item_active',
-  //   itemClass: 'gallery__item',
-  // },
-
+  },
 };
+
+// Имена событий брокера событий
+export const EVENTS_NAMES = {
+  // карточка товара
+  card: {
+    preview: 'card:select', // карточка выбрана
+  },
+  // товары (модель данных)
+  items: {
+    change: 'items:change', // список товаров изменен
+  },
+  // корзина
+  basket: {
+    addItem: `basket:itemAdd`, // добавление товара в корзину
+    change: `basket:change` // корзина изменена
+  },
+  // модальное окно
+  modal: {
+    close: 'modal:close' // закрыть
+  }
+}
 
 /** Константа соответствий категорий товара модификаторам, используемым для отображения фона категории. */
 export const categoryMap = new Proxy({

@@ -1,10 +1,14 @@
 import { IBasket, IProduct, Price } from "../../types";
+import { EVENTS_NAMES } from "../../utils/constants";
+import { IEvents } from "../base/Events";
 
 /** КОРЗИНА ПРОДУКТОВ 
 * Класс, специализированный для работы со списком товаров.  
 * Расширяет класс ProductsList, реализует IBasket */
 export class Basket implements IBasket {
   protected _items: IProduct[] = []; // хранилище товаров корзины
+
+  constructor(protected events: IEvents) { }
 
   /** Массив товаров в корзине */
   get items(): IProduct[] {
@@ -44,6 +48,7 @@ export class Basket implements IBasket {
       else {
         this._items.push(item);
       }
+      this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
     }
   }
 
@@ -51,6 +56,7 @@ export class Basket implements IBasket {
   public delItemById(id: string): void {
     if (this.hasItem(id)) {
       this._items = this._items.filter((item => item.id !== id))
+      this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
     };
   }
 
@@ -62,5 +68,6 @@ export class Basket implements IBasket {
   /** Очистка корзины */
   public clear(): void {
     this._items = [];
+    this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
   }
 }

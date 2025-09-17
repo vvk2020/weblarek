@@ -1,5 +1,5 @@
-import { Price } from "../../types";
-import { SELECTORS } from "../../utils/constants";
+import { ICard, Price } from "../../types";
+import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
 import { setElementData } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
@@ -8,7 +8,7 @@ import { IEvents } from "../base/Events";
  * Используется для создания специализированных карточек галереи, корзины 
  * и подробного просмотра товаров
  */
-export abstract class Card<T> extends Component<T> {
+export abstract class Card<T> extends Component<T> implements ICard<T> {
   protected events: IEvents; // брокер событий
   protected titleElement: HTMLElement; // <h2> заголовка товара в корзине
   protected priceElement: HTMLElement; // <span> вывода цены товара
@@ -16,9 +16,15 @@ export abstract class Card<T> extends Component<T> {
   constructor(protected container: HTMLElement, events: IEvents) {
     super(container);
     this.events = events;
+
     // Определение HTML-элементов в контейнере container
     this.titleElement = this.container.querySelector(SELECTORS.card.title) as HTMLElement;
     this.priceElement = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
+
+    // Обработчик открытия preview карточки
+    this.container.addEventListener('click', () =>
+      this.events.emit(EVENTS_NAMES.card.preview, this.container)
+    );
   }
 
   /** Задание заголовка товара в карточке */

@@ -1,4 +1,6 @@
 import { ICatalog, IProduct } from "../../types";
+import { EVENTS_NAMES } from "../../utils/constants";
+import { IEvents } from "../base/Events";
 
 /** КАТАЛОГ ТОВАРОВ  */
 export class Catalog implements ICatalog {
@@ -7,7 +9,7 @@ export class Catalog implements ICatalog {
 
   /** Конструктор каталога товаров  
    * Опционально позволяет инициализировать каталог товаров объектом items типа Storage */
-  constructor(items?: IProduct[]) {
+  constructor(protected events: IEvents, items?: IProduct[]) {
     if (items && items.length > 0) {
       this._items = items;
     }
@@ -21,6 +23,7 @@ export class Catalog implements ICatalog {
   set items(items: IProduct[]) {
     this._selectedItem = undefined; // сброс выбранного товара
     this._items = items; // перезапись товаров каталога из items
+    this.events.emit(EVENTS_NAMES.items.change);
   }
 
   /** Выбранный товар */

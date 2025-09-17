@@ -1,10 +1,10 @@
-import { IGalleryCardData } from "../../types";
+import { IGalleryCard, IGalleryCardData } from "../../types";
 import { categoryMap, CDN_URL, SELECTORS } from "../../utils/constants";
 import { IEvents } from "../base/Events";
 import { Card } from "../common/Card";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
-export class GalleryCard extends Card<IGalleryCardData> {
+export class GalleryCard extends Card<IGalleryCardData> implements IGalleryCard {
   protected events: IEvents; // брокер событий
   protected categoryElement: HTMLElement; // <span> категории товара
   protected imageElement: HTMLImageElement; // <img> изображения товара

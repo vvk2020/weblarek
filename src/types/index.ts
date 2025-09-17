@@ -72,15 +72,27 @@ export interface IPurchaseData {
 
 //! СЛОЙ ПРЕДСТАВЛЕНИЯ =========================================
 
-export interface ICardsData {
-  cards: IProduct[];
-  // preview: string | null;
-  // addCard(card: ICard): void;
-  // deleteCard(cardId: string, payload: Function | null): void;
-  // updateCard(card: ICard, payload: Function | null): void;
-  // getCard(cardId: string): ICard;
-  // checkValidation(data: Record<keyof TCardInfo, string>): boolean;
+export interface ICard<T> {
+  set title(text: string);
+  set price(value: Price);
+  render(data?: Partial<T>): HTMLElement;
 }
+
+export interface IGalleryCard extends ICard<IGalleryCardData> {
+  set category(key: string);
+  set image(path: string);
+}
+
+
+// export interface ICardsData {
+//   cards: IProduct[];
+//   // preview: string | null;
+//   // addCard(card: ICard): void;
+//   // deleteCard(cardId: string, payload: Function | null): void;
+//   // updateCard(card: ICard, payload: Function | null): void;
+//   // getCard(cardId: string): ICard;
+//   // checkValidation(data: Record<keyof TCardInfo, string>): boolean;
+// }
 
 
 /** HEADER СТРАНИЦЫ */

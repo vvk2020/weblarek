@@ -15,8 +15,8 @@ export class Modal<T> extends Component<T> implements IModal {
     protected events: IEvents, // брокер событий
     protected contentElements: HTMLElement[] = [] // контент, размещаемый в окне
   ) {
-    console.log('container', container);
-    console.log('contentElements:', contentElements);
+    // console.log('container', container);
+    // console.log('contentElements:', contentElements);
     super(container);
 
     // Определение HTML-элементов в контейнере container
