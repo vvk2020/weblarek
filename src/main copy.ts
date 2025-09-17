@@ -12,7 +12,7 @@ import { LarekAPI } from './components/models/LarekAPI';
 import { EventEmitter } from './components/base/Events';
 import { Header } from './components/view/Header';
 import { cloneTemplate } from './utils/utils';
-import { Gallery } from './components/view/Gallery';
+import { GalleryView } from './components/view/GalleryView';
 import { GalleryCard } from './components/view/GalleryCard';
 import { BasketCard } from './components/view/BasketCard';
 import { PreviewCard } from './components/view/PreviewCard';

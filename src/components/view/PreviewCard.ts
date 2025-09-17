@@ -5,13 +5,12 @@ import { GalleryCard } from "./GalleryCard";
 
 /** КЛАСС КАРТОЧКИ В ПОДРОБНОМ ОТОБРАЖЕНИИ */
 export class PreviewCard extends GalleryCard {
-  protected events: IEvents; // брокер событий
   protected descriptionElement: HTMLElement; // <p описания товара
   protected buttonBasketElement: HTMLButtonElement; // <button> кнопка добавления/удаления товара из корзины
 
-  constructor(protected container: HTMLElement, events: IEvents) {
+  constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container, events);
-    this.events = events;
+    
     // Определение HTML-элементов в контейнере container
     this.descriptionElement = this.container.querySelector(SELECTORS.card.description) as HTMLElement;
     this.buttonBasketElement = this.container.querySelector(SELECTORS.preview.buttonBasket) as HTMLButtonElement;
@@ -25,9 +24,6 @@ export class PreviewCard extends GalleryCard {
 
   /** Рендер карточки товара корзины на основе данных data */
   public render(data?: IPreviewCardData, hasItemInBasket?: boolean): HTMLElement {
-
-    console.log('isAddedToBasket', hasItemInBasket);
-
     // Изменение стиля отображения кнопки добавления товара в корзину, если он бесценный или уже в корзине  
     Object.assign(this.buttonBasketElement,
       (!data?.price) ?

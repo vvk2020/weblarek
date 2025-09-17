@@ -1,5 +1,5 @@
 import { IHeaderData as IHeader } from "../../types";
-import { SELECTORS } from "../../utils/constants";
+import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
@@ -13,6 +13,11 @@ export class Header extends Component<IHeader> {
 
     // Определение HTML-элементов в контейнере container
     this.basketCounterElement = this.container.querySelector(SELECTORS.header.basketCounter) as HTMLElement; // счетчик товаров в корзине
+
+    // События на кнопке
+    this.container.addEventListener('click', () => {
+      this.events.emit(EVENTS_NAMES.basket.openModal, this.container); // добавления товара в корзину
+    });
   }
 
 

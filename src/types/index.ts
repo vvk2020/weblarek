@@ -114,8 +114,14 @@ export interface IModal {
 
 
 /** ГАЛЛЕРЕЯ КАРТОЧЕК ТОВАРА */
-export interface IGallery {
-  gallery: HTMLElement[];
+export interface IGalleryData {
+  cards: HTMLElement[];
+}
+
+/** КОРЗИНА КАРТОЧЕК ТОВАРА */
+export interface IBasketData {
+  cards: HTMLElement[];
+  total: Price;
 }
 
 /** АбСТРАКТНАЯ ФОРМА */

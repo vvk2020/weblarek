@@ -28,7 +28,9 @@ export const SELECTORS = {
   },
 
   basket: {
-    container: '.gallery', // контейнер
+    container: '#basket', // контейнер корзины
+    listContainer: '.basket__list', // контейнер списка карточек
+    total: '.basket__price', // стоимость товаров в корзине
     card: {
       index: '.basket__item-index', // порядковый номер в корзине
     }
@@ -89,7 +91,8 @@ export const EVENTS_NAMES = {
   // корзина
   basket: {
     addItem: `basket:itemAdd`, // добавление товара в корзину
-    change: `basket:change` // корзина изменена
+    change: `basket:change`, // корзина изменена
+    openModal: 'basket:openModal', // открытие (просмотр) корзины в модальном окне
   },
   // модальное окно
   modal: {
