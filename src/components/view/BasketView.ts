@@ -5,8 +5,8 @@ import { IEvents } from "../base/Events";
 
 /** ПРЕДСТАВЛЕНИЕ КОРЗИНЫ КАРТОЧЕК ТОВАРОВ */
 export class BasketView extends Component<IBasketData> {
-  protected listContainer: HTMLUListElement; // <ul> контейнер для карточек
-  protected totalElement: HTMLElement; // <span> стоимость товаров в корзине
+  protected listContainer: HTMLUListElement; // <ul> контейнера карточек товара
+  protected totalElement: HTMLElement; // <span> стоимости товаров в корзине
   protected buttonOrderElement: HTMLButtonElement; // <button> оформления заказа
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
@@ -17,24 +17,20 @@ export class BasketView extends Component<IBasketData> {
     this.totalElement = this.container.querySelector(SELECTORS.basket.total) as HTMLElement;
     this.buttonOrderElement = this.container.querySelector(SELECTORS.basket.orderButton) as HTMLButtonElement;
 
-    const abc = this.container.querySelector('.modal__title') as HTMLButtonElement;
-    console.log('abc', abc);
-
-
     // console.log('this.buttonOrderElement', this.buttonOrderElement);
     // console.log('SELECTORS.basket.container', SELECTORS.basket.container);
   }
 
   set cards(cards: HTMLElement[]) {
+    // Отображение в корзине карточек или стилизованного текста "Корзина пуста"
+    if (cards?.length > 0) {
+      this.listContainer?.replaceChildren(...cards);
+      this.listContainer.classList.remove('basket__empty-text');
 
-    // if (cards?.length > 0) {
-
-    this.listContainer?.replaceChildren(...cards);
-
-    console.log('---cards?.length', cards?.length);
-    // } else {
-    console.log('+++cards', cards);
-    // }
+    } else {
+      this.listContainer.textContent = 'Корзина пуста';
+      this.listContainer.classList.add('basket__empty-text');
+    }
 
   }
 

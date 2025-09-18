@@ -12,6 +12,11 @@
     flex-grow: 1;
   }
 
+  /* стиль текста, выводимого в пустой корзине */
+  &__empty-text {
+    opacity: 0.3;
+  }
+
   &__item {
     border-bottom: 1px solid $primary;
     padding: 1.5rem 0;
@@ -30,7 +35,7 @@
     }
 
     &-delete {
-      @include mixins.icon(2rem, 'trash');
+      @include mixins.icon(2rem, "trash");
       @include mixins.link($hover, white);
       opacity: 0.5;
       margin-left: 4rem;
