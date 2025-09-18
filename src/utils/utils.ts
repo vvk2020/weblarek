@@ -135,3 +135,12 @@ export function createElement<
     }
     return element;
 }
+
+// Получение id товара из его карточки card (разметки)
+export function getIdFromCard(card: HTMLElement): string {
+	// Запрос id выбранной карточки из разметки
+	const { id } = getElementData(card, {
+		id: (value: string | undefined) => value || ''
+	});
+    return id as string;
+}

@@ -33,6 +33,7 @@ export const SELECTORS = {
     listContainer: '.basket__list', // контейнер списка карточек
     total: '.basket__price', // стоимость товаров в корзине
     orderButton: '.basket__button', // кнопка оформления заказа
+    delItemButton: '.basket__item-delete.card__button', // кнопка удаления товара из корзины
     card: {
       index: '.basket__item-index', // порядковый номер в корзине
       delButton: '.basket__item-delete', // кнопка удаления товара из корзины
@@ -94,12 +95,17 @@ export const EVENTS_NAMES = {
   // корзина
   basket: {
     addItem: `basket:itemAdd`, // добавление товара в корзину
+    delItem: `basket:delAdd`, // удаление товара из корзины
     change: `basket:change`, // корзина изменена
     openModal: 'basket:openModal', // открытие (просмотр) корзины в модальном окне
   },
   // модальное окно
   modal: {
     close: 'modal:close' // закрыть
+  },
+  // заказ (покупка)
+  order: {
+    openOrderForm: 'order: openOrderForm', // открытие первой формы оформления заказа (формы order) 
   }
 }
 

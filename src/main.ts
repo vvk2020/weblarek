@@ -3,10 +3,10 @@ import './scss/styles.scss';
 import { LarekAPI } from './components/models/LarekAPI';
 import { API_URL, EVENTS_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
-import { ILarekProducts } from './types';
+import { ILarekProducts, IProduct } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
-import { cloneTemplate, getElementData } from './utils/utils';
+import { cloneTemplate, getElementData, getIdFromCard } from './utils/utils';
 import { GalleryCard } from './components/view/GalleryCard';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/PreviewCard';
@@ -15,6 +15,7 @@ import { Basket } from './components/models/Basket';
 import { Header } from './components/view/Header';
 import { BasketCard } from './components/view/BasketCard';
 import { BasketView } from './components/view/BasketView';
+import { OrderForm } from './components/view/OrderForm';
 
 //* ЭЛЕМЕНТЫ РАЗМЕТКИ
 
@@ -25,12 +26,8 @@ const basketCardTemplate = document.querySelector(SELECTORS.templates.basketCard
 
 // Контейнеры ...
 const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галереи
-console.log('galleryElement', galleryElement);
-
 const basketElement = document.querySelector(SELECTORS.basket.container) as HTMLTemplateElement; // корзины
 const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модального окна
-// const previewElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // корзина
-
 const headerContainer = document.querySelector(SELECTORS.header.container) as HTMLElement; // header-контейнер
 
 const events = new EventEmitter(); // брокер событий
@@ -66,11 +63,9 @@ events.on(EVENTS_NAMES.items.change, () => {
 
 // Брокер: регистрация события preview карточки
 events.on(EVENTS_NAMES.card.preview, (card: HTMLElement) => {
-	// Запрос id выбранной карточки из разметки
-	const { id } = getElementData(card, {
-		id: (value: string | undefined) => value || ''
-	});
-	if (id && typeof (id) === 'string') {
+	// Получение id товара из его карточки card (разметки)
+	const id = getIdFromCard(card);
+	if (id) {
 		// Запрос данных товара из каталога (модели данных)
 		const item = catalog.getItemById(id);
 		// Проверка наличия товара в корзине
@@ -83,12 +78,10 @@ events.on(EVENTS_NAMES.card.preview, (card: HTMLElement) => {
 
 // Брокер: регистрация события добавления товара из галереи в корзину (модель данных)
 events.on(EVENTS_NAMES.basket.addItem, (card: HTMLElement) => {
-	// Запрос id выбранной карточки из разметки
-	const { id } = getElementData(card, {
-		id: (value: string | undefined) => value || ''
-	});
+	// Получение id товара из его карточки card
+	const id = getIdFromCard(card);
 	// Добавление товара в корзину (модель данных)
-	if (id && typeof (id) === 'string') {
+	if (id) {
 		// Проверка наличия товара в корзине
 		const hasItemInBasket = basket.hasItem(id);
 		// Если товар с id уже в корзине, то удаляем из корзины, если нет - добавляем
@@ -116,13 +109,41 @@ events.on(EVENTS_NAMES.modal.close, () => {
 
 // Брокер: регистрация события открытия модального окна корзины
 events.on(EVENTS_NAMES.basket.openModal, () => {
-	// Создание представления карточек для корзины
-	const basketCards = basket.items.map((item, index) => {
+	// Размещение карточек корзины в списке корзины модального окна
+	modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
+	modal.open(); // открытие модального окна
+});
+
+// Брокер: регистрация события удаления товара из корзины
+events.on(EVENTS_NAMES.basket.delItem, (card: HTMLElement) => {
+	// Получение id товара из его карточки card (разметки)
+	const id = getIdFromCard(card);
+	// Если товар есть наличия в корзине, удаляем
+	if (id && basket.hasItem(id)) {
+		basket.delItemById(id); // удаление в модели данных корзины
+		// Размещение карточек корзины в списке корзины модального окна
+		modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
+	}
+});
+
+// Создание представления карточек для корзины
+function createBasketCards(): HTMLElement[] {
+	return basket.items.map((item, index) => {
 		const basketCard = new BasketCard(cloneTemplate(basketCardTemplate), events);
 		return basketCard.render(item, ++index);
 	});
+}
 
-	// Размещение карточек корзины в списке корзины модального окна
-	modal.setСontent([basketContainer.render({ cards: basketCards, total: basket.total })]);
-	modal.open(); // открытие модального окна
+// Брокер: открытие первой формы заполнения заказа (форма order)
+
+const orderFormContainer = document.querySelector(SELECTORS.forms.templates.order) as HTMLElement; // header-контейнер
+
+events.on(EVENTS_NAMES.order.openOrderForm, () => {
+	console.log('openOrderForm');
+	modal.close(); // закрытие модального окна
+
+	// const orderForm = new OrderForm(, events);
+
+
+	// modal.setСontent([orderFormContainer.render()]);
 });
