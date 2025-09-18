@@ -3,7 +3,7 @@ import './scss/styles.scss';
 import { LarekAPI } from './components/models/LarekAPI';
 import { API_URL, EVENTS_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
-import { ICard, IGalleryCard, ILarekProducts, IPreviewCardData, IProduct } from './types';
+import { ILarekProducts } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
 import { cloneTemplate, getElementData } from './utils/utils';

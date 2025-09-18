@@ -25,14 +25,17 @@ export const SELECTORS = {
   // Галерея карточек
   gallery: {
     container: '.gallery', // контейнер
+    card: 'gallery__item', // карточка
   },
 
   basket: {
     container: '#basket', // контейнер корзины
     listContainer: '.basket__list', // контейнер списка карточек
     total: '.basket__price', // стоимость товаров в корзине
+    orderButton: '.basket__button', // кнопка оформления заказа
     card: {
       index: '.basket__item-index', // порядковый номер в корзине
+      delButton: '.basket__item-delete', // кнопка удаления товара из корзины
     }
   },
 
@@ -48,7 +51,7 @@ export const SELECTORS = {
     // <h2 class="card__title">+1 час в сутках</h2>
     // <img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
     // <span class="card__price">750 синапсов</span>
-    // </button>
+    // </button>    
     selector: '.card',
     category: '.card__category',
     title: '.card__title',

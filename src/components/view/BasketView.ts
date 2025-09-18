@@ -5,8 +5,9 @@ import { IEvents } from "../base/Events";
 
 /** ПРЕДСТАВЛЕНИЕ КОРЗИНЫ КАРТОЧЕК ТОВАРОВ */
 export class BasketView extends Component<IBasketData> {
-  protected listContainer?: HTMLUListElement; // контейнер списка карточек корзины
-  protected totalElement?: HTMLElement; // стоимость товаров в корзине
+  protected listContainer: HTMLUListElement; // <ul> контейнер для карточек
+  protected totalElement: HTMLElement; // <span> стоимость товаров в корзине
+  protected buttonOrderElement: HTMLButtonElement; // <button> оформления заказа
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
@@ -14,30 +15,35 @@ export class BasketView extends Component<IBasketData> {
     // Определение HTML-элементов в контейнере container
     this.listContainer = this.container.querySelector(SELECTORS.basket.listContainer) as HTMLUListElement;
     this.totalElement = this.container.querySelector(SELECTORS.basket.total) as HTMLElement;
+    this.buttonOrderElement = this.container.querySelector(SELECTORS.basket.orderButton) as HTMLButtonElement;
+
+    const abc = this.container.querySelector('.modal__title') as HTMLButtonElement;
+    console.log('abc', abc);
+
+
+    // console.log('this.buttonOrderElement', this.buttonOrderElement);
+    // console.log('SELECTORS.basket.container', SELECTORS.basket.container);
   }
 
   set cards(cards: HTMLElement[]) {
 
     // if (cards?.length > 0) {
-      this.listContainer?.replaceChildren(...cards);
-      // console.log('---cards?.le,ngth', cards?.length);
+
+    this.listContainer?.replaceChildren(...cards);
+
+    console.log('---cards?.length', cards?.length);
     // } else {
-      // console.log('+++cards?.length', cards?.length);
+    console.log('+++cards', cards);
     // }
 
-    ОТСЮДА
   }
 
   /** Рендер корзины товаров */
   public render(data?: IBasketData): HTMLElement {
     // Отображение стоимости товаров в корзине
-    if (data?.total && this.totalElement) {
-      this.totalElement.textContent = data?.total.toString() + ' синапсов';
+    if (this.totalElement) {
+      this.totalElement.textContent = data?.total ? data?.total.toString() + ' синапсов' : '0 синапсов';
     }
-
-    console.log('data', data);
-
-
 
     // Изменение стиля отображения кнопки добавления товара в корзину, если он бесценный или уже в корзине  
     // Object.assign(this.buttonBasketElement,

@@ -22,9 +22,12 @@ export abstract class Card<T> extends Component<T> implements ICard<T> {
     this.priceElement = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
 
     // Обработчик открытия preview карточки
-    this.container.addEventListener('click', () =>
-      this.events.emit(EVENTS_NAMES.card.preview, this.container)
-    );
+    this.container.addEventListener('click', () => {
+      // Preview открывается только при выборе карточек из галереи (не из корзины)
+      if (this.container.classList.contains(SELECTORS.gallery.card)) {
+        this.events.emit(EVENTS_NAMES.card.preview, this.container)
+      }
+    });
   }
 
   /** Задание заголовка товара в карточке */
