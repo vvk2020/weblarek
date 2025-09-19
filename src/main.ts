@@ -6,7 +6,7 @@ import { Api } from './components/base/Api';
 import { ILarekProducts, IProduct } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
-import { cloneTemplate, getElementData, getIdFromCard } from './utils/utils';
+import { cloneTemplate, getElementData, getIdFromCard, getPaymentNameFromButton } from './utils/utils';
 import { GalleryCard } from './components/view/GalleryCard';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/PreviewCard';
@@ -23,6 +23,7 @@ import { OrderForm } from './components/view/OrderForm';
 const galleryCardTemplate = document.querySelector(SELECTORS.templates.galleryCard) as HTMLTemplateElement; // галереи
 const previewCardTemplate = document.querySelector(SELECTORS.templates.previewCard) as HTMLTemplateElement; // подробного просмотра
 const basketCardTemplate = document.querySelector(SELECTORS.templates.basketCard) as HTMLTemplateElement; // карточки корзины
+const orderFormTemplate = document.querySelector(SELECTORS.forms.templates.order) as HTMLTemplateElement; // форма order
 
 // Контейнеры ...
 const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галереи
@@ -40,6 +41,7 @@ const previewCard = new PreviewCard(cloneTemplate(previewCardTemplate), events);
 const modal = new Modal(modalContainer, events, []); // модальное окно
 const basket = new Basket(events);
 const header = new Header(headerContainer, events);
+const orderForm = new OrderForm(cloneTemplate(orderFormTemplate), events);
 
 /** ЗАГРУЗКА ДАННЫХ С СЕРВЕРА */
 Promise.all([
@@ -49,6 +51,14 @@ Promise.all([
 		})
 		.catch((err: Response) => console.error(err))
 ]);
+
+// Создание представления карточек для корзины
+function createBasketCards(): HTMLElement[] {
+	return basket.items.map((item, index) => {
+		const basketCard = new BasketCard(cloneTemplate(basketCardTemplate), events);
+		return basketCard.render(item, ++index);
+	});
+}
 
 // Брокер: регистрация события изменения состава каталога товаров
 events.on(EVENTS_NAMES.items.change, () => {
@@ -126,24 +136,13 @@ events.on(EVENTS_NAMES.basket.delItem, (card: HTMLElement) => {
 	}
 });
 
-// Создание представления карточек для корзины
-function createBasketCards(): HTMLElement[] {
-	return basket.items.map((item, index) => {
-		const basketCard = new BasketCard(cloneTemplate(basketCardTemplate), events);
-		return basketCard.render(item, ++index);
-	});
-}
-
 // Брокер: открытие первой формы заполнения заказа (форма order)
-
-const orderFormContainer = document.querySelector(SELECTORS.forms.templates.order) as HTMLElement; // header-контейнер
-
 events.on(EVENTS_NAMES.order.openOrderForm, () => {
-	console.log('openOrderForm');
-	modal.close(); // закрытие модального окна
+	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
+});
 
-	// const orderForm = new OrderForm(, events);
-
-
-	// modal.setСontent([orderFormContainer.render()]);
+// Брокер: Выбор способа оплаты на форме заполнения заказа (форма order)
+events.on(EVENTS_NAMES.order.set.payment, (btn?: HTMLButtonElement) => {
+	console.log('btn:', getPaymentNameFromButton(btn));
+	// modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });

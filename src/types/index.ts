@@ -131,4 +131,5 @@ export interface IForm {
 
 /**  ФОРМА ЗАКАЗА */
 export interface IOrderForm {
+  render(): HTMLElement;
 }

@@ -106,6 +106,10 @@ export const EVENTS_NAMES = {
   // заказ (покупка)
   order: {
     openOrderForm: 'order: openOrderForm', // открытие первой формы оформления заказа (формы order) 
+    set: { // установка параметров заказа:
+      payment: 'order:setPayment', // способа оплаты
+    }    
+
   }
 }
 
