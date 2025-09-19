@@ -1,12 +1,12 @@
 import './scss/styles.scss';
 
 import { LarekAPI } from './components/models/LarekAPI';
-import { API_URL, EVENTS_NAMES, SELECTORS } from './utils/constants';
+import { API_URL, EVENTS_NAMES, PAYMENT_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
 import { ILarekProducts, IProduct } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
-import { cloneTemplate, getElementData, getIdFromCard, getPaymentNameFromButton } from './utils/utils';
+import { cloneTemplate, getIdFromCard } from './utils/utils';
 import { GalleryCard } from './components/view/GalleryCard';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/PreviewCard';
@@ -16,6 +16,7 @@ import { Header } from './components/view/Header';
 import { BasketCard } from './components/view/BasketCard';
 import { BasketView } from './components/view/BasketView';
 import { OrderForm } from './components/view/OrderForm';
+import { Buyer } from './components/models/Buyer';
 
 //* ЭЛЕМЕНТЫ РАЗМЕТКИ
 
@@ -42,6 +43,7 @@ const modal = new Modal(modalContainer, events, []); // модальное ок�
 const basket = new Basket(events);
 const header = new Header(headerContainer, events);
 const orderForm = new OrderForm(cloneTemplate(orderFormTemplate), events);
+const buyer = new Buyer(); // покупатель
 
 /** ЗАГРУЗКА ДАННЫХ С СЕРВЕРА */
 Promise.all([
@@ -142,7 +144,36 @@ events.on(EVENTS_NAMES.order.openOrderForm, () => {
 });
 
 // Брокер: Выбор способа оплаты на форме заполнения заказа (форма order)
-events.on(EVENTS_NAMES.order.set.payment, (btn?: HTMLButtonElement) => {
-	console.log('btn:', getPaymentNameFromButton(btn));
+events.on(EVENTS_NAMES.order.set.payment, (button: HTMLButtonElement) => {
+	// Alias способа оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
+	const paymentType = (button?.name && PAYMENT_NAMES[button.name]) || undefined;
+	// Задание способа оплаты в модели данных
+	buyer.set('payment', paymentType);
+
+
+	
+	// Блокировка/разблокировка кнопки перехода на следующую форму
+	orderForm.disableNextButton = !(!buyer.errors.payment && !buyer.errors.address);
+	console.log('+++ payment', !buyer.errors.payment);
+	console.log('+++ address', !buyer.errors.address);
+	console.log('orderForm.disableNextButton:', orderForm.disableNextButton);
+
+
+	// if (buyer.valid)
+	// console.log('+++');
+	// else
+	// console.log('---');
+	// console.log('buyer.data.payment:', buyer.data.payment);
+
+
+
+
+
+
+
+
+
+	// Получение name способа оплаты товара из кнопки выбора на форме (разметки)
+
 	// modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });

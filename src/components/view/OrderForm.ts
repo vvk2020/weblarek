@@ -5,8 +5,12 @@ import { Form } from "../common/Form";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
 export class OrderForm extends Form<IOrderForm> {
-	protected paymentButtonsList: HTMLButtonElement[]; // массив radio-<button>
-	protected selectedPaymentButton?: HTMLButtonElement; // <img> изображения товара
+	protected paymentButtonsList: HTMLButtonElement[]; // массив radio-<button> выбора способа оплаты
+	protected selectedPaymentButton?: HTMLButtonElement; // выбранная <button> (способ оплаты)
+	protected nextButton: HTMLButtonElement; // <button> перехода к следующей форме
+	protected addressInput: HTMLInputElement; // <input> адреса
+
+
 
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container, events);
@@ -34,13 +38,21 @@ export class OrderForm extends Form<IOrderForm> {
 		// </template>
 
 		// Определение HTML-элементов в контейнере container
+		this.nextButton = container.querySelector(`.order__button`) as HTMLButtonElement;
+		this.addressInput = container.querySelector(`input[name="address"]`) as HTMLInputElement;
+
+		// console.log('this.addressInput', this.addressInput);	
+
 		const paymentGroupContaner = container.querySelector(`.order__buttons`) as HTMLElement; // контейнер для radioButtons
 		this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll('button.button_alt'));
 
-		console.log('this.buttonsList', this.paymentButtonsList);
-
+		// Обработчики
 		this.paymentButtonsList.forEach(button => {
 			button.addEventListener('click', this.handlePaymentButtonClick);
+		}); // кнопки задания способа оплаты
+
+		this.addressInput.addEventListener('input', () => {
+			console.log('this.addressInput.addEventListener()');
 		});
 	}
 
@@ -93,4 +105,9 @@ export class OrderForm extends Form<IOrderForm> {
 	// set image(path: string) {
 	//   this.setImage(this.imageElement, CDN_URL + path, "Картинка карточки");
 	// }
+
+	/** Блокировка(true) / разблокировка (false) кнопки перехода на следующую форму оформления заказа */
+	set disableNextButton(disabled: boolean) {
+		this.nextButton.disabled = disabled;
+	}
 }

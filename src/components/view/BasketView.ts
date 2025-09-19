@@ -17,7 +17,7 @@ export class BasketView extends Component<IBasketData> {
     this.listContainer = this.container.querySelector(SELECTORS.basket.listContainer) as HTMLUListElement;
     this.totalElement = this.container.querySelector(SELECTORS.basket.total) as HTMLElement;
     this.buttonOrderElement = this.container.querySelector(SELECTORS.basket.orderButton) as HTMLButtonElement;
-    console.log('this.buttonOrderElement', this.buttonOrderElement);
+    // console.log('this.buttonOrderElement', this.buttonOrderElement);
 
 
     // Обработчик старта (вызова первой формы) оформления заказа 

@@ -88,7 +88,6 @@ export function getElementData<T extends Record<string, unknown>>(el: HTMLElemen
     for (const key in el.dataset) {
         data[key as keyof T] = scheme[key](el.dataset[key]);
     }
-    console.log('+++', el, data);
     return data as T;
 }
 
@@ -144,19 +143,4 @@ export function getIdFromCard(card: HTMLElement): string {
         id: (value: string | undefined) => value || ''
     });
     return id as string;
-}
-
-// Получение name способа оплаты товара из кнопки выбора на форме (разметки)
-export function getPaymentNameFromButton(button?: HTMLButtonElement): string {
-    console.log('button7', button);
-    // Запрос id выбранной карточки из разметки
-    if (button) {
-        const { name } = getElementData(button, {
-            name: (value: string | undefined) => value || ''
-        });
-        console.log('paymentName', name);
-        return name as string;
-    } else {
-        return "";
-    }
 }

@@ -1,3 +1,5 @@
+import { TPayment } from "../types";
+
 /* Константа для получения полного пути для сервера. Для выполнения запроса 
 необходимо к API_URL добавить только ендпоинт. */
 export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
@@ -108,7 +110,7 @@ export const EVENTS_NAMES = {
     openOrderForm: 'order: openOrderForm', // открытие первой формы оформления заказа (формы order) 
     set: { // установка параметров заказа:
       payment: 'order:setPayment', // способа оплаты
-    }    
+    }
 
   }
 }
@@ -125,6 +127,18 @@ export const categoryMap = new Proxy({
     return target[prop as keyof typeof target] || target['другое'];
   }
 });
+
+/** Константа соответствий name способа оплаты в разметке и данным о способе оплаты, отправляемым на сервер при заказе */
+// export const PAYMENT_MAP: Record<string, TPayment> = {
+//   'card': 'online',
+//   'cash': 'cash',
+// } as const;
+
+export const PAYMENT_NAMES: { [key: string]: TPayment } = {
+  'card': 'online',
+  'cash': 'cash',
+  'undefinedKey': undefined,
+};
 
 /** Endpoint get-запроса списка товаров */
 export const URI_PRODUCTS = '/product/';
