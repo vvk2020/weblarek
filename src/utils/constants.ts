@@ -69,8 +69,10 @@ export const SELECTORS = {
     templates: { // шаблоны
       order: '#order', // форма ввода email и телефона
       contacts: '#contacts', // форма ввода способа оплаты и адреса
+      success: '#success', // сообщение об успешном оформлении заказа
     },
     errors: '.form__errors', // поле вывода сообщения об ошибках формы (валидации)
+    submitButton: 'button[type="submit"]', // ыгиьше-кнопка
     inputs: { // поля ввода данных
       selector: '.form__input' // поле ввода форм
       // address: 'input[name="address"]', // адрес доставки
@@ -86,6 +88,12 @@ export const SELECTORS = {
       }
     }
   },
+
+  // Окно успешного оформления заказа
+  success: {
+    total: '.order-success__description', // списано синапсов
+    buttonClose: '.order-success__close', // кнопка закрытия окна
+  }
 };
 
 // Имена событий брокера событий
@@ -109,10 +117,17 @@ export const EVENTS_NAMES = {
     order: { // форма заказа (покупка)
       open: 'order:openForm', // открытие первой формы оформления заказа (формы order) 
       chahgeFields: 'order:chahgeFields', // изменение в полях ввода данных
-      submit: 'order:next', // переход нк следующей форме оформления заказа
+      submit: 'order:next', // submit формы
+    },
+    contacts: { // форма оплаты (покупка)
+      // open: 'contacts:openForm', // открытие первой формы оформления заказа (формы contacts) 
+      chahgeFields: 'contacts:chahgeFields', // изменение в полях ввода данных
+      submit: 'contacts:next', // submit формы
     }
+  },
+  success: {
+    close: 'success:close', // закрыть окно
   }
-
 }
 
 /** Константа соответствий категорий товара модификаторам, используемым для отображения фона категории. */

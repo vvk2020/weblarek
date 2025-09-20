@@ -1,7 +1,7 @@
-import { IGalleryCard, IGalleryCardData } from "../../types";
-import { categoryMap, CDN_URL, SELECTORS } from "../../utils/constants";
-import { IEvents } from "../base/Events";
-import { Card } from "../common/Card";
+import { IGalleryCard, IGalleryCardData } from "../../../types";
+import { categoryMap, CDN_URL, SELECTORS } from "../../../utils/constants";
+import { IEvents } from "../../base/Events";
+import { Card } from "../../common/Card";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
 export class GalleryCard extends Card<IGalleryCardData> implements IGalleryCard {

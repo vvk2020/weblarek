@@ -15,9 +15,9 @@ import { cloneTemplate } from './utils/utils';
 import { GalleryView } from './components/view/GalleryView';
 import { GalleryCard } from './components/view/GalleryCard';
 import { BasketCard } from './components/view/BasketCard';
-import { PreviewCard } from './components/view/PreviewCard';
+import { PreviewCard } from './components/view/cards/PreviewCard';
 import { Modal } from './components/common/Modal';
-import { Form } from './components/common/Form';
+import { Form } from './components/view/forms/Form';
 
 //! ТЕСТЫ ===========================================================
 

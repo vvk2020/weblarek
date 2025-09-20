@@ -1,6 +1,6 @@
 import { ICard, Price } from "../../types";
 import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
-import { getElementData, setElementData } from "../../utils/utils";
+import { setElementData } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 

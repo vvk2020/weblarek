@@ -138,8 +138,20 @@ export interface IContactsForm {
   // render(): HTMLElement;
 }
 
-/** ПОЛЯ ДАННЫХ ФОРМЫ order */
+/** ПОЛЯ ДАННЫХ ФОРМЫ OrderForms */
 export interface IOrderFields {
-    paymentButton: HTMLButtonElement | undefined;
-    addressInput: HTMLInputElement;
+  paymentButton: HTMLButtonElement | undefined;
+  addressInput: HTMLInputElement;
 }
+
+/** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */
+export interface IContactsFields {
+  emailInput: HTMLInputElement;
+  phoneInput: HTMLInputElement;
+}
+
+/** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */
+export interface ISuccess {
+  total: Price;
+}
+

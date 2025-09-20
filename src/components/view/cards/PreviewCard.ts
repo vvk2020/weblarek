@@ -1,6 +1,6 @@
-import { IPreviewCardData } from "../../types";
-import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
-import { IEvents } from "../base/Events";
+import { IPreviewCardData } from "../../../types";
+import { EVENTS_NAMES, SELECTORS } from "../../../utils/constants";
+import { IEvents } from "../../base/Events";
 import { GalleryCard } from "./GalleryCard";
 
 /** КЛАСС КАРТОЧКИ В ПОДРОБНОМ ОТОБРАЖЕНИИ */

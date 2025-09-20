@@ -1,7 +1,7 @@
-import { IBasketCardData } from "../../types";
-import { SELECTORS } from "../../utils/constants";
-import { IEvents } from "../base/Events";
-import { Card } from "../common/Card";
+import { IBasketCardData } from "../../../types";
+import { SELECTORS } from "../../../utils/constants";
+import { IEvents } from "../../base/Events";
+import { Card } from "../../common/Card";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
 export class BasketCard extends Card<IBasketCardData> {
@@ -11,16 +11,6 @@ export class BasketCard extends Card<IBasketCardData> {
   constructor(protected container: HTMLElement, events: IEvents) {
     super(container, events);
     this.events = events;
-
-    // <template id="card-basket">
-    // 	<li class="basket__item card card_compact">
-    // 		<span class="basket__item-index">1</span>
-    // 		<span class="card__title">Фреймворк куки судьбы</span>
-    // 		<span class="card__price">2500 синапсов</span>
-    // 		<button class="basket__item-delete card__button" aria-label="удалить"></button>
-    // 	</li>
-    // </template>
-
     // Определение HTML-элементов в контейнере container
     this.IndexElement = this.container.querySelector(SELECTORS.basket.card.index) as HTMLElement;
   }
@@ -32,7 +22,6 @@ export class BasketCard extends Card<IBasketCardData> {
       // console.log('seqNumber', index);
       this.IndexElement.textContent = index.toString();
     }
-    // return this.container; // возврат исходного контейнера
     return super.render(data);
   }
 }
