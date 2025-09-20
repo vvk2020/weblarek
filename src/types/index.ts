@@ -133,3 +133,9 @@ export interface IForm {
 export interface IOrderForm {
   render(): HTMLElement;
 }
+
+/** ПОЛЯ ДАННЫХ ФОРМЫ order */
+export interface IOrderFields {
+    paymentButton: HTMLButtonElement | undefined;
+    addressInput: HTMLInputElement;
+}

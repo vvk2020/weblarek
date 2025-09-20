@@ -22,7 +22,7 @@ export class Buyer {
   /** Универсальный метод определения свойств */
   public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
     (this as any)[field] = value;
-    console.log(`Buyer[${field}] = ${value}`);
+    // console.log(`Buyer[${field}] = ${value}`);
   }
 
   /** Данные покупателя в виде объекта */

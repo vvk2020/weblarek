@@ -23,10 +23,10 @@ export class Form<T> extends Component<T> {
     this.errorsElement.textContent = text;
   }
 
-  // Задание полей ввода данных
-  set inputValues(data: Record<string, string>) {
-    this.inputsElements.forEach((element) => {
-      element.value = data[element.name];
-    });
-  }
+  // // Задание полей ввода данных
+  // set inputValues(data: Record<string, string>) {
+  //   this.inputsElements.forEach((element) => {
+  //     element.value = data[element.name];
+  //   });
+  // }
 }

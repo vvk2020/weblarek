@@ -3,7 +3,7 @@ import './scss/styles.scss';
 import { LarekAPI } from './components/models/LarekAPI';
 import { API_URL, EVENTS_NAMES, PAYMENT_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
-import { ILarekProducts, IProduct } from './types';
+import { ILarekProducts, IOrderFields, IProduct } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
 import { cloneTemplate, getIdFromCard } from './utils/utils';
@@ -138,42 +138,21 @@ events.on(EVENTS_NAMES.basket.delItem, (card: HTMLElement) => {
 	}
 });
 
-// Брокер: открытие первой формы заполнения заказа (форма order)
-events.on(EVENTS_NAMES.order.openOrderForm, () => {
+// Брокер: открытие первой формы заполнения заказа (OrderForm)
+events.on(EVENTS_NAMES.forms.order.open, () => {
 	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });
 
-// Брокер: Выбор способа оплаты на форме заполнения заказа (форма order)
-events.on(EVENTS_NAMES.order.set.payment, (button: HTMLButtonElement) => {
-	// Alias способа оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
-	const paymentType = (button?.name && PAYMENT_NAMES[button.name]) || undefined;
-	// Задание способа оплаты в модели данных
+
+// Брокер: Изменение в полях данных на форме заполнения заказа (OrderForm)
+events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
+	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
+	const paymentType = (fields.paymentButton?.name && PAYMENT_NAMES[fields.paymentButton.name]) || undefined;
+	// Изменение модели данных
 	buyer.set('payment', paymentType);
-
-
-	
+	buyer.set('address', fields.addressInput.value);
 	// Блокировка/разблокировка кнопки перехода на следующую форму
 	orderForm.disableNextButton = !(!buyer.errors.payment && !buyer.errors.address);
-	console.log('+++ payment', !buyer.errors.payment);
-	console.log('+++ address', !buyer.errors.address);
-	console.log('orderForm.disableNextButton:', orderForm.disableNextButton);
-
-
-	// if (buyer.valid)
-	// console.log('+++');
-	// else
-	// console.log('---');
-	// console.log('buyer.data.payment:', buyer.data.payment);
-
-
-
-
-
-
-
-
-
-	// Получение name способа оплаты товара из кнопки выбора на форме (разметки)
-
-	// modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
+	// Вывод ошибок валидации в поле на OrderForm
+	orderForm.errors = (buyer.errors.payment || buyer.errors.address) || '';
 });

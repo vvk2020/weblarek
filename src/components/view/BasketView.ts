@@ -22,7 +22,7 @@ export class BasketView extends Component<IBasketData> {
 
     // Обработчик старта (вызова первой формы) оформления заказа 
     this.buttonOrderElement.addEventListener('click', () => {
-      this.events.emit(EVENTS_NAMES.order.openOrderForm, this.container); // брокер: генерирование события удаления товара из корзины
+      this.events.emit(EVENTS_NAMES.forms.order.open, this.container); // брокер: генерирование события удаления товара из корзины
     });
   };
 
@@ -38,7 +38,6 @@ export class BasketView extends Component<IBasketData> {
       this.listContainer.classList.add('basket__empty-text');
       this.buttonOrderElement.disabled = true; // блокировка кнопки оформления заказа
     }
-
   }
 
   /** Рендер корзины товаров */

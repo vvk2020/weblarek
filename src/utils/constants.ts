@@ -86,33 +86,32 @@ export const SELECTORS = {
 
 // Имена событий брокера событий
 export const EVENTS_NAMES = {
-  // карточка товара
-  card: {
+  card: { // карточка товара
     preview: 'card:select', // карточка выбрана
   },
-  // товары (модель данных)
-  items: {
+  items: { // товары (модель данных)
     change: 'items:change', // список товаров изменен
   },
-  // корзина
-  basket: {
+  basket: { // корзина
     addItem: `basket:itemAdd`, // добавление товара в корзину
     delItem: `basket:delAdd`, // удаление товара из корзины
     change: `basket:change`, // корзина изменена
     openModal: 'basket:openModal', // открытие (просмотр) корзины в модальном окне
   },
-  // модальное окно
-  modal: {
+  modal: { // модальное окно
     close: 'modal:close' // закрыть
   },
-  // заказ (покупка)
-  order: {
-    openOrderForm: 'order: openOrderForm', // открытие первой формы оформления заказа (формы order) 
-    set: { // установка параметров заказа:
-      payment: 'order:setPayment', // способа оплаты
+  forms: { // формы
+    order: { // форма заказа (покупка)
+      open: 'order:openForm', // открытие первой формы оформления заказа (формы order) 
+      chahgeFields: 'order:chahgeFields', // изменение в полях ввода данных
+      // set: { // установка параметров заказа:
+      //   payment: 'order:setPayment', // способа оплаты
+      //   address: 'order:setAddress', // адреса
+      // }
     }
-
   }
+
 }
 
 /** Константа соответствий категорий товара модификаторам, используемым для отображения фона категории. */
