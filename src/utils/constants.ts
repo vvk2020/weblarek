@@ -109,7 +109,7 @@ export const EVENTS_NAMES = {
     order: { // форма заказа (покупка)
       open: 'order:openForm', // открытие первой формы оформления заказа (формы order) 
       chahgeFields: 'order:chahgeFields', // изменение в полях ввода данных
-      next: 'order:next', // переход нк следующей форме оформления заказа
+      submit: 'order:next', // переход нк следующей форме оформления заказа
     }
   }
 

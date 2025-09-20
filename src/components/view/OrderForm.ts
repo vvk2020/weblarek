@@ -9,6 +9,7 @@ export class OrderForm extends Form<IOrderForm> {
 	protected selectedPaymentButton?: HTMLButtonElement; // выбранная кнопка способа оплаты
 	protected nextButton: HTMLButtonElement; // <button> перехода к следующей форме
 	protected addressInput: HTMLInputElement; // <input> адреса
+	protected form: HTMLFormElement; // форма
 
 
 
@@ -16,14 +17,30 @@ export class OrderForm extends Form<IOrderForm> {
 		super(container, events);
 
 		// Определение HTML-элементов в контейнере container
-		// this.nextButton = container.querySelector(`.order__button`) as HTMLButtonElement;
 		this.nextButton = container.querySelector(SELECTORS.forms.order.orderButton) as HTMLButtonElement;
-		// this.addressInput = container.querySelector(`input[name="address"]`) as HTMLInputElement;
 		this.addressInput = container.querySelector(SELECTORS.forms.order.fields.address) as HTMLInputElement;
+		this.form = container as HTMLFormElement;
 
-		// const paymentGroupContaner = container.querySelector(`.order__buttons`) as HTMLElement; // контейнер кнопок способов оплаты
+	// <template id="contacts">
+	// 	<form class="form" name="contacts">
+	// 		<div class="order">
+	// 			<label class="order__field">
+	// 				<span class="form__label modal__title">Email</span>
+	// 				<input name="email" class="form__input" type="text" placeholder="Введите Email" />
+	// 			</label>
+	// 			<label class="order__field">
+	// 				<span class="form__label modal__title">Телефон</span>
+	// 				<input name="phone" class="form__input" type="text" placeholder="+7 (" />
+	// 			</label>
+	// 		</div>
+	// 		<div class="modal__actions">
+	// 			<button type="submit" disabled class="button">Оплатить</button>
+	// 			<span class="form__errors"></span>
+	// 		</div>
+	// 	</form>
+	// </template>
+
 		const paymentGroupContaner = container.querySelector(SELECTORS.forms.order.fields.payment.container) as HTMLElement; // контейнер кнопок способов оплаты
-		// this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll('button.button_alt'));
 		this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll(SELECTORS.forms.order.fields.payment.button));
 
 		// Назначение обработчика выбора способа оплаты
@@ -41,9 +58,12 @@ export class OrderForm extends Form<IOrderForm> {
 		});
 
 		// Назначение обработчика кнопки перехода к следующей форме
-		this.nextButton.addEventListener('input', () => {
-			// Генерирование сообщения об изменении в полях данных фомы OrderForm
-			this.events.emit(EVENTS_NAMES.forms.order.next);
+		console.log('nextButton', this.nextButton);
+
+		this.form.addEventListener('submit', (event: SubmitEvent) => {
+			event.preventDefault(); // отмена стандартной отправки форы
+			// Генерирование submit-сообщения фомы OrderForm (переход к ContactForm)
+			this.events.emit(EVENTS_NAMES.forms.order.submit);
 		});
 	}
 

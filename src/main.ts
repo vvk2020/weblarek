@@ -165,7 +165,7 @@ events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
 });
 
 // Брокер: открытие первой формы заполнения заказа (OrderForm)
-events.on(EVENTS_NAMES.forms.order.next, () => {
-	console.log('EVENTS_NAMES.forms.order.next');
-	// modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
+events.on(EVENTS_NAMES.forms.order.submit, () => {
+	console.log('EVENTS_NAMES.forms.order.submit');
+	modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
 });
