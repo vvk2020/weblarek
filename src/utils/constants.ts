@@ -49,12 +49,6 @@ export const SELECTORS = {
 
   // Селекторы элементов карточек
   card: {
-    // <button class="gallery__item card">
-    // <span class="card__category card__category_soft">софт-скил</span>
-    // <h2 class="card__title">+1 час в сутках</h2>
-    // <img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
-    // <span class="card__price">750 синапсов</span>
-    // </button>    
     selector: '.card',
     category: '.card__category',
     title: '.card__title',
@@ -80,6 +74,16 @@ export const SELECTORS = {
     inputs: { // поля ввода данных
       selector: '.form__input' // поле ввода форм
       // address: 'input[name="address"]', // адрес доставки
+    },
+    order: { // форма OrderForm
+      orderButton: '.order__button',
+      fields: { // поля
+        address: 'input[name="address"]', // поле адреса доставки
+        payment: { // группа кнопок выбора способа оплаты
+          container: '.order__buttons', // контейнер кнопок способов оплаты
+          button: 'button.button_alt',// кнопка способа оплаты
+        }
+      }
     }
   },
 };
@@ -105,10 +109,7 @@ export const EVENTS_NAMES = {
     order: { // форма заказа (покупка)
       open: 'order:openForm', // открытие первой формы оформления заказа (формы order) 
       chahgeFields: 'order:chahgeFields', // изменение в полях ввода данных
-      // set: { // установка параметров заказа:
-      //   payment: 'order:setPayment', // способа оплаты
-      //   address: 'order:setAddress', // адреса
-      // }
+      next: 'order:next', // переход нк следующей форме оформления заказа
     }
   }
 

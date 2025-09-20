@@ -131,7 +131,11 @@ export interface IForm {
 
 /**  ФОРМА ЗАКАЗА */
 export interface IOrderForm {
-  render(): HTMLElement;
+  // render(): HTMLElement;
+}
+/** ФОРМА КОНТАКТОВ */
+export interface IContactsForm {
+  // render(): HTMLElement;
 }
 
 /** ПОЛЯ ДАННЫХ ФОРМЫ order */

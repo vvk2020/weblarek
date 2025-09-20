@@ -17,6 +17,7 @@ import { BasketCard } from './components/view/BasketCard';
 import { BasketView } from './components/view/BasketView';
 import { OrderForm } from './components/view/OrderForm';
 import { Buyer } from './components/models/Buyer';
+import { ContactsForm } from './components/view/ContactsForm';
 
 //* ЭЛЕМЕНТЫ РАЗМЕТКИ
 
@@ -25,6 +26,7 @@ const galleryCardTemplate = document.querySelector(SELECTORS.templates.galleryCa
 const previewCardTemplate = document.querySelector(SELECTORS.templates.previewCard) as HTMLTemplateElement; // подробного просмотра
 const basketCardTemplate = document.querySelector(SELECTORS.templates.basketCard) as HTMLTemplateElement; // карточки корзины
 const orderFormTemplate = document.querySelector(SELECTORS.forms.templates.order) as HTMLTemplateElement; // форма order
+const contactsFormTemplate = document.querySelector(SELECTORS.forms.templates.contacts) as HTMLTemplateElement; // форма contacts
 
 // Контейнеры ...
 const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галереи
@@ -43,6 +45,7 @@ const modal = new Modal(modalContainer, events, []); // модальное ок�
 const basket = new Basket(events);
 const header = new Header(headerContainer, events);
 const orderForm = new OrderForm(cloneTemplate(orderFormTemplate), events);
+const contactsForm = new ContactsForm(cloneTemplate(contactsFormTemplate), events);
 const buyer = new Buyer(); // покупатель
 
 /** ЗАГРУЗКА ДАННЫХ С СЕРВЕРА */
@@ -143,7 +146,6 @@ events.on(EVENTS_NAMES.forms.order.open, () => {
 	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });
 
-
 // Брокер: Изменение в полях данных на форме заполнения заказа (OrderForm)
 events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
 	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
@@ -153,6 +155,17 @@ events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
 	buyer.set('address', fields.addressInput.value);
 	// Блокировка/разблокировка кнопки перехода на следующую форму
 	orderForm.disableNextButton = !(!buyer.errors.payment && !buyer.errors.address);
+	// Текст ошибки валидации
+	const errorMessage = (buyer.errors.payment || buyer.errors.address) || '';
 	// Вывод ошибок валидации в поле на OrderForm
-	orderForm.errors = (buyer.errors.payment || buyer.errors.address) || '';
+	orderForm.errors = errorMessage;
+	// // Если ошибок нет, открыаем вторую форму (ContactsForm)
+	// if (!errorMessage) modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
+
+});
+
+// Брокер: открытие первой формы заполнения заказа (OrderForm)
+events.on(EVENTS_NAMES.forms.order.next, () => {
+	console.log('EVENTS_NAMES.forms.order.next');
+	// modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
 });

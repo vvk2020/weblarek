@@ -16,11 +16,15 @@ export class OrderForm extends Form<IOrderForm> {
 		super(container, events);
 
 		// Определение HTML-элементов в контейнере container
-		this.nextButton = container.querySelector(`.order__button`) as HTMLButtonElement;
-		this.addressInput = container.querySelector(`input[name="address"]`) as HTMLInputElement;
+		// this.nextButton = container.querySelector(`.order__button`) as HTMLButtonElement;
+		this.nextButton = container.querySelector(SELECTORS.forms.order.orderButton) as HTMLButtonElement;
+		// this.addressInput = container.querySelector(`input[name="address"]`) as HTMLInputElement;
+		this.addressInput = container.querySelector(SELECTORS.forms.order.fields.address) as HTMLInputElement;
 
-		const paymentGroupContaner = container.querySelector(`.order__buttons`) as HTMLElement; // контейнер кнопок способов оплаты
-		this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll('button.button_alt'));
+		// const paymentGroupContaner = container.querySelector(`.order__buttons`) as HTMLElement; // контейнер кнопок способов оплаты
+		const paymentGroupContaner = container.querySelector(SELECTORS.forms.order.fields.payment.container) as HTMLElement; // контейнер кнопок способов оплаты
+		// this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll('button.button_alt'));
+		this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll(SELECTORS.forms.order.fields.payment.button));
 
 		// Назначение обработчика выбора способа оплаты
 		this.paymentButtonsList.forEach(button => {
@@ -34,6 +38,12 @@ export class OrderForm extends Form<IOrderForm> {
 				paymentButton: this.selectedPaymentButton,
 				addressInput: this.addressInput
 			} as IOrderFields);
+		});
+
+		// Назначение обработчика кнопки перехода к следующей форме
+		this.nextButton.addEventListener('input', () => {
+			// Генерирование сообщения об изменении в полях данных фомы OrderForm
+			this.events.emit(EVENTS_NAMES.forms.order.next);
 		});
 	}
 
