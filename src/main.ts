@@ -30,10 +30,7 @@ const orderFormTemplate = document.querySelector(SELECTORS.forms.templates.order
 const contactsFormTemplate = document.querySelector(SELECTORS.forms.templates.contacts) as HTMLTemplateElement; // форма contacts
 const successTemplate = document.querySelector(SELECTORS.forms.templates.success) as HTMLTemplateElement; // форма contacts
 
-console.log('successTemplate', successTemplate);
-
-
-// Контейнеры ...
+// Контейнеры
 const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галереи
 const basketElement = document.querySelector(SELECTORS.basket.container) as HTMLTemplateElement; // корзины
 const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модального окна
@@ -54,7 +51,7 @@ const buyer = new Buyer(); // покупатель
 const productsAPI = new LarekAPI(api);
 const success = new Success(cloneTemplate(successTemplate), events);
 
-/** ЗАГРУЗКА ДАННЫХ С СЕРВЕРА */
+//* ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
 Promise.all([
 	productsAPI.getShopProducts()
 		.then((data: ILarekProducts) => {
@@ -169,7 +166,6 @@ events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
 
 // Брокер: submit формы OrderForm
 events.on(EVENTS_NAMES.forms.order.submit, () => {
-	// orderForm.reset(); // сброс полей формы 
 	modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
 });
 
@@ -178,10 +174,6 @@ events.on(EVENTS_NAMES.forms.contacts.chahgeFields, (fields: IContactsFields) =>
 	// Изменение модели данных
 	buyer.set('email', fields.emailInput.value);
 	buyer.set('phone', fields.phoneInput.value);
-
-	console.log('++!(!buyer.errors.email && !buyer.errors.phone)', !(!buyer.errors.email && !buyer.errors.phone));
-
-
 	// Блокировка/разблокировка кнопки перехода на следующую форму
 	contactsForm.disableSubmitButton = !(!buyer.errors.email && !buyer.errors.phone);
 	// Текст ошибки валидации
@@ -192,9 +184,6 @@ events.on(EVENTS_NAMES.forms.contacts.chahgeFields, (fields: IContactsFields) =>
 
 // Брокер: submit формы ContactsForm
 events.on(EVENTS_NAMES.forms.contacts.submit, () => {
-	// contactsForm.reset(); // сброс полей формы 
-	console.log('EVENTS_NAMES.forms.contacts.submit');
-
 	// Запрос оформления заказа
 	if (buyer.valid) {
 		// Данные для запроса
@@ -205,18 +194,19 @@ events.on(EVENTS_NAMES.forms.contacts.submit, () => {
 		};
 		productsAPI.placeOrder(orderData)
 			.then((data: IPurchaseData) => {
-				modal.setСontent([success.render({ total: data.total })]); // размещение формы в модальном окне
+				basket.clear(); // очистка корзины
+				// Сброс полей форм
+				orderForm.reset();
+				contactsForm.reset();
+				// Размещение формы с сообщением об успешной оплате в модальном окне
+				modal.setСontent([success.render({ total: data.total })]);
 			})
 			.catch((err: Response) => console.error(err));
 	}
 
 });
 
-// Брокер: submit формы OrderForm
+// Брокер: закрытие окна с сообщением об успешной оплате
 events.on(EVENTS_NAMES.success.close, () => {
 	modal.close(); // закрытие модального окна
-	basket.clear(); // очистка корзины
-	// Сброс полей форм
-	orderForm.reset();
-	contactsForm.reset();
 });

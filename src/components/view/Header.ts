@@ -1,9 +1,9 @@
-import { IHeaderData as IHeader } from "../../types";
+import { IHeaderData } from "../../types";
 import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-export class Header extends Component<IHeader> {
+export class Header extends Component<IHeaderData> {
   protected basketCounterElement: HTMLElement; // <span> вывода значения счетчика товаров в корзине
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
@@ -25,7 +25,7 @@ export class Header extends Component<IHeader> {
 
   /** Рендер Header'а на основе данных, переданных через data   
    * Если данные не определены, то возврат контейнера */
-  public render(data?: Partial<IHeader>): HTMLElement {
+  public render(data?: Partial<IHeaderData>): HTMLElement {
     return (!data) ? this.container : super.render(data);
   }
 }

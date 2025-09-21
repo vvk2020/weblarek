@@ -1,6 +1,5 @@
-import { IHeaderData as IHeader, ISuccess, Price } from "../../types";
+import { ISuccess, Price } from "../../types";
 import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
-// import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
