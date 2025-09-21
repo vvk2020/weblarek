@@ -1,37 +1,32 @@
 import { IContactsFields, IContactsForm } from "../../../types";
-import { EVENTS_NAMES } from "../../../utils/constants";
+import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
-import { Form } from "../../common/Form";
+import { Form } from "./Form";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
 export class ContactsForm extends Form<IContactsForm> {
-	// protected paymentButtonsList: HTMLButtonElement[]; // массив кнопок выбора способа оплаты
-	// protected selectedPaymentButton?: HTMLButtonElement; // выбранная кнопка способа оплаты
-	protected emailInput: HTMLInputElement; // <input> email покупателя
-	protected phoneInput: HTMLInputElement; // <input> телефона покупателя
+	protected emailInp: HTMLInputElement; // <input> email покупателя
+	protected phoneInp: HTMLInputElement; // <input> телефона покупателя
 
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container, events);
-
 		// Определение HTML-элементов в контейнере container
-		// this.submitButton = container.querySelector('button[type="submit"]') as HTMLButtonElement;
-		this.emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
-		this.phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
-
+		this.emailInp = container.querySelector(SELECTORS.forms.contacts.fields.email) as HTMLInputElement;
+		this.phoneInp = container.querySelector(SELECTORS.forms.contacts.fields.phone) as HTMLInputElement;
 		// Назначение обработчика изменения в полях ввода
-		this.emailInput.addEventListener('input', () => {
+		this.emailInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы ContactsForm
-			this.events.emit(EVENTS_NAMES.forms.contacts.chahgeFields, {
-				emailInput: this.emailInput,
-				phoneInput: this.phoneInput
+			this.events.emit(EVENTS.forms.contacts.chahgeFields, {
+				emailInput: this.emailInp,
+				phoneInput: this.phoneInp
 			} as IContactsFields);
 		});
 
-		this.phoneInput.addEventListener('input', () => {
+		this.phoneInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы ContactsForm
-			this.events.emit(EVENTS_NAMES.forms.contacts.chahgeFields, {
-				emailInput: this.emailInput,
-				phoneInput: this.phoneInput
+			this.events.emit(EVENTS.forms.contacts.chahgeFields, {
+				emailInput: this.emailInp,
+				phoneInput: this.phoneInp
 			} as IContactsFields);
 		});
 	}

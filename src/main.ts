@@ -1,7 +1,7 @@
 import './scss/styles.scss';
 
 import { LarekAPI } from './components/models/LarekAPI';
-import { API_URL, EVENTS_NAMES, PAYMENT_NAMES, SELECTORS } from './utils/constants';
+import { API_URL, EVENTS, PAYMENT_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
 import { IContactsFields, ILarekProducts, IOrderData, IOrderFields, IProduct, IPurchaseData } from './types';
 import { EventEmitter } from './components/base/Events';
@@ -9,7 +9,7 @@ import { Catalog } from './components/models/Catalog';
 import { cloneTemplate, getIdFromCard } from './utils/utils';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/cards/PreviewCard';
-import { Modal } from './components/common/Modal';
+import { Modal } from './components/view/Modal';
 import { Basket } from './components/models/Basket';
 import { Header } from './components/view/Header';
 import { BasketView } from './components/view/BasketView';
@@ -69,7 +69,7 @@ function createBasketCards(): HTMLElement[] {
 }
 
 // Брокер: регистрация события изменения состава каталога товаров
-events.on(EVENTS_NAMES.items.change, () => {
+events.on(EVENTS.items.change, () => {
 	// Создание и render карточек
 	const galleryCards = catalog.items.map((item) => {
 		const catalogCard = new GalleryCard(cloneTemplate(galleryCardTemplate), events);
@@ -80,7 +80,7 @@ events.on(EVENTS_NAMES.items.change, () => {
 });
 
 // Брокер: регистрация события preview карточки
-events.on(EVENTS_NAMES.card.preview, (card: HTMLElement) => {
+events.on(EVENTS.card.preview, (card: HTMLElement) => {
 	// Получение id товара из его карточки card (разметки)
 	const id = getIdFromCard(card);
 	if (id) {
@@ -95,7 +95,7 @@ events.on(EVENTS_NAMES.card.preview, (card: HTMLElement) => {
 });
 
 // Брокер: регистрация события добавления товара из галереи в корзину (модель данных)
-events.on(EVENTS_NAMES.basket.addItem, (card: HTMLElement) => {
+events.on(EVENTS.basket.addItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card
 	const id = getIdFromCard(card);
 	// Добавление товара в корзину (модель данных)
@@ -115,25 +115,25 @@ events.on(EVENTS_NAMES.basket.addItem, (card: HTMLElement) => {
 });
 
 // Брокер: регистрация события изменения корзины
-events.on(EVENTS_NAMES.basket.change, () => {
+events.on(EVENTS.basket.change, () => {
 	// Обновление счетчика товаров в корзине
 	header.render({ basketCounter: basket.itemCount });
 });
 
 // Брокер: регистрация события закрытия модального окна
-events.on(EVENTS_NAMES.modal.close, () => {
+events.on(EVENTS.modal.close, () => {
 	modal.close();
 });
 
 // Брокер: регистрация события открытия модального окна корзины
-events.on(EVENTS_NAMES.basket.openModal, () => {
+events.on(EVENTS.basket.openModal, () => {
 	// Размещение карточек корзины в списке корзины модального окна
 	modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
 	modal.open(); // открытие модального окна
 });
 
 // Брокер: регистрация события удаления товара из корзины
-events.on(EVENTS_NAMES.basket.delItem, (card: HTMLElement) => {
+events.on(EVENTS.basket.delItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card (разметки)
 	const id = getIdFromCard(card);
 	// Если товар есть наличия в корзине, удаляем
@@ -145,17 +145,17 @@ events.on(EVENTS_NAMES.basket.delItem, (card: HTMLElement) => {
 });
 
 // Брокер: открытие формы OrderForm
-events.on(EVENTS_NAMES.forms.order.open, () => {
+events.on(EVENTS.forms.order.open, () => {
 	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });
 
 // Брокер: Изменение в полях данных на форме заполнения заказа (OrderForm)
-events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
+events.on(EVENTS.forms.order.chahgeFields, (fields: IOrderFields) => {
 	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
-	const paymentType = (fields.paymentButton?.name && PAYMENT_NAMES[fields.paymentButton.name]) || undefined;
+	const paymentType = (fields.payment?.name && PAYMENT_NAMES[fields.payment.name]) || undefined;
 	// Изменение модели данных
 	buyer.set('payment', paymentType);
-	buyer.set('address', fields.addressInput.value);
+	buyer.set('address', fields.address.value);
 	// Блокировка/разблокировка кнопки перехода на следующую форму
 	orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
 	// Текст ошибки валидации
@@ -165,12 +165,12 @@ events.on(EVENTS_NAMES.forms.order.chahgeFields, (fields: IOrderFields) => {
 });
 
 // Брокер: submit формы OrderForm
-events.on(EVENTS_NAMES.forms.order.submit, () => {
+events.on(EVENTS.forms.order.submit, () => {
 	modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
 });
 
 // Брокер: Изменение в полях данных на форме оплаты зака (ContactsForm)
-events.on(EVENTS_NAMES.forms.contacts.chahgeFields, (fields: IContactsFields) => {
+events.on(EVENTS.forms.contacts.chahgeFields, (fields: IContactsFields) => {
 	// Изменение модели данных
 	buyer.set('email', fields.emailInput.value);
 	buyer.set('phone', fields.phoneInput.value);
@@ -183,7 +183,7 @@ events.on(EVENTS_NAMES.forms.contacts.chahgeFields, (fields: IContactsFields) =>
 });
 
 // Брокер: submit формы ContactsForm
-events.on(EVENTS_NAMES.forms.contacts.submit, () => {
+events.on(EVENTS.forms.contacts.submit, () => {
 	// Запрос оформления заказа
 	if (buyer.valid) {
 		// Данные для запроса
@@ -207,6 +207,6 @@ events.on(EVENTS_NAMES.forms.contacts.submit, () => {
 });
 
 // Брокер: закрытие окна с сообщением об успешной оплате
-events.on(EVENTS_NAMES.success.close, () => {
+events.on(EVENTS.success.close, () => {
 	modal.close(); // закрытие модального окна
 });

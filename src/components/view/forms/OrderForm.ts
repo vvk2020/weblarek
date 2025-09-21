@@ -1,57 +1,54 @@
 import { IOrderFields, IOrderForm } from "../../../types";
-import { EVENTS_NAMES, SELECTORS } from "../../../utils/constants";
+import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
-import { Form } from "../../common/Form";
+import { Form } from "./Form";
 
 /** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
 export class OrderForm extends Form<IOrderForm> {
-	protected paymentButtonsList: HTMLButtonElement[]; // массив кнопок выбора способа оплаты
-	protected selectedPaymentButton?: HTMLButtonElement; // выбранная кнопка способа оплаты
-	protected addressInput: HTMLInputElement; // <input> адреса
+	protected paymentBtns: HTMLButtonElement[]; // массив кнопок выбора способа оплаты
+	protected selectedPaymentBtn?: HTMLButtonElement; // выбранная кнопка способа оплаты
+	protected addressInp: HTMLInputElement; // <input> адреса
 
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container, events);
-
 		// Определение HTML-элементов в контейнере container
-		this.addressInput = container.querySelector(SELECTORS.forms.order.fields.address) as HTMLInputElement;
+		this.addressInp = container.querySelector(SELECTORS.forms.order.fields.address) as HTMLInputElement;
 		const paymentGroupContaner = container.querySelector(SELECTORS.forms.order.fields.payment.container) as HTMLElement; // контейнер кнопок способов оплаты
-		this.paymentButtonsList = Array.from(paymentGroupContaner.querySelectorAll(SELECTORS.forms.order.fields.payment.button));
-
+		this.paymentBtns = Array.from(paymentGroupContaner.querySelectorAll(SELECTORS.forms.order.fields.payment.button));
 		// Назначение обработчика выбора способа оплаты
-		this.paymentButtonsList.forEach(button => {
+		this.paymentBtns.forEach(button => {
 			button.addEventListener('click', this.handlePaymentButtonClick);
 		}); // кнопки задания способа оплаты
-
 		// Назначение обработчика изменения адреса доставки
-		this.addressInput.addEventListener('input', () => {
+		this.addressInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы OrderForm
-			this.events.emit(EVENTS_NAMES.forms.order.chahgeFields, {
-				paymentButton: this.selectedPaymentButton,
-				addressInput: this.addressInput
+			this.events.emit(EVENTS.forms.order.chahgeFields, {
+				payment: this.selectedPaymentBtn,
+				address: this.addressInp
 			} as IOrderFields);
 		});
 	}
 
 	/** Задание категории товара в карточке */
 	set selectedPayment(button: HTMLButtonElement | undefined) {
-		this.selectedPaymentButton = button;
+		this.selectedPaymentBtn = button;
 		// Генерирование сообщения об изменении в полях данных фомы OrderForm
-		this.events.emit(EVENTS_NAMES.forms.order.chahgeFields, {
-			paymentButton: button,
-			addressInput: this.addressInput
+		this.events.emit(EVENTS.forms.order.chahgeFields, {
+			payment: button,
+			address: this.addressInp
 		} as IOrderFields);
 	}
 
 	/** Обработчик click по кнопке способа оплаты */
 	private handlePaymentButtonClick = (event: Event) => {
 		const button = event.currentTarget as HTMLButtonElement; // выбранная кнопка
-		if (this.selectedPaymentButton === button) {
+		if (this.selectedPaymentBtn === button) {
 			// Отмена выбранного способа
 			button.classList.remove('button_alt-active');
 			this.selectedPayment = undefined;
 		} else {
 			// Выбор нового способа
-			this.paymentButtonsList.forEach(btn => btn.classList.remove('button_alt-active'));
+			this.paymentBtns.forEach(btn => btn.classList.remove('button_alt-active'));
 			button.classList.add('button_alt-active');
 			this.selectedPayment = button;
 		}
@@ -61,9 +58,9 @@ export class OrderForm extends Form<IOrderForm> {
 	public reset() {
 		super.reset(); // сброс <input>-полей
 		// Сброс выбранного способа оплаты
-		if (this.selectedPaymentButton) {
-			this.selectedPaymentButton.classList.remove('button_alt-active');
-			this.selectedPaymentButton = undefined;
+		if (this.selectedPaymentBtn) {
+			this.selectedPaymentBtn.classList.remove('button_alt-active');
+			this.selectedPaymentBtn = undefined;
 		}
 		// this.submitButton.disabled = true;
 	}

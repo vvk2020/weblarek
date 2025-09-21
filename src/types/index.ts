@@ -140,8 +140,8 @@ export interface IContactsForm {
 
 /** ПОЛЯ ДАННЫХ ФОРМЫ OrderForms */
 export interface IOrderFields {
-  paymentButton: HTMLButtonElement | undefined;
-  addressInput: HTMLInputElement;
+  payment: HTMLButtonElement | undefined;
+  address: HTMLInputElement;
 }
 
 /** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */

@@ -1,5 +1,5 @@
 import { IBasket, IProduct, Price } from "../../types";
-import { EVENTS_NAMES } from "../../utils/constants";
+import { EVENTS } from "../../utils/constants";
 import { IEvents } from "../base/Events";
 
 /** КОРЗИНА ПРОДУКТОВ 
@@ -48,7 +48,7 @@ export class Basket implements IBasket {
       else {
         this._items.push(item);
       }
-      this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
+      this.events.emit(EVENTS.basket.change); // генерирование события изменения корзины
     }
   }
 
@@ -56,7 +56,7 @@ export class Basket implements IBasket {
   public delItemById(id: string): void {
     if (this.hasItem(id)) {
       this._items = this._items.filter((item => item.id !== id))
-      this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
+      this.events.emit(EVENTS.basket.change); // генерирование события изменения корзины
     };
   }
 
@@ -68,6 +68,6 @@ export class Basket implements IBasket {
   /** Очистка корзины */
   public clear(): void {
     this._items = [];
-    this.events.emit(EVENTS_NAMES.basket.change); // генерирование события изменения корзины
+    this.events.emit(EVENTS.basket.change); // генерирование события изменения корзины
   }
 }

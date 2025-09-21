@@ -86,6 +86,12 @@ export const SELECTORS = {
           button: 'button.button_alt',// кнопка способа оплаты
         }
       }
+    },
+    contacts: { // форма ContactsForm
+      fields: { // поля
+        email: 'input[name="email"]', // email
+        phone: 'input[name="phone"]', // телефон
+      }
     }
   },
 
@@ -97,7 +103,7 @@ export const SELECTORS = {
 };
 
 // Имена событий брокера событий
-export const EVENTS_NAMES = {
+export const EVENTS = {
   card: { // карточка товара
     preview: 'card:select', // карточка выбрана
   },

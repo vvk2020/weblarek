@@ -1,26 +1,26 @@
 import { ISuccess, Price } from "../../types";
-import { EVENTS_NAMES, SELECTORS } from "../../utils/constants";
+import { EVENTS, SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
 export class Success extends Component<ISuccess> {
-  protected totalElement: HTMLElement; // <span> вывода значения счетчика товаров в корзине
-  protected buttonClose: HTMLButtonElement; // <button> закрытия окна
+  protected totalEl: HTMLElement; // <span> вывода значения счетчика товаров в корзине
+  protected closeBtn: HTMLButtonElement; // <button> закрытия окна
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
     // Определение HTML-элементов в контейнере container
-    this.totalElement = this.container.querySelector(SELECTORS.success.total) as HTMLElement;
-    this.buttonClose = this.container.querySelector(SELECTORS.success.buttonClose) as HTMLButtonElement;
+    this.totalEl = this.container.querySelector(SELECTORS.success.total) as HTMLElement;
+    this.closeBtn = this.container.querySelector(SELECTORS.success.buttonClose) as HTMLButtonElement;
     // События на кнопке закрытия окна
-    this.buttonClose.addEventListener('click', () => {
-      this.events.emit(EVENTS_NAMES.success.close);
+    this.closeBtn.addEventListener('click', () => {
+      this.events.emit(EVENTS.success.close);
     });
   }
 
   /** Вывод в описании списанной стоимости заказа */
   set total(value: Price) {
-    if (value) this.totalElement.textContent = 'Списано ' + value.toString() + ' синапсов';
+    if (value) this.totalEl.textContent = 'Списано ' + value.toString() + ' синапсов';
   }
 
   /** Рендер на основе данных, переданных через data   

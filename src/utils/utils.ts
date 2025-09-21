@@ -48,6 +48,8 @@ export function ensureElement<T extends HTMLElement>(selectorElement: SelectorEl
 
 export function cloneTemplate<T extends HTMLElement>(query: string | HTMLTemplateElement): T {
     const template = ensureElement(query) as HTMLTemplateElement;
+    const element = template.content.firstElementChild;
+    if (!element) throw new Error(`Шаблон не содержит элементов: ${query}`);
     return template.content.firstElementChild.cloneNode(true) as T;
 }
 

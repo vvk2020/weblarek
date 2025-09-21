@@ -1,5 +1,5 @@
 import { ICatalog, IProduct } from "../../types";
-import { EVENTS_NAMES } from "../../utils/constants";
+import { EVENTS } from "../../utils/constants";
 import { IEvents } from "../base/Events";
 
 /** КАТАЛОГ ТОВАРОВ  */
@@ -23,7 +23,7 @@ export class Catalog implements ICatalog {
   set items(items: IProduct[]) {
     this._selectedItem = undefined; // сброс выбранного товара
     this._items = items; // перезапись товаров каталога из items
-    this.events.emit(EVENTS_NAMES.items.change);
+    this.events.emit(EVENTS.items.change);
   }
 
   /** Выбранный товар */

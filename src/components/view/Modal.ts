@@ -6,29 +6,23 @@ import { IEvents } from "../base/Events";
 /** КЛАСС МОДАЛЬНОГО ОКНА  
  * Модальное окно предоставляет контейнер для размещения контента */
 export class Modal<T> extends Component<T> implements IModal {
-  protected closeButtonElement: HTMLButtonElement; // кнопка ✖ закрытия окна
+  protected closeBtn: HTMLButtonElement; // кнопка ✖ закрытия окна
   protected contentContainer: HTMLElement; // контейнер для размещения контента в окне
 
   /** Конструктор окна, предоставляет контейнер для размещения контента*/
   constructor(
     container: HTMLElement, // контейнер для размещения окна
     protected events: IEvents, // брокер событий
-    protected contentElements: HTMLElement[] = [] // контент, размещаемый в окне
+    protected contentEl: HTMLElement[] = [] // контент, размещаемый в окне
   ) {
-    // console.log('container', container);
-    // console.log('contentElements:', contentElements);
     super(container);
-
     // Определение HTML-элементов в контейнере container
-    this.closeButtonElement = container.querySelector(SELECTORS.modal.closeButton) as HTMLButtonElement; // кнопка закрытия окна ✖
+    this.closeBtn = container.querySelector(SELECTORS.modal.closeButton) as HTMLButtonElement; // кнопка закрытия окна ✖
     this.contentContainer = container.querySelector(SELECTORS.modal.contentContainer) as HTMLElement; // контейнер для контента окна
-
     // Размещение контента в контейнере
-    if (contentElements) this.setСontent(contentElements);
-
+    if (contentEl) this.setСontent(contentEl);
     // Навешивание обработчика закрытия окна по кнопке ✖ окна
-    this.closeButtonElement?.addEventListener("click", this.close.bind(this));
-
+    this.closeBtn?.addEventListener("click", this.close.bind(this));
     // Навешивание обработчика закрытия окна по click вне окна
     container.addEventListener("mousedown", (evt) => {
       if (evt.target === evt.currentTarget) {
@@ -41,7 +35,7 @@ export class Modal<T> extends Component<T> implements IModal {
 
   /** Размещение контента в контейнере окна */
   setСontent(elements: HTMLElement[]): void {
-    this.contentElements = elements;
+    this.contentEl = elements;
     this.contentContainer.replaceChildren(...elements);
   }
 
