@@ -9,7 +9,6 @@ export class BasketCard extends Card<IBasketCardData> implements IBasketCard {
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container, events);
-    // Определение HTML-элементов в контейнере container
     this.IndexEl = this.container.querySelector(SELECTORS.basket.card.index) as HTMLElement;
   }
 

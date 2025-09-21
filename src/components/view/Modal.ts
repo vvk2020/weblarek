@@ -3,8 +3,7 @@ import { SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-/** КЛАСС МОДАЛЬНОГО ОКНА  
- * Модальное окно предоставляет контейнер для размещения контента */
+/** МОДАЛЬНОЕ ОКНО */
 export class Modal<T> extends Component<T> implements IModal {
   protected closeBtn: HTMLButtonElement; // кнопка ✖ закрытия окна
   protected contentContainer: HTMLElement; // контейнер для размещения контента в окне
@@ -16,7 +15,6 @@ export class Modal<T> extends Component<T> implements IModal {
     protected contentEl: HTMLElement[] = [] // контент, размещаемый в окне
   ) {
     super(container);
-    // Определение HTML-элементов в контейнере container
     this.closeBtn = container.querySelector(SELECTORS.modal.closeButton) as HTMLButtonElement; // кнопка закрытия окна ✖
     this.contentContainer = container.querySelector(SELECTORS.modal.contentContainer) as HTMLElement; // контейнер для контента окна
     // Размещение контента в контейнере
@@ -32,7 +30,7 @@ export class Modal<T> extends Component<T> implements IModal {
   }
 
   /** Размещение контента в контейнере окна */
-  setСontent(elements: HTMLElement[]): void {
+  public setСontent(elements: HTMLElement[]): void {
     this.contentEl = elements;
     this.contentContainer.replaceChildren(...elements);
   }

@@ -8,29 +8,26 @@ export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
 которое хранится в объекте товара. */
 export const CDN_URL = `${import.meta.env.VITE_API_ORIGIN}/content/weblarek`;
 
-/** Константа селекторов элементов разметки */
+/** СЕЛЕКТОРЫ ЭЛЕМЕНТОВ РАЗМЕТКИ */
 export const SELECTORS = {
-  // Header
-  header: {
+
+  header: { // Header
     container: '.header__container', // контейнер
     basketCounter: '.header__basket-counter', // счетчик товаров в корзине
   },
 
-  // id шаблонов карточек товаров
-  templates: {
-    // Карточка
-    galleryCard: '#card-catalog', // в галерее
-    previewCard: '#card-preview', // в подробном отображении
-    basketCard: '#card-basket', // в корзине
+  templates: { // шаблоны карточек товаров в ...
+    galleryCard: '#card-catalog', // галерее
+    previewCard: '#card-preview', // подробном отображении
+    basketCard: '#card-basket', // корзине
   },
 
-  // Галерея карточек
-  gallery: {
+  gallery: { // галерея карточек
     container: '.gallery', // контейнер
     card: 'gallery__item', // карточка
   },
 
-  basket: {
+  basket: { // корзина карточек
     container: '#basket', // контейнер корзины
     listContainer: '.basket__list', // контейнер списка карточек
     total: '.basket__price', // стоимость товаров в корзине
@@ -42,13 +39,11 @@ export const SELECTORS = {
     }
   },
 
-  preview: {
-    // container: '.gallery', // контейнер
+  preview: { // окно подробного просмотра карточки
     buttonBasket: '.card__button', // кнопка добавления/удаления товара из корзины
   },
 
-  // Селекторы элементов карточек
-  card: {
+  card: { // селекторы элементов карточки
     selector: '.card',
     category: '.card__category',
     title: '.card__title',
@@ -57,19 +52,17 @@ export const SELECTORS = {
     description: '.card__text',
   },
 
-  // Модальное окно
-  modal: {
+  modal: { // модальное окно
     container: '#modal-container', // контейнер
-    closeButton: '.modal__close',
+    closeButton: '.modal__close', // кнопка закрытия окна
     contentContainer: '.modal__content', // контейнер контента окна
   },
 
-  // Формы
-  forms: {
+  forms: { // формы
     templates: { // шаблоны
-      order: '#order', // форма ввода email и телефона
-      contacts: '#contacts', // форма ввода способа оплаты и адреса
-      success: '#success', // сообщение об успешном оформлении заказа
+      order: '#order', // формы ввода email и телефона
+      contacts: '#contacts', // формы ввода способа оплаты и адреса
+      success: '#success', // сообщения об успешном оформлении заказа
     },
     errors: '.form__errors', // поле вывода сообщения об ошибках формы (валидации)
     submitButton: 'button[type="submit"]', // ыгиьше-кнопка
@@ -95,19 +88,18 @@ export const SELECTORS = {
     }
   },
 
-  // Окно успешного оформления заказа
-  success: {
+  success: { // сообщение об успешном оформлении заказа
     total: '.order-success__description', // списано синапсов
     buttonClose: '.order-success__close', // кнопка закрытия окна
   }
 };
 
-// Имена событий брокера событий
+/** СОБЫТИЯ БРОКЕРА */
 export const EVENTS = {
   card: { // карточка товара
     preview: 'card:select', // карточка выбрана
   },
-  items: { // товары (модель данных)
+  catalog: { // товары (модель данных)
     change: 'items:change', // список товаров изменен
   },
   basket: { // корзина
@@ -120,23 +112,22 @@ export const EVENTS = {
     close: 'modal:close' // закрыть
   },
   forms: { // формы
-    order: { // форма заказа (покупка)
-      open: 'order:openForm', // открытие первой формы оформления заказа (формы order) 
+    order: { // первая (OrderForm)
+      open: 'order:openForm', // открытие формы
       chahgeFields: 'order:chahgeFields', // изменение в полях ввода данных
       submit: 'order:next', // submit формы
     },
-    contacts: { // форма оплаты (покупка)
-      // open: 'contacts:openForm', // открытие первой формы оформления заказа (формы contacts) 
+    contacts: { // вторая (ContactsForm)
       chahgeFields: 'contacts:chahgeFields', // изменение в полях ввода данных
       submit: 'contacts:next', // submit формы
     }
   },
-  success: {
+  success: { // успешное формление заказа
     close: 'success:close', // закрыть окно
   }
 }
 
-/** Константа соответствий категорий товара модификаторам, используемым для отображения фона категории. */
+/** КОНСТАНТА СООТВЕТСТВИЙ КАТЕГОРИЙ ТОВАРА МОДИФИКАТОРАМ, ИСПОЛЬЗУЕМЫМ ДЛЯ ОТОБРАЖЕНИЯ ФОНА КАТЕГОРИИ */
 export const categoryMap = new Proxy({
   'софт-скил': 'card__category_soft',
   'хард-скил': 'card__category_hard',

@@ -23,7 +23,7 @@ export class Catalog implements ICatalog {
   set items(items: IProduct[]) {
     this._selectedItem = undefined; // сброс выбранного товара
     this._items = items; // перезапись товаров каталога из items
-    this.events.emit(EVENTS.items.change);
+    this.events.emit(EVENTS.catalog.change);
   }
 
   /** Выбранный товар */

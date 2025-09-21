@@ -40,15 +40,9 @@ export abstract class Card<T> extends Component<T> implements ICard<T> {
     this.priceEl.textContent = value ? value.toString() + ' синапсов' : 'Бесценно';
   }
 
-  /** Рендер карточки товара на основе данных data   
-   * 1. Если данные не определены, то возврат исходного контейнера 
-   * 2. Контейнеру присваивается id карточки */
-  public render(data?: Partial<T>): HTMLElement {
-    if (data) {
-      // Присвоение контейнеру уникального идентификатора карточки
-      if ('id' in data) setElementData(this.container, { id: data.id });
-      return super.render(data);
-    }
-    return this.container; // возврат исходного контейнера
+  /** Задание порядкового номера товара в корзине */
+  set id(value: string) {
+    setElementData(this.container, { id: value });
   }
+
 }

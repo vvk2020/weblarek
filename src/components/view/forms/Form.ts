@@ -34,6 +34,11 @@ export abstract class Form<T> extends Component<T> implements IForm {
     if (this.errorsEl) this.errorsEl.textContent = text;
   }
 
+  /** Блокировка(true) / разблокировка (false) submit-кнопки */
+  set disableSubmitButton(disabled: boolean) {
+    this.submitBtn.disabled = disabled;
+  }
+
   /** Очистка полей ввода данных формы */
   public reset(): void {
     // Сброс полей ввода
@@ -41,10 +46,5 @@ export abstract class Form<T> extends Component<T> implements IForm {
       inputElement.value = '';
     });
     this.submitBtn.disabled = true; // блокировка кнопки
-  }
-
-  /** Блокировка(true) / разблокировка (false) submit-кнопки */
-  set disableSubmitButton(disabled: boolean) {
-    this.submitBtn.disabled = disabled;
   }
 }

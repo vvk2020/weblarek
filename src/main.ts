@@ -22,7 +22,7 @@ import { Success } from './components/view/Success';
 
 //* ЭЛЕМЕНТЫ РАЗМЕТКИ
 
-// Шаблоны карточек
+// Шаблоны карточек, форм и др.
 const galleryCardTemplate = document.querySelector(SELECTORS.templates.galleryCard) as HTMLTemplateElement; // галереи
 const previewCardTemplate = document.querySelector(SELECTORS.templates.previewCard) as HTMLTemplateElement; // подробного просмотра
 const basketCardTemplate = document.querySelector(SELECTORS.templates.basketCard) as HTMLTemplateElement; // карточки корзины
@@ -69,7 +69,7 @@ function createBasketCards(): HTMLElement[] {
 }
 
 // Брокер: регистрация события изменения состава каталога товаров
-events.on(EVENTS.items.change, () => {
+events.on(EVENTS.catalog.change, () => {
 	// Создание и render карточек
 	const galleryCards = catalog.items.map((item) => {
 		const catalogCard = new GalleryCard(cloneTemplate(galleryCardTemplate), events);

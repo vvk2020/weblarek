@@ -1,7 +1,7 @@
 import { IGalleryData } from "../../types";
 import { Component } from "../base/Component";
 
-/** ПРЕДСТАВЛЕНИЕ ГАЛЕРЕИ КАРТОЧЕК ТОВАРОВ */
+/** ГАЛЕРЕЯ КАРТОЧЕК ТОВАРОВ */
 export class GalleryView extends Component<IGalleryData> {
 
   constructor(protected container: HTMLElement) {

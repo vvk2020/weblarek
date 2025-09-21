@@ -72,21 +72,25 @@ export interface IPurchaseData {
 
 //! СЛОЙ ПРЕДСТАВЛЕНИЯ =========================================
 
+/** КАРТОЧКА ТОВАРА */
 export interface ICard<T> {
   set title(text: string);
   set price(value: Price);
-  render(data?: Partial<T>): HTMLElement;
+  set id(value: string);
 }
 
+/** КАРТОЧКА ТОВАРА В ГАЛЕРЕЕ */
 export interface IGalleryCard extends ICard<IGalleryCardData> {
   set category(key: string);
   set image(path: string);
 }
 
+/** КАРТОЧКА ТОВАРА В КОРЗИНЕ */
 export interface IBasketCard extends ICard<IBasketCardData> {
   render(data?: IBasketCardData, index?: number): HTMLElement;
 }
 
+/** HEADER */
 export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
 }
@@ -121,30 +125,29 @@ export interface IForm {
   reset(): void;
 }
 
-/**  ФОРМА ЗАКАЗА */
+/** ПЕРВАЯ ФОРМА ОФОРМЛЕНИЯ ЗАКАЗА */
 export interface IOrderForm {
   set selectedPayment(button: HTMLButtonElement | undefined);
   reset(): void;
 }
 
-/** ФОРМА КОНТАКТОВ */
+/** ВТОРАЯ ФОРМА ОФОРМЛЕНИЯ ЗАКАЗА */
 export interface IContactsForm {
 }
 
-/** ПОЛЯ ДАННЫХ ФОРМЫ OrderForms */
+/** ЭЛЕМЕНТЫ ФОРМЫ OrderForms */
 export interface IOrderFields {
   payment: HTMLButtonElement | undefined;
   address: HTMLInputElement;
 }
 
-/** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */
+/** ЭЛЕМЕНТЫ ФОРМЫ ContactsForm */
 export interface IContactsFields {
   emailInput: HTMLInputElement;
   phoneInput: HTMLInputElement;
 }
 
-/** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */
+/** ЭЛЕМЕНТЫ ФОРМЫ ContactsForm */
 export interface ISuccess {
   set total(value: Price);
-  render(data?: Partial<ISuccess>): HTMLElement;
 }

@@ -1,13 +1,13 @@
-import { IBasketData } from "../../types";
+import { IBasketData, Price } from "../../types";
 import { EVENTS, SELECTORS } from "../../utils/constants";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-/** ПРЕДСТАВЛЕНИЕ КОРЗИНЫ КАРТОЧЕК ТОВАРОВ */
+/** КОРЗИНА КАРТОЧЕК ТОВАРОВ */
 export class BasketView extends Component<IBasketData> {
-  protected listEl: HTMLUListElement; // <ul> контейнера карточек товара
-  protected totalEl: HTMLElement; // <span> стоимости товаров в корзине
-  protected orderBtn: HTMLButtonElement; // <button> оформления заказа
+  protected listEl: HTMLUListElement; // контейнер карточек товара
+  protected totalEl: HTMLElement; // стоимость товаров в корзине
+  protected orderBtn: HTMLButtonElement; // кнопка оформления заказа
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
@@ -17,7 +17,7 @@ export class BasketView extends Component<IBasketData> {
     this.orderBtn = this.container.querySelector(SELECTORS.basket.orderButton) as HTMLButtonElement;
     // Обработчик старта (вызова первой формы) оформления заказа 
     this.orderBtn.addEventListener('click', () => {
-      this.events.emit(EVENTS.forms.order.open, this.container); // брокер: генерирование события удаления товара из корзины
+      this.events.emit(EVENTS.forms.order.open, this.container);
     });
   };
 
@@ -35,12 +35,9 @@ export class BasketView extends Component<IBasketData> {
     }
   }
 
-  /** Рендер корзины товаров */
-  public render(data?: IBasketData): HTMLElement {
-    // Отображение стоимости товаров в корзине
+  set total(value: Price) {
     if (this.totalEl) {
-      this.totalEl.textContent = data?.total ? data?.total.toString() + ' синапсов' : '0 синапсов';
+      this.totalEl.textContent = value ? value.toString() + ' синапсов' : '0 синапсов';
     }
-    return super.render(data);
   }
 }
