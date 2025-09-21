@@ -1,3 +1,4 @@
+import { IForm } from "../../../types";
 import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
@@ -5,7 +6,7 @@ import { IEvents } from "../../base/Events";
 /** АБСТРАКТНАЯ ФОРМА  
  * Используется для создания специализированных форм ввода данных покупателя
  * при оформлении заказа */
-export class Form<T> extends Component<T> {
+export abstract class Form<T> extends Component<T> implements IForm {
   protected errorsEl: HTMLElement; // <span> вывода ошибок формы
   protected inputsList: NodeListOf<HTMLInputElement>; // лист <input>'ов формы
   protected form: HTMLFormElement; // форма
@@ -38,7 +39,7 @@ export class Form<T> extends Component<T> {
 
   /** Сброс формы, включающий:
    * 1. Очистку <input>-полей */
-  public reset() {
+  public reset(): void {
     // Сброс полей ввода
     this.inputsList.forEach((inputElement) => {
       inputElement.value = '';

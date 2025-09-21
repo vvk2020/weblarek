@@ -83,19 +83,6 @@ export interface IGalleryCard extends ICard<IGalleryCardData> {
   set image(path: string);
 }
 
-
-// export interface ICardsData {
-//   cards: IProduct[];
-//   // preview: string | null;
-//   // addCard(card: ICard): void;
-//   // deleteCard(cardId: string, payload: Function | null): void;
-//   // updateCard(card: ICard, payload: Function | null): void;
-//   // getCard(cardId: string): ICard;
-//   // checkValidation(data: Record<keyof TCardInfo, string>): boolean;
-// }
-
-
-/** HEADER СТРАНИЦЫ */
 export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
 }
@@ -112,7 +99,6 @@ export interface IModal {
   close(): void; // метод закрытия окна
 }
 
-
 /** ГАЛЛЕРЕЯ КАРТОЧЕК ТОВАРА */
 export interface IGalleryData {
   cards: HTMLElement[];
@@ -126,16 +112,19 @@ export interface IBasketData {
 
 /** АбСТРАКТНАЯ ФОРМА */
 export interface IForm {
-  errors: string; // текст ошибок валидации
+  set errors(text: string);
+  set disableSubmitButton(disabled: boolean);
+  reset(): void;
 }
 
 /**  ФОРМА ЗАКАЗА */
 export interface IOrderForm {
-  // render(): HTMLElement;
+  set selectedPayment(button: HTMLButtonElement | undefined);
+  reset(): void;
 }
+
 /** ФОРМА КОНТАКТОВ */
 export interface IContactsForm {
-  // render(): HTMLElement;
 }
 
 /** ПОЛЯ ДАННЫХ ФОРМЫ OrderForms */
@@ -152,6 +141,6 @@ export interface IContactsFields {
 
 /** ПОЛЯ ДАННЫХ ФОРМЫ ContactsForm */
 export interface ISuccess {
-  total: Price;
+  set total(value: Price);
+  render(data?: Partial<ISuccess>): HTMLElement;
 }
-

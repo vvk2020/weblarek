@@ -29,8 +29,6 @@ export class Modal<T> extends Component<T> implements IModal {
         this.close();
       }
     });
-    // Привязка обработчика закрытия окна к Esc
-    this.handleEscUp = this.handleEscUp.bind(this);
   }
 
   /** Размещение контента в контейнере окна */
@@ -42,19 +40,11 @@ export class Modal<T> extends Component<T> implements IModal {
   /** Открытие модального окна */
   public open(): void {
     this.container.classList.add("modal_active");
-    document.addEventListener("keyup", this.handleEscUp);
   }
 
   /** Закрытие модального окна */
   public close(): void {
     this.container.classList.remove("modal_active");
-    document.removeEventListener("keyup", this.handleEscUp);
   }
 
-  /** Обработчик закрытия модального окна по Esc*/
-  public handleEscUp(evt: KeyboardEvent): void {
-    if (evt.key === "Escape") {
-      this.close();
-    }
-  };
 }

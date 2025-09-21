@@ -17,7 +17,6 @@ export class BasketCard extends Card<IBasketCardData> {
   public render(data?: IBasketCardData, index?: number): HTMLElement {
     // Назначение порядкового номера карточки в корзине
     if (index && this.IndexEl) {
-      // console.log('seqNumber', index);
       this.IndexEl.textContent = index.toString();
     }
     return super.render(data);

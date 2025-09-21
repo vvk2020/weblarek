@@ -55,7 +55,7 @@ export class OrderForm extends Form<IOrderForm> {
 	};
 
 	/** Сброс <input>-полей и выбора способа оплаты */
-	public reset() {
+	public reset(): void {
 		super.reset(); // сброс <input>-полей
 		// Сброс выбранного способа оплаты
 		if (this.selectedPaymentBtn) {

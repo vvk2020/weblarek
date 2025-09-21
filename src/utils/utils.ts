@@ -125,8 +125,14 @@ export function createElement<
             if (isPlainObject(value) && key === 'dataset') {
                 setElementData(element, value);
             } else {
-                // @ts-expect-error fix indexing later
-                element[key] = isBoolean(value) ? value : String(value);
+                // element[key] = isBoolean(value) ? value : String(value); // ошибка !!!
+                if (key in element) {
+                    if (isBoolean(value)) {
+                        (element as any)[key] = value;
+                    } else {
+                        (element as any)[key] = String(value);
+                    }
+                }
             }
         }
     }
