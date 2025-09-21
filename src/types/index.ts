@@ -83,6 +83,10 @@ export interface IGalleryCard extends ICard<IGalleryCardData> {
   set image(path: string);
 }
 
+export interface IBasketCard extends ICard<IBasketCardData> {
+  render(data?: IBasketCardData, index?: number): HTMLElement;
+}
+
 export interface IHeaderData {
   basketCounter: number; // счетчик товаров в корзине
 }

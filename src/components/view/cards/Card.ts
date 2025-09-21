@@ -4,18 +4,13 @@ import { setElementData } from "../../../utils/utils";
 import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
 
-/** АБСТРАКТНАЯ КАРТОЧКА ТОВАРА  
- * Используется для создания специализированных карточек галереи, корзины 
- * и подробного просмотра товаров
- */
+/** АБСТРАКТНАЯ КАРТОЧКА ТОВАРА */
 export abstract class Card<T> extends Component<T> implements ICard<T> {
-  protected titleEl: HTMLElement; // <h2> заголовка товара в корзине
-  protected priceEl: HTMLElement; // <span> вывода цены товара
-  // protected buttonDelItemElement?: HTMLButtonElement; // <button> удалеия товара из корзины
+  protected titleEl: HTMLElement; // название товара
+  protected priceEl: HTMLElement; // цена товара
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
-    // Определение HTML-элементов в контейнере container
     this.titleEl = this.container.querySelector(SELECTORS.card.title) as HTMLElement;
     this.priceEl = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
     // Обработчик открытия preview карточки
@@ -34,7 +29,7 @@ export abstract class Card<T> extends Component<T> implements ICard<T> {
     };
   }
 
-  /** Задание заголовка товара в карточке */
+  /** Задание названия товара в карточке */
   set title(text: string) {
     this.titleEl.textContent = text;
   }

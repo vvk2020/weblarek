@@ -1,11 +1,11 @@
-import { IBasketCardData } from "../../../types";
+import { IBasketCard, IBasketCardData } from "../../../types";
 import { SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Card } from "./Card";
 
-/** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
-export class BasketCard extends Card<IBasketCardData> {
-  protected IndexEl: HTMLElement; // <span> порядкового номера в списке товаров
+/** КАРТОЧКА КОРЗИНЫ */
+export class BasketCard extends Card<IBasketCardData> implements IBasketCard {
+  protected IndexEl: HTMLElement; // порядковый номер товара в корзине
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container, events);

@@ -3,7 +3,7 @@ import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Form } from "./Form";
 
-/** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
+/** ПЕРВАЯ ФОРМА ЗАКАЗА */
 export class OrderForm extends Form<IOrderForm> {
 	protected paymentBtns: HTMLButtonElement[]; // массив кнопок выбора способа оплаты
 	protected selectedPaymentBtn?: HTMLButtonElement; // выбранная кнопка способа оплаты
@@ -18,7 +18,7 @@ export class OrderForm extends Form<IOrderForm> {
 		// Назначение обработчика выбора способа оплаты
 		this.paymentBtns.forEach(button => {
 			button.addEventListener('click', this.handlePaymentButtonClick);
-		}); // кнопки задания способа оплаты
+		});
 		// Назначение обработчика изменения адреса доставки
 		this.addressInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы OrderForm
@@ -29,7 +29,7 @@ export class OrderForm extends Form<IOrderForm> {
 		});
 	}
 
-	/** Задание категории товара в карточке */
+	/** Задание способа оплаты заказа */
 	set selectedPayment(button: HTMLButtonElement | undefined) {
 		this.selectedPaymentBtn = button;
 		// Генерирование сообщения об изменении в полях данных фомы OrderForm
@@ -39,7 +39,7 @@ export class OrderForm extends Form<IOrderForm> {
 		} as IOrderFields);
 	}
 
-	/** Обработчик click по кнопке способа оплаты */
+	/** Обработчик события выбора способа оплаты */
 	private handlePaymentButtonClick = (event: Event) => {
 		const button = event.currentTarget as HTMLButtonElement; // выбранная кнопка
 		if (this.selectedPaymentBtn === button) {
@@ -54,7 +54,7 @@ export class OrderForm extends Form<IOrderForm> {
 		}
 	};
 
-	/** Сброс <input>-полей и выбора способа оплаты */
+	/** Очистка полей ввода данных и сбросй выбранного способа оплаты */
 	public reset(): void {
 		super.reset(); // сброс <input>-полей
 		// Сброс выбранного способа оплаты

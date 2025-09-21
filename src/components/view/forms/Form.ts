@@ -3,18 +3,15 @@ import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
 
-/** АБСТРАКТНАЯ ФОРМА  
- * Используется для создания специализированных форм ввода данных покупателя
- * при оформлении заказа */
+/** АБСТРАКТНАЯ ФОРМА */
 export abstract class Form<T> extends Component<T> implements IForm {
-  protected errorsEl: HTMLElement; // <span> вывода ошибок формы
-  protected inputsList: NodeListOf<HTMLInputElement>; // лист <input>'ов формы
   protected form: HTMLFormElement; // форма
-  protected submitBtn: HTMLButtonElement; // кнопка submit формы
+  protected submitBtn: HTMLButtonElement; // кнопка отправки формы
+  protected errorsEl: HTMLElement; // ошибка формы
+  protected inputsList: NodeListOf<HTMLInputElement>; // список полей ввода данных формы
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container);
-    // Определение HTML-элементов в контейнере container
     this.form = container as HTMLFormElement;
     this.submitBtn = container.querySelector(SELECTORS.forms.submitButton) as HTMLButtonElement;
     this.errorsEl = this.container.querySelector(SELECTORS.forms.errors) as HTMLElement;
@@ -37,8 +34,7 @@ export abstract class Form<T> extends Component<T> implements IForm {
     if (this.errorsEl) this.errorsEl.textContent = text;
   }
 
-  /** Сброс формы, включающий:
-   * 1. Очистку <input>-полей */
+  /** Очистка полей ввода данных формы */
   public reset(): void {
     // Сброс полей ввода
     this.inputsList.forEach((inputElement) => {

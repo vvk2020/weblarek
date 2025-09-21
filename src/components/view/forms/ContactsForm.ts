@@ -3,14 +3,13 @@ import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Form } from "./Form";
 
-/** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
+/** ВТОРАЯ ФОРМА ЗАКАЗА */
 export class ContactsForm extends Form<IContactsForm> {
 	protected emailInp: HTMLInputElement; // <input> email покупателя
 	protected phoneInp: HTMLInputElement; // <input> телефона покупателя
 
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container, events);
-		// Определение HTML-элементов в контейнере container
 		this.emailInp = container.querySelector(SELECTORS.forms.contacts.fields.email) as HTMLInputElement;
 		this.phoneInp = container.querySelector(SELECTORS.forms.contacts.fields.phone) as HTMLInputElement;
 		// Назначение обработчика изменения в полях ввода

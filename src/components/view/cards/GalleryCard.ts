@@ -3,19 +3,18 @@ import { categoryMap, CDN_URL, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Card } from "./Card";
 
-/** КЛАСС КАРТОЧКИ ГАЛЕРЕИ */
+/** КАРТОЧКА ГАЛЕРЕИ */
 export class GalleryCard extends Card<IGalleryCardData> implements IGalleryCard {
-  protected categoryEl: HTMLElement; // <span> категории товара
-  protected imageEl: HTMLImageElement; // <img> изображения товара
+  protected categoryEl: HTMLElement; // категория товара
+  protected imageEl: HTMLImageElement; // изображение товара
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container, events);
-    // Определение HTML-элементов в контейнере container
     this.categoryEl = this.container.querySelector(SELECTORS.card.category) as HTMLElement;
     this.imageEl = this.container.querySelector(SELECTORS.card.image) as HTMLImageElement;
   }
 
-  /** Задание категории товара в карточке */
+  /** Задание и стилизация категории товара в карточке */
   set category(key: string) {
     if (key in categoryMap) {
       this.categoryEl.textContent = key;
