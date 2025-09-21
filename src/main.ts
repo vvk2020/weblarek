@@ -52,13 +52,13 @@ const productsAPI = new LarekAPI(api);
 const success = new Success(cloneTemplate(successTemplate), events);
 
 //* ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
-Promise.all([
-	productsAPI.getShopProducts()
-		.then((data: ILarekProducts) => {
-			catalog.items = data.items;
-		})
-		.catch((err: Response) => console.error(err))
-]);
+// Promise.all([
+productsAPI.getShopProducts()
+	.then((data: ILarekProducts) => {
+		catalog.items = data.items;
+	})
+	.catch((err: Response) => console.error(err));
+// ]);
 
 // Создание представления карточек для корзины
 function createBasketCards(): HTMLElement[] {
