@@ -3,11 +3,11 @@ import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { GalleryCard } from "./GalleryCard";
 
-/** КЛАСС КАРТОЧКИ В ПОДРОБНОМ ОТОБРАЖЕНИИ */
+/** КАРТОЧКА В ПОДРОБНОМ ОТОБРАЖЕНИИ */
 export class PreviewCard extends GalleryCard {
-  protected descriptionEl: HTMLElement; // <p описания товара
-  protected basketBtn: HTMLButtonElement; // <button> кнопка добавления/удаления товара из корзины
-  protected hasItemInBasket: boolean = false; // наличие карточки в корзине
+  protected descriptionEl: HTMLElement; // описание товара
+  protected basketBtn: HTMLButtonElement; // кнопка добавления/удаления товара из корзины
+  protected hasItemInBasket: boolean = false; // флпг наличия карточки в корзине
 
   constructor(protected container: HTMLElement, protected events: IEvents) {
     super(container, events);

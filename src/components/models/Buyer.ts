@@ -19,11 +19,6 @@ export class Buyer {
     }
   }
 
-  /** Универсальный метод определения свойств */
-  public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
-    (this as any)[field] = value;
-  }
-
   /** Данные покупателя в виде объекта */
   get data(): IBuyer {
     return {
@@ -32,14 +27,6 @@ export class Buyer {
       phone: this.phone,
       address: this.address
     };
-  }
-
-  /** Очистка всех данных покупателя */
-  public clear() {
-    this.payment = undefined;
-    this.email = '';
-    this.phone = '';
-    this.address = '';
   }
 
   /** Ошибки валидации данных покупателя  
@@ -61,5 +48,19 @@ export class Buyer {
   get valid(): boolean {
     return Object.keys(this.errors).length === 0;
   }
+
+  /** Универсальный метод определения свойств */
+  public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
+    (this as any)[field] = value;
+  }
+
+  /** Очистка всех данных покупателя */
+  public clear() {
+    this.payment = undefined;
+    this.email = '';
+    this.phone = '';
+    this.address = '';
+  }
+
 
 }
