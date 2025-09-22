@@ -97,18 +97,9 @@ events.on(EVENTS.basket.addItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card
 	const id = getIdFromCard(card);
 	// Добавление товара в корзину (модель данных)
-	if (id) {
-		// Проверка наличия товара в корзине
-		const hasItemInBasket = basket.hasItem(id);
-		// Если товар с id уже в корзине, то удаляем из корзины, если нет - добавляем
-		if (hasItemInBasket) {
-			basket.delItemById(id);
-		} else {
-			// Запрос данных товара из каталога (модели данных)
-			const item = catalog.getItemById(id);
-			// Добавление товара в корзину (модель данных)
-			basket.addItem(item);
-		}
+	if (id && !basket.hasItem(id)) {
+		const item = catalog.getItemById(id); // запрос данных товара из каталога (модели данных)
+		basket.addItem(item); // добавление товара в корзину (модель данных)
 	}
 });
 
@@ -134,7 +125,7 @@ events.on(EVENTS.basket.openModal, () => {
 events.on(EVENTS.basket.delItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card (разметки)
 	const id = getIdFromCard(card);
-	// Если товар есть наличия в корзине, удаляем
+	// Если товар в корзине, удаляем
 	if (id && basket.hasItem(id)) {
 		basket.delItemById(id); // удаление в модели данных корзины
 		// Размещение карточек корзины в списке корзины модального окна
