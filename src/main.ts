@@ -107,6 +107,8 @@ events.on(EVENTS.basket.addItem, (card: HTMLElement) => {
 events.on(EVENTS.basket.change, () => {
 	// Обновление счетчика товаров в корзине
 	header.render({ basketCounter: basket.itemCount });
+	// Размещение карточек корзины в списке корзины модального окна
+	modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
 });
 
 // Брокер: регистрация события закрытия модального окна
@@ -128,8 +130,6 @@ events.on(EVENTS.basket.delItem, (card: HTMLElement) => {
 	// Если товар в корзине, удаляем
 	if (id && basket.hasItem(id)) {
 		basket.delItemById(id); // удаление в модели данных корзины
-		// Размещение карточек корзины в списке корзины модального окна
-		modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
 	}
 });
 
