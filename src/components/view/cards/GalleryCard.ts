@@ -1,5 +1,5 @@
 import { IGalleryCard, IGalleryCardData } from "../../../types";
-import { categoryMap, CDN_URL, SELECTORS } from "../../../utils/constants";
+import { categoryMap, CDN_URL, EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Card } from "./Card";
 
@@ -12,6 +12,10 @@ export class GalleryCard extends Card<IGalleryCardData> implements IGalleryCard 
     super(container, events);
     this.categoryEl = this.container.querySelector(SELECTORS.card.category) as HTMLElement;
     this.imageEl = this.container.querySelector(SELECTORS.card.image) as HTMLImageElement;
+    // Обработчик открытия preview карточки
+    this.container.addEventListener('click', () => {
+        this.events.emit(EVENTS.card.preview, this.container)
+    });
   }
 
   /** Задание и стилизация категории товара в карточке */

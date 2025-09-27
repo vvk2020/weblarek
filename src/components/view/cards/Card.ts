@@ -13,20 +13,6 @@ export abstract class Card<T> extends Component<T> implements ICard<T> {
     super(container);
     this.titleEl = this.container.querySelector(SELECTORS.card.title) as HTMLElement;
     this.priceEl = this.container.querySelector(SELECTORS.card.price) as HTMLImageElement;
-    // Обработчик открытия preview карточки
-    this.container.addEventListener('click', () => {
-      // Preview открывается только при выборе карточек из галереи (не из корзины)
-      if (this.container.classList.contains(SELECTORS.gallery.card)) {
-        this.events.emit(EVENTS.card.preview, this.container)
-      }
-    });
-    // Обработчик удаления товара из корзины с помощью кнопки 
-    if (this.container.classList.contains('basket__item')) {
-      const buttonDelItemElement = this.container.querySelector(SELECTORS.basket.delItemButton) as HTMLButtonElement;
-      buttonDelItemElement?.addEventListener('click', () => {
-        this.events.emit(EVENTS.basket.delItem, this.container); // брокер: генерирование события удаления товара из корзины
-      });
-    };
   }
 
   /** Задание названия товара в карточке */
