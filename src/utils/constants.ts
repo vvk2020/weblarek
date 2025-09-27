@@ -103,7 +103,7 @@ export const EVENTS = {
     change: 'items:change', // список товаров изменен
   },
   basket: { // корзина
-    addItem: `basket:itemAdd`, // добавление товара в корзину
+    handleItem: `basket:handleAdd`, // добавление/удаление товара корзины
     delItem: `basket:delAdd`, // удаление товара из корзины
     change: `basket:change`, // корзина изменена
     openModal: 'basket:openModal', // открытие (просмотр) корзины в модальном окне

@@ -684,7 +684,7 @@ yarn build
   - `EVENTS.basket.delItem` - удаление карточки из корзины
 
 - класс `PreviewCard`:
-  - `EVENTS.basket.addItem` - добавление в корзину товара
+  - `EVENTS.basket.handleItem` - добавление/удаление товара корзины
   - `EVENTS.modal.close` - закрытие модального окна
 
 - класс `Form`:

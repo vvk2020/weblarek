@@ -93,13 +93,22 @@ events.on(EVENTS.card.preview, (card: HTMLElement) => {
 });
 
 // Брокер: регистрация события добавления товара из галереи в корзину (модель данных)
-events.on(EVENTS.basket.addItem, (card: HTMLElement) => {
+events.on(EVENTS.basket.handleItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card
 	const id = getIdFromCard(card);
-	// Добавление товара в корзину (модель данных)
-	if (id && !basket.hasItem(id)) {
-		const item = catalog.getItemById(id); // запрос данных товара из каталога (модели данных)
-		basket.addItem(item); // добавление товара в корзину (модель данных)
+	// Добавление товара в корзину (модель данных) 
+	if (id) { 
+		// Проверка наличия товара в корзине 
+		const hasItemInBasket = basket.hasItem(id); 
+		// Если товар с id уже в корзине, то удаляем из корзины, если нет - добавляем 
+		if (hasItemInBasket) { 
+			basket.delItemById(id); 
+		} else { 
+			// Запрос данных товара из каталога (модели данных) 
+			const item = catalog.getItemById(id); 
+			// Добавление товара в корзину (модель данных) 
+			basket.addItem(item); 
+		} 
 	}
 });
 

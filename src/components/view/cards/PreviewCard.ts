@@ -17,15 +17,15 @@ export class PreviewCard extends GalleryCard {
     // События на кнопке
     this.container.addEventListener('click', () => {
       this.events.emit(
-        this.hasItemInBasket?EVENTS.basket.delItem : EVENTS.basket.addItem, 
-        this.container); // добавления товара в корзину
+        EVENTS.basket.handleItem,
+        this.container); // добавления/удаления товара корзины
       this.events.emit(EVENTS.modal.close); // закрытие модального окна
     });
   }
 
   /** Рендер карточки товара корзины на основе данных data */
   public render(data?: IPreviewCardData, hasItemInBasket?: boolean): HTMLElement {
-    
+
     this.hasItemInBasket = hasItemInBasket || false;
     // Изменение стиля отображения кнопки добавления товара в корзину, если он бесценный или уже в корзине  
     Object.assign(this.basketBtn,
