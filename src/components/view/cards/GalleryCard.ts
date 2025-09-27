@@ -17,6 +17,12 @@ export class GalleryCard extends Card<IGalleryCardData> implements IGalleryCard 
   /** Задание и стилизация категории товара в карточке */
   set category(key: string) {
     if (key in categoryMap) {
+      // Удаление ранее заданных классов категорий
+      const categoryRegex = /card__category_/;
+      const classesToRemove = Array.from(this.categoryEl.classList)
+        .filter(className => categoryRegex.test(className));
+      this.categoryEl.classList.remove(...classesToRemove);
+      // Задание класса категории
       this.categoryEl.textContent = key;
       this.categoryEl.classList.add(categoryMap[key as keyof typeof categoryMap]);
     }

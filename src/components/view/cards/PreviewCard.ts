@@ -1,5 +1,5 @@
 import { IPreviewCardData } from "../../../types";
-import { EVENTS, SELECTORS } from "../../../utils/constants";
+import { categoryMap, EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { GalleryCard } from "./GalleryCard";
 

@@ -140,12 +140,6 @@ export const categoryMap = new Proxy({
   }
 });
 
-/** Константа соответствий name способа оплаты в разметке и данным о способе оплаты, отправляемым на сервер при заказе */
-// export const PAYMENT_MAP: Record<string, TPayment> = {
-//   'card': 'online',
-//   'cash': 'cash',
-// } as const;
-
 export const PAYMENT_NAMES: { [key: string]: TPayment } = {
   'card': 'online',
   'cash': 'cash',
