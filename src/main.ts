@@ -6,7 +6,7 @@ import { Api } from './components/base/Api';
 import { IBuyer, IContactsFields, ILarekProducts, IOrderData, IOrderFields, IProduct, IPurchaseData } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
-import { cloneTemplate, getIdFromCard, getKeybyPaymentValue } from './utils/utils';
+import { cloneTemplate, ensureElement, getIdFromCard, getKeybyPaymentValue } from './utils/utils';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/cards/PreviewCard';
 import { Modal } from './components/view/Modal';
@@ -22,19 +22,19 @@ import { Success } from './components/view/Success';
 
 //* ЭЛЕМЕНТЫ РАЗМЕТКИ
 
-// Шаблоны карточек, форм и др.
-const galleryCardTemplate = document.querySelector(SELECTORS.templates.galleryCard) as HTMLTemplateElement; // галереи
-const previewCardTemplate = document.querySelector(SELECTORS.templates.previewCard) as HTMLTemplateElement; // подробного просмотра
-const basketCardTemplate = document.querySelector(SELECTORS.templates.basketCard) as HTMLTemplateElement; // карточки корзины
-const orderFormTemplate = document.querySelector(SELECTORS.forms.templates.order) as HTMLTemplateElement; // форма order
-const contactsFormTemplate = document.querySelector(SELECTORS.forms.templates.contacts) as HTMLTemplateElement; // форма contacts
-const successTemplate = document.querySelector(SELECTORS.forms.templates.success) as HTMLTemplateElement; // форма contacts
+// Шаблоны
+const galleryCardTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.templates.galleryCard); // галереи
+const previewCardTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.templates.previewCard); // подробного просмотра
+const basketCardTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.templates.basketCard); // карточки корзины
+const orderFormTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.forms.templates.order); // форма order
+const contactsFormTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.forms.templates.contacts); // форма contacts
+const successTemplate = ensureElement<HTMLTemplateElement>(SELECTORS.forms.templates.success); // форма успешного формления заказа
+const basketElement = ensureElement<HTMLTemplateElement>(SELECTORS.basket.container); // корзины
 
 // Контейнеры
-const galleryElement = document.querySelector(SELECTORS.gallery.container) as HTMLElement; // галереи
-const basketElement = document.querySelector(SELECTORS.basket.container) as HTMLTemplateElement; // корзины
-const modalContainer = document.querySelector(SELECTORS.modal.container) as HTMLElement; // модального окна
-const headerContainer = document.querySelector(SELECTORS.header.container) as HTMLElement; // header-контейнер
+const galleryElement = ensureElement(SELECTORS.gallery.container); // галереи
+const modalContainer = ensureElement(SELECTORS.modal.container); // модального окна
+const headerContainer = ensureElement(SELECTORS.header.container); // header-контейнер
 
 const events = new EventEmitter(); // брокер событий
 const api = new Api(API_URL);
@@ -87,7 +87,9 @@ events.on(EVENTS.card.preview, (card: HTMLElement) => {
 		// Проверка наличия товара в корзине
 		const hasItemInBasket = basket.hasItem(id);
 		// Передача данных в preview карточки и размещение его в модальном окне
-		modal.setСontent([previewCard.render(item, hasItemInBasket)]);
+		modal.render({
+			content: [previewCard.render(item, hasItemInBasket)]
+		});
 		modal.open(); // открытие модального окна
 	}
 });
@@ -117,7 +119,9 @@ events.on(EVENTS.basket.change, () => {
 	// Обновление счетчика товаров в корзине
 	header.render({ basketCounter: basket.itemCount });
 	// Размещение карточек корзины в списке корзины модального окна
-	modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
+	modal.render({
+		content: [basketContainer.render({ cards: createBasketCards(), total: basket.total })]
+	});
 });
 
 // Брокер: регистрация события закрытия модального окна
@@ -128,7 +132,9 @@ events.on(EVENTS.modal.close, () => {
 // Брокер: регистрация события открытия модального окна корзины
 events.on(EVENTS.basket.openModal, () => {
 	// Размещение карточек корзины в списке корзины модального окна
-	modal.setСontent([basketContainer.render({ cards: createBasketCards(), total: basket.total })]);
+	modal.render({
+		content: [basketContainer.render({ cards: createBasketCards(), total: basket.total })]
+	});
 	modal.open(); // открытие модального окна
 });
 
@@ -144,25 +150,39 @@ events.on(EVENTS.basket.delItem, (card: HTMLElement) => {
 
 // Брокер: открытие формы OrderForm
 events.on(EVENTS.forms.order.open, () => {
-	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
+	modal.render({
+		content: [orderForm.render()]
+	}); // размещение формы в модальном окне
 });
 
 // Брокер: регистрация события изменения данных покупателя
 events.on(EVENTS.buyer.change, (buyerField) => {
-	switch (Object.keys(buyerField)[0]) {
-		case 'payment': {
-			orderForm.payment = getKeybyPaymentValue(Object.values(buyerField)[0]);
+	const field = Object.keys(buyerField)[0];
+	if (field === 'payment') {
+		orderForm.payment = getKeybyPaymentValue(Object.values(buyerField)[0]);
+	}
+	// Вывод ошибок валидации фомы и блокировка/разблокировка кнопок
+	switch (field) {
+		// Первая форма оформления заказа
+		case 'payment':
+		case 'address': {
+			// Блокировка/разблокировка кнопки перехода на следующую форму
+			orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
+			// Вывод ошибок валидации в полях на OrderForm
+			orderForm.errors = (buyer.errors.payment || buyer.errors.address) || '';
 			break;
 		}
-		default: ; // прочие поля формы orderForm
+		// Вторая форма оформления заказа
+		case 'email':
+		case 'phone': {
+			// Блокировка/разблокировка кнопки оплаты заказа
+			contactsForm.disableSubmitButton = !(!buyer.errors.email && !buyer.errors.phone);
+			// Вывод ошибок валидации в полях на ContactForm
+			contactsForm.errors = (buyer.errors.email || buyer.errors.phone) || '';
+			break;
+		}
+		default: ;
 	}
-	// Блокировка/разблокировка кнопки перехода на следующую форму
-	orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
-	// Текст ошибки валидации
-	const errorMessage = (buyer.errors.payment || buyer.errors.address) || '';
-	// Вывод ошибок валидации в поле на OrderForm
-	orderForm.errors = errorMessage;
-
 });
 
 // Брокер: Изменение в полях данных первой формы заполнения заказа (OrderForm)
@@ -178,7 +198,9 @@ events.on(EVENTS.forms.order.chahgeFields, (fields: IOrderFields) => {
 
 // Брокер: submit формы OrderForm
 events.on(EVENTS.forms.order.submit, () => {
-	modal.setСontent([contactsForm.render()]); // размещение формы в модальном окне
+	modal.render({
+		content: [contactsForm.render()]
+	}); // размещение формы в модальном окне
 });
 
 // Брокер: Изменение в полях данных на форме оплаты зака (ContactsForm)
@@ -186,12 +208,6 @@ events.on(EVENTS.forms.contacts.chahgeFields, (fields: IContactsFields) => {
 	// Изменение модели данных
 	buyer.set('email', fields.emailInput.value);
 	buyer.set('phone', fields.phoneInput.value);
-	// Блокировка/разблокировка кнопки перехода на следующую форму
-	contactsForm.disableSubmitButton = !(!buyer.errors.email && !buyer.errors.phone);
-	// Текст ошибки валидации
-	const errorMessage = (buyer.errors.email || buyer.errors.phone) || '';
-	// Вывод ошибок валидации в поле формы
-	contactsForm.errors = errorMessage;
 });
 
 // Брокер: submit формы ContactsForm
@@ -211,7 +227,10 @@ events.on(EVENTS.forms.contacts.submit, () => {
 				orderForm.reset();
 				contactsForm.reset();
 				// Размещение формы с сообщением об успешной оплате в модальном окне
-				modal.setСontent([success.render({ total: data.total })]);
+				modal.render({
+					content: [success.render({ total: data.total })]
+				}
+				);
 			})
 			.catch((err: Response) => console.error(err));
 	}

@@ -65,6 +65,4 @@ export class Buyer {
     this.phone = '';
     this.address = '';
   }
-
-
 }

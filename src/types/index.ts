@@ -102,10 +102,12 @@ export type IPreviewCardData = IProduct;
 
 /** МОДАЛЬНОЕ ОКНО */
 export interface IModal {
-  setСontent(elements: HTMLElement[]): void; // размещение контента в контейнере окна
+  set content(elements: HTMLElement | HTMLElement[]); // размещение контента в контейнере окна
   open(): void; // метод открытия окна
   close(): void; // метод закрытия окна
 }
+
+export type IModalData = Pick<IModal, 'content'>;
 
 /** ГАЛЛЕРЕЯ КАРТОЧЕК ТОВАРА */
 export interface IGalleryData {
