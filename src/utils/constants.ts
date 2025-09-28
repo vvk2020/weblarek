@@ -96,6 +96,9 @@ export const SELECTORS = {
 
 /** СОБЫТИЯ БРОКЕРА */
 export const EVENTS = {
+  buyer: { // покупатель
+    change: 'buyer:change', // данные изменены
+  },
   card: { // карточка товара
     preview: 'card:select', // карточка выбрана
   },

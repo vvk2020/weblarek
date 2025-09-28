@@ -1,4 +1,6 @@
 import { IBuyer, TPayment } from "../../types";
+import { EVENTS } from "../../utils/constants";
+import { IEvents } from "../base/Events";
 
 /** ПОКУПАТЕЛЬ */
 export class Buyer {
@@ -10,7 +12,7 @@ export class Buyer {
 
   /** Конструктор покупателя  
    * Опционально могут определены все или часть свойств покупетля */
-  constructor(buyer?: Partial<IBuyer>) {
+  constructor(protected events: IEvents, buyer?: Partial<IBuyer>) {
     if (buyer) {
       for (const key of Object.keys(buyer)) {
         const buyerKey = key as keyof IBuyer;
@@ -52,6 +54,8 @@ export class Buyer {
   /** Универсальный метод определения свойств */
   public set<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
     (this as any)[field] = value;
+    // Генерирование события изменения данных в поле [field] покупателя
+    this.events.emit(EVENTS.buyer.change, { [field]: value } as Partial<IBuyer>);
   }
 
   /** Очистка всех данных покупателя */

@@ -1,12 +1,13 @@
-import { IOrderFields, IOrderForm } from "../../../types";
+import { IOrderFields, IOrderForm, TPayment } from "../../../types";
 import { EVENTS, SELECTORS } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 import { Form } from "./Form";
 
+
 /** ПЕРВАЯ ФОРМА ЗАКАЗА */
 export class OrderForm extends Form<IOrderForm> {
 	protected paymentBtns: HTMLButtonElement[]; // массив кнопок выбора способа оплаты
-	protected selectedPaymentBtn?: HTMLButtonElement; // выбранная кнопка способа оплаты
+	// protected selectedPaymentBtn?: HTMLButtonElement; // выбранная кнопка способа оплаты
 	protected addressInp: HTMLInputElement; // <input> адреса
 
 	constructor(container: HTMLElement, protected events: IEvents) {
@@ -17,51 +18,41 @@ export class OrderForm extends Form<IOrderForm> {
 		this.paymentBtns = Array.from(paymentGroupContaner.querySelectorAll(SELECTORS.forms.order.fields.payment.button));
 		// Назначение обработчика выбора способа оплаты
 		this.paymentBtns.forEach(button => {
-			button.addEventListener('click', this.handlePaymentButtonClick);
+			button.addEventListener('click', (evt) => {
+				// Генерирование сообщения об изменении в полях данных фомы OrderForm
+				this.events.emit(EVENTS.forms.order.chahgeFields, {
+					payment: evt.target as HTMLButtonElement,
+					address: this.addressInp,
+				} as IOrderFields);
+			});
 		});
-		// Назначение обработчика изменения адреса доставки
-		this.addressInp.addEventListener('input', () => {
+		// Назначение обработчика изменения значения в поле ввода адреса
+		this.addressInp.addEventListener('input', (evt) => {
 			// Генерирование сообщения об изменении в полях данных фомы OrderForm
 			this.events.emit(EVENTS.forms.order.chahgeFields, {
-				payment: this.selectedPaymentBtn,
-				address: this.addressInp
+				payment: evt.target as HTMLButtonElement,
+				address: this.addressInp,
 			} as IOrderFields);
 		});
 	}
 
-	/** Задание способа оплаты заказа */
-	set selectedPayment(button: HTMLButtonElement | undefined) {
-		this.selectedPaymentBtn = button;
-		// Генерирование сообщения об изменении в полях данных фомы OrderForm
-		this.events.emit(EVENTS.forms.order.chahgeFields, {
-			payment: button,
-			address: this.addressInp
-		} as IOrderFields);
+	/** Отображение выбранного способа оплаты заказа по его HTMLButtonElement.name */
+	set payment(paymentKey: string | undefined) {
+		this.resetPayment(); // сброс отображения предыдущего выбора способа оплаты
+		if (paymentKey) {
+			const paymentButton = this.paymentBtns.find((btn) => btn.name === paymentKey)
+			paymentButton?.classList.add('button_alt-active');
+		}
 	}
 
-	/** Обработчик события выбора способа оплаты */
-	private handlePaymentButtonClick = (event: Event) => {
-		const button = event.currentTarget as HTMLButtonElement; // выбранная кнопка
-		if (this.selectedPaymentBtn === button) {
-			// Отмена выбранного способа
-			button.classList.remove('button_alt-active');
-			this.selectedPayment = undefined;
-		} else {
-			// Выбор нового способа
-			this.paymentBtns.forEach(btn => btn.classList.remove('button_alt-active'));
-			button.classList.add('button_alt-active');
-			this.selectedPayment = button;
-		}
-	};
+	/** Сброс отображения выбранного способа оплаты */
+	private resetPayment() {
+		this.paymentBtns.forEach(btn => btn.classList.remove('button_alt-active'))
+	}
 
-	/** Очистка полей ввода данных и сбросй выбранного способа оплаты */
+	/** Сброс формы к default-состоянию */
 	public reset(): void {
-		super.reset(); // сброс <input>-полей
-		// Сброс выбранного способа оплаты
-		if (this.selectedPaymentBtn) {
-			this.selectedPaymentBtn.classList.remove('button_alt-active');
-			this.selectedPaymentBtn = undefined;
-		}
-		// this.submitButton.disabled = true;
+		super.reset(); // очистка полей ввода данных
+		this.resetPayment(); // cброс способа оплаты
 	}
 }

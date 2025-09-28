@@ -1,3 +1,5 @@
+import { PAYMENT_NAMES } from "./constants";
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -151,4 +153,10 @@ export function getIdFromCard(card: HTMLElement): string {
         id: (value: string | undefined) => value || ''
     });
     return id as string;
+}
+
+/** Получение имени ключа споба платежа по его значению из константы PAYMENT_NAMES */
+export function getKeybyPaymentValue(value: string | undefined): string | undefined {
+    if (!value) return value;
+    return Object.keys(PAYMENT_NAMES).find(key => PAYMENT_NAMES[key] === value);
 }

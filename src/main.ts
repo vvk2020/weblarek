@@ -3,10 +3,10 @@ import './scss/styles.scss';
 import { LarekAPI } from './components/models/LarekAPI';
 import { API_URL, EVENTS, PAYMENT_NAMES, SELECTORS } from './utils/constants';
 import { Api } from './components/base/Api';
-import { IContactsFields, ILarekProducts, IOrderData, IOrderFields, IProduct, IPurchaseData } from './types';
+import { IBuyer, IContactsFields, ILarekProducts, IOrderData, IOrderFields, IProduct, IPurchaseData } from './types';
 import { EventEmitter } from './components/base/Events';
 import { Catalog } from './components/models/Catalog';
-import { cloneTemplate, getIdFromCard } from './utils/utils';
+import { cloneTemplate, getIdFromCard, getKeybyPaymentValue } from './utils/utils';
 import { GalleryView } from './components/view/GalleryView';
 import { PreviewCard } from './components/view/cards/PreviewCard';
 import { Modal } from './components/view/Modal';
@@ -47,7 +47,7 @@ const basket = new Basket(events);
 const header = new Header(headerContainer, events);
 const orderForm = new OrderForm(cloneTemplate(orderFormTemplate), events);
 const contactsForm = new ContactsForm(cloneTemplate(contactsFormTemplate), events);
-const buyer = new Buyer(); // покупатель
+const buyer = new Buyer(events); // покупатель
 const productsAPI = new LarekAPI(api);
 const success = new Success(cloneTemplate(successTemplate), events);
 
@@ -97,18 +97,18 @@ events.on(EVENTS.basket.handleItem, (card: HTMLElement) => {
 	// Получение id товара из его карточки card
 	const id = getIdFromCard(card);
 	// Добавление товара в корзину (модель данных) 
-	if (id) { 
+	if (id) {
 		// Проверка наличия товара в корзине 
-		const hasItemInBasket = basket.hasItem(id); 
+		const hasItemInBasket = basket.hasItem(id);
 		// Если товар с id уже в корзине, то удаляем из корзины, если нет - добавляем 
-		if (hasItemInBasket) { 
-			basket.delItemById(id); 
-		} else { 
+		if (hasItemInBasket) {
+			basket.delItemById(id);
+		} else {
 			// Запрос данных товара из каталога (модели данных) 
-			const item = catalog.getItemById(id); 
+			const item = catalog.getItemById(id);
 			// Добавление товара в корзину (модель данных) 
-			basket.addItem(item); 
-		} 
+			basket.addItem(item);
+		}
 	}
 });
 
@@ -147,19 +147,33 @@ events.on(EVENTS.forms.order.open, () => {
 	modal.setСontent([orderForm.render()]); // размещение формы в модальном окне
 });
 
-// Брокер: Изменение в полях данных на форме заполнения заказа (OrderForm)
-events.on(EVENTS.forms.order.chahgeFields, (fields: IOrderFields) => {
-	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
-	const paymentType = (fields.payment?.name && PAYMENT_NAMES[fields.payment.name]) || undefined;
-	// Изменение модели данных
-	buyer.set('payment', paymentType);
-	buyer.set('address', fields.address.value);
+// Брокер: регистрация события изменения данных покупателя
+events.on(EVENTS.buyer.change, (buyerField) => {
+	switch (Object.keys(buyerField)[0]) {
+		case 'payment': {
+			orderForm.payment = getKeybyPaymentValue(Object.values(buyerField)[0]);
+			break;
+		}
+		default: ; // прочие поля формы orderForm
+	}
 	// Блокировка/разблокировка кнопки перехода на следующую форму
 	orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
 	// Текст ошибки валидации
 	const errorMessage = (buyer.errors.payment || buyer.errors.address) || '';
 	// Вывод ошибок валидации в поле на OrderForm
 	orderForm.errors = errorMessage;
+
+});
+
+// Брокер: Изменение в полях данных первой формы заполнения заказа (OrderForm)
+events.on(EVENTS.forms.order.chahgeFields, (fields: IOrderFields) => {
+	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
+	let paymentType = (fields.payment?.name && PAYMENT_NAMES[fields.payment.name]) || undefined;
+	/* Изменение модели данных:
+	1. При повторном выборе одного и того же способа оплаты сбрасываем выбор */
+	paymentType = (buyer.data.payment === paymentType) ? undefined : paymentType;
+	buyer.set('payment', paymentType);
+	buyer.set('address', fields.address.value);
 });
 
 // Брокер: submit формы OrderForm
@@ -193,7 +207,7 @@ events.on(EVENTS.forms.contacts.submit, () => {
 		productsAPI.placeOrder(orderData)
 			.then((data: IPurchaseData) => {
 				basket.clear(); // очистка корзины
-				// Сброс полей форм
+				// Сброс форм
 				orderForm.reset();
 				contactsForm.reset();
 				// Размещение формы с сообщением об успешной оплате в модальном окне
