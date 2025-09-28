@@ -22,17 +22,15 @@ export class OrderForm extends Form<IOrderForm> {
 				// Генерирование сообщения об изменении в полях данных фомы OrderForm
 				this.events.emit(EVENTS.forms.order.chahgeFields, {
 					payment: evt.target as HTMLButtonElement,
-					address: this.addressInp,
-				} as IOrderFields);
+				} as Partial<IOrderFields>);
 			});
 		});
 		// Назначение обработчика изменения значения в поле ввода адреса
 		this.addressInp.addEventListener('input', (evt) => {
 			// Генерирование сообщения об изменении в полях данных фомы OrderForm
 			this.events.emit(EVENTS.forms.order.chahgeFields, {
-				payment: evt.target as HTMLButtonElement,
 				address: this.addressInp,
-			} as IOrderFields);
+			} as Partial<IOrderFields>);
 		});
 	}
 

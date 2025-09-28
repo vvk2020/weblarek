@@ -25,19 +25,34 @@ export class BasketView extends Component<IBasketData> {
     // Отображение в корзине карточек или стилизованного текста "Корзина пуста"
     if (cards?.length > 0) {
       this.listEl?.replaceChildren(...cards);
-      this.listEl.classList.remove('basket__empty-text');
-      this.orderBtn.disabled = false; // раззблокировка кнопки оформления заказа
-
     } else {
       this.listEl.textContent = 'Корзина пуста';
-      this.listEl.classList.add('basket__empty-text');
-      this.orderBtn.disabled = true; // блокировка кнопки оформления заказа
     }
+    this.refreshState(); // стилизация корзины в зависимости от кол-ва товаров в ней
   }
 
   set total(value: Price) {
     if (this.totalEl) {
       this.totalEl.textContent = value ? value.toString() + ' синапсов' : '0 синапсов';
     }
+  }
+
+  /** Стилизация корзины в зависимости от кол-ва товаров в ней */
+  private refreshState(): void {
+    // Лист карточек в корзине
+    const cardsList = this.listEl.querySelectorAll(SELECTORS.basket.card.selector) as NodeList;
+    // Стилизация корзины (отображение "Корзина пуста") и кнопки оформления
+    if (cardsList.length > 0) {
+      this.listEl.classList.remove('basket__empty-text');
+      this.orderBtn.disabled = false; // раззблокировка кнопки оформления заказа
+    } else {
+      this.listEl.classList.add('basket__empty-text');
+      this.orderBtn.disabled = true; // блокировка кнопки оформления заказа
+    }
+  }
+
+  render(data?: Partial<IBasketData> | undefined): HTMLElement {
+    this.refreshState(); // cтилизация корзины в зависимости от кол-ва товаров в ней
+    return super.render(data);
   }
 }

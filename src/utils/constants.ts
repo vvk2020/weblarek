@@ -33,7 +33,8 @@ export const SELECTORS = {
     total: '.basket__price', // стоимость товаров в корзине
     orderButton: '.basket__button', // кнопка оформления заказа
     delItemButton: '.basket__item-delete.card__button', // кнопка удаления товара из корзины
-    card: {
+    card: { // карточка
+      selector: '.basket__item', // селектор карточки
       index: '.basket__item-index', // порядковый номер в корзине
       delButton: '.basket__item-delete', // кнопка удаления товара из корзины
     }

@@ -133,7 +133,7 @@ events.on(EVENTS.modal.close, () => {
 events.on(EVENTS.basket.openModal, () => {
 	// Размещение карточек корзины в списке корзины модального окна
 	modal.render({
-		content: [basketContainer.render({ cards: createBasketCards(), total: basket.total })]
+		content: basketContainer.render()
 	});
 	modal.open(); // открытие модального окна
 });
@@ -155,45 +155,38 @@ events.on(EVENTS.forms.order.open, () => {
 	}); // размещение формы в модальном окне
 });
 
-// Брокер: регистрация события изменения данных покупателя
+// Брокер: регистрация события изменения в поле данных покупателя
 events.on(EVENTS.buyer.change, (buyerField) => {
 	const field = Object.keys(buyerField)[0];
-	if (field === 'payment') {
-		orderForm.payment = getKeybyPaymentValue(Object.values(buyerField)[0]);
-	}
-	// Вывод ошибок валидации фомы и блокировка/разблокировка кнопок
-	switch (field) {
-		// Первая форма оформления заказа
-		case 'payment':
-		case 'address': {
-			// Блокировка/разблокировка кнопки перехода на следующую форму
-			orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
-			// Вывод ошибок валидации в полях на OrderForm
-			orderForm.errors = (buyer.errors.payment || buyer.errors.address) || '';
-			break;
-		}
-		// Вторая форма оформления заказа
-		case 'email':
-		case 'phone': {
-			// Блокировка/разблокировка кнопки оплаты заказа
-			contactsForm.disableSubmitButton = !(!buyer.errors.email && !buyer.errors.phone);
-			// Вывод ошибок валидации в полях на ContactForm
-			contactsForm.errors = (buyer.errors.email || buyer.errors.phone) || '';
-			break;
-		}
-		default: ;
+	const value = Object.values(buyerField)[0];
+	if (field === 'payment' || field === 'address') {
+		// Получение имени ключа споба платежа по его значению из константы PAYMENT_NAMES
+		if (field === 'payment')
+			orderForm.payment = getKeybyPaymentValue(value);
+		// Блокировка/разблокировка кнопки перехода на следующую форму
+		orderForm.disableSubmitButton = !(!buyer.errors.payment && !buyer.errors.address);
+		// Вывод ошибок валидации в полях на OrderForm
+		orderForm.errors = (buyer.errors.payment || buyer.errors.address) || '';
+	} else if (field === 'email' || field === 'phone') {
+		// Блокировка/разблокировка кнопки оплаты заказа
+		contactsForm.disableSubmitButton = !(!buyer.errors.email && !buyer.errors.phone);
+		// Вывод ошибок валидации в полях на ContactForm
+		contactsForm.errors = (buyer.errors.email || buyer.errors.phone) || '';
 	}
 });
 
 // Брокер: Изменение в полях данных первой формы заполнения заказа (OrderForm)
-events.on(EVENTS.forms.order.chahgeFields, (fields: IOrderFields) => {
-	// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
-	let paymentType = (fields.payment?.name && PAYMENT_NAMES[fields.payment.name]) || undefined;
-	/* Изменение модели данных:
-	1. При повторном выборе одного и того же способа оплаты сбрасываем выбор */
-	paymentType = (buyer.data.payment === paymentType) ? undefined : paymentType;
-	buyer.set('payment', paymentType);
-	buyer.set('address', fields.address.value);
+events.on(EVENTS.forms.order.chahgeFields, (fields: Partial<IOrderFields>) => {
+	if ('payment' in fields) {
+		// Способ оплаты типа TPayment, пересылаемый в запросе при оформлении заказа
+		let paymentType = (fields.payment?.name && PAYMENT_NAMES[fields.payment.name]) || undefined;
+		/* Изменение модели данных:
+		1. При повторном выборе одного и того же способа оплаты сбрасываем выбор */
+		paymentType = (buyer.data.payment === paymentType) ? undefined : paymentType;
+		buyer.set('payment', paymentType);
+	}
+	if ('address' in fields && fields.address)
+		buyer.set('address', fields.address.value);
 });
 
 // Брокер: submit формы OrderForm
@@ -204,37 +197,39 @@ events.on(EVENTS.forms.order.submit, () => {
 });
 
 // Брокер: Изменение в полях данных на форме оплаты зака (ContactsForm)
-events.on(EVENTS.forms.contacts.chahgeFields, (fields: IContactsFields) => {
+events.on(EVENTS.forms.contacts.chahgeFields, (fields: Partial<IContactsFields>) => {
 	// Изменение модели данных
-	buyer.set('email', fields.emailInput.value);
-	buyer.set('phone', fields.phoneInput.value);
+	if ('email' in fields && fields.email) {
+		buyer.set('email', fields.email.value);
+		console.log('email');
+	}
+	if ('phone' in fields && fields.phone) {
+		buyer.set('phone', fields.phone.value);
+		console.log('phone');
+	}
 });
 
 // Брокер: submit формы ContactsForm
 events.on(EVENTS.forms.contacts.submit, () => {
 	// Запрос оформления заказа
-	if (buyer.valid) {
-		// Данные для запроса
-		const orderData: IOrderData = {
-			...buyer.data,
-			total: basket.total,
-			items: Object.values(basket.items).map(item => item.id),
-		};
-		productsAPI.placeOrder(orderData)
-			.then((data: IPurchaseData) => {
-				basket.clear(); // очистка корзины
-				// Сброс форм
-				orderForm.reset();
-				contactsForm.reset();
-				// Размещение формы с сообщением об успешной оплате в модальном окне
-				modal.render({
-					content: [success.render({ total: data.total })]
-				}
-				);
-			})
-			.catch((err: Response) => console.error(err));
-	}
-
+	const orderData: IOrderData = { // Данные для запроса
+		...buyer.data,
+		total: basket.total,
+		items: Object.values(basket.items).map(item => item.id),
+	};
+	productsAPI.placeOrder(orderData)
+		.then((data: IPurchaseData) => {
+			basket.clear(); // очистка корзины
+			// Сброс форм
+			orderForm.reset();
+			contactsForm.reset();
+			// Размещение формы с сообщением об успешной оплате в модальном окне
+			modal.render({
+				content: [success.render({ total: data.total })]
+			}
+			);
+		})
+		.catch((err: Response) => console.error(err));
 });
 
 // Брокер: закрытие окна с сообщением об успешной оплате

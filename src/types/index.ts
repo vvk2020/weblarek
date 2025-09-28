@@ -145,8 +145,8 @@ export interface IOrderFields {
 
 /** ЭЛЕМЕНТЫ ФОРМЫ ContactsForm */
 export interface IContactsFields {
-  emailInput: HTMLInputElement;
-  phoneInput: HTMLInputElement;
+  email: HTMLInputElement;
+  phone: HTMLInputElement;
 }
 
 /** ЭЛЕМЕНТЫ ФОРМЫ ContactsForm */

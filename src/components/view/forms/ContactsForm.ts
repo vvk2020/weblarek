@@ -16,17 +16,15 @@ export class ContactsForm extends Form<IContactsForm> {
 		this.emailInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы ContactsForm
 			this.events.emit(EVENTS.forms.contacts.chahgeFields, {
-				emailInput: this.emailInp,
-				phoneInput: this.phoneInp
-			} as IContactsFields);
+				email: this.emailInp,
+			} as Partial<IContactsFields>);
 		});
 
 		this.phoneInp.addEventListener('input', () => {
 			// Генерирование сообщения об изменении в полях данных фомы ContactsForm
 			this.events.emit(EVENTS.forms.contacts.chahgeFields, {
-				emailInput: this.emailInp,
-				phoneInput: this.phoneInp
-			} as IContactsFields);
+				phone: this.phoneInp
+			} as Partial<IContactsFields>);
 		});
 	}
 }
